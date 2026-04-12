@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, Filter, X } from 'lucide-react';
+import { Search, Filter, X, ChevronDown } from 'lucide-react';
 import { useProducts } from '../contexts/ProductContext';
 
 export function FilterBar() {
@@ -10,96 +10,104 @@ export function FilterBar() {
     categories
   } = useProducts();
 
+  // Helper for status dot colors
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'Low Stock': return 'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.3)]';
+      case 'Out of Stock': return 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.3)]';
+      case 'In Stock': return 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.3)]';
+      default: return 'bg-blue-600 shadow-[0_0_8px_rgba(37,99,235,0.3)]';
+    }
+  };
+
   return (
-    /* FIX: Added 'w-full' and 'min-h' to prevent layout shifts when active filters appear/disappear */
-    <div className="w-full bg-white rounded-xl border border-slate-900/5 p-1.5 space-y-2 transition-all duration-300">
-      <div className="flex flex-col lg:flex-row gap-1.5">
+    <div className="w-full sticky top-0 z-30 glass-light border-b border-zinc-200/50 p-3 mb-6 transition-all duration-300">
+      <div className="max-w-[1600px] mx-auto space-y-3">
+        <div className="flex flex-col lg:flex-row gap-2">
 
-        {/* Search - Ultra Compact & Bold */}
-        <div className="relative flex-1 group">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3 h-3 text-slate-400 group-focus-within:text-slate-900 transition-colors" />
-          <input
-            type="text"
-            placeholder="Search products..."
-            className="w-full pl-8 pr-3 py-1.5 bg-white border border-slate-900 rounded-lg focus:outline-none focus:ring-4 focus:ring-slate-900/5 transition-all text-xs font-bold text-slate-900 placeholder:text-slate-400"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-
-        {/* Filters Wrapper */}
-        <div className="flex flex-wrap sm:flex-nowrap gap-1.5">
-          {/* Category Select */}
-          <div className="flex items-center gap-1.5 bg-white px-3 py-1 rounded-lg border border-slate-900 focus-within:ring-4 focus-within:ring-slate-900/5 transition-all">
-            <Filter className="w-3 h-3 text-slate-400" />
-            <select
-              className="bg-transparent border-none focus:ring-0 text-[10px] font-black text-slate-900 uppercase tracking-wider cursor-pointer outline-none"
-              value={categoryFilter}
-              onChange={(e) => setCategoryFilter(e.target.value)}
-            >
-              {categories.map((cat) => (
-                <option key={cat} value={cat}>{cat}</option>
-              ))}
-            </select>
+          {/* Search: Zinc-Cobalt Themed */}
+          <div className="relative flex-1 group">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-400 group-focus-within:text-blue-600 transition-colors" />
+            <input
+              type="text"
+              placeholder="Search Protocol Inventory..."
+              className="w-full pl-10 pr-4 py-2 bg-zinc-100/50 border border-zinc-200 rounded-xl focus:outline-none focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/5 transition-all text-xs font-bold text-zinc-900 placeholder:text-zinc-400"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
           </div>
 
-          {/* Status Select */}
-          <div className="flex items-center gap-1.5 bg-white px-3 py-1 rounded-lg border border-slate-900 focus-within:ring-4 focus-within:ring-slate-900/5 transition-all">
-            <div className={`w-1.5 h-1.5 rounded-full ${statusFilter === 'All' ? 'bg-blue-500' : statusFilter === 'Low Stock' ? 'bg-amber-500' : 'bg-emerald-500'}`}></div>
-            <select
-              className="bg-transparent border-none focus:ring-0 text-[10px] font-black text-slate-900 uppercase tracking-wider cursor-pointer outline-none"
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-            >
-              <option value="All">All Status</option>
-              <option value="In Stock">In Stock</option>
-              <option value="Low Stock">Low Stock</option>
-              <option value="Out of Stock">Out of Stock</option>
-            </select>
+          {/* Filters Wrapper */}
+          <div className="flex flex-wrap sm:flex-nowrap gap-2">
+            
+            {/* Category Select */}
+            <div className="relative flex items-center bg-white px-3 py-2 rounded-xl border border-zinc-200 hover:border-zinc-300 focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/5 transition-all">
+              <Filter className="w-3.5 h-3.5 text-zinc-400 mr-2" />
+              <select
+                className="appearance-none bg-transparent pr-6 text-[10px] font-black text-zinc-900 uppercase tracking-widest cursor-pointer outline-none"
+                value={categoryFilter}
+                onChange={(e) => setCategoryFilter(e.target.value)}
+              >
+                {categories.map((cat) => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+              <ChevronDown className="absolute right-2.5 w-3 h-3 text-zinc-400 pointer-events-none" />
+            </div>
+
+            {/* Status Select */}
+            <div className="relative flex items-center bg-white px-3 py-2 rounded-xl border border-zinc-200 hover:border-zinc-300 focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/5 transition-all">
+              <div className={`w-1.5 h-1.5 rounded-full mr-2.5 ${getStatusColor(statusFilter)} transition-all duration-500`}></div>
+              <select
+                className="appearance-none bg-transparent pr-6 text-[10px] font-black text-zinc-900 uppercase tracking-widest cursor-pointer outline-none"
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+              >
+                <option value="All">All Status</option>
+                <option value="In Stock">In Stock</option>
+                <option value="Low Stock">Low Stock</option>
+                <option value="Out of Stock">Out of Stock</option>
+              </select>
+              <ChevronDown className="absolute right-2.5 w-3 h-3 text-zinc-400 pointer-events-none" />
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Active Filters Area - Logic remains same, layout improved */}
-      {
-        (searchTerm || categoryFilter !== "All" || statusFilter !== "All") && (
-          <div className="flex flex-wrap items-center gap-2 pt-4 border-t border-slate-50 animate-in fade-in slide-in-from-top-2 duration-300">
-            <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] mr-1">Active Filters:</span>
-
+        {/* Active Filters: Minimalist Badges */}
+        {(searchTerm || categoryFilter !== "All" || statusFilter !== "All") && (
+          <div className="flex flex-wrap items-center gap-2 pt-2 animate-in fade-in slide-in-from-top-1 duration-300">
             {searchTerm && (
-              <span className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 text-blue-700 text-[10px] font-black rounded-full border border-blue-100">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-zinc-900 text-white text-[9px] font-bold rounded-md uppercase tracking-tighter">
                 "{searchTerm}"
-                <button onClick={() => setSearchTerm("")} className="hover:text-blue-900"><X className="w-3 h-3" /></button>
+                <X className="w-3 h-3 cursor-pointer hover:text-red-400" onClick={() => setSearchTerm("")} />
               </span>
             )}
 
             {categoryFilter !== "All" && (
-              <span className="inline-flex items-center gap-2 px-3 py-1 bg-slate-100 text-slate-700 text-[10px] font-black rounded-full border border-slate-200 uppercase">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-blue-50 text-blue-600 text-[9px] font-bold rounded-md border border-blue-100 uppercase tracking-tighter">
                 {categoryFilter}
-                <button onClick={() => setCategoryFilter("All")} className="hover:text-slate-900"><X className="w-3 h-3" /></button>
+                <X className="w-3 h-3 cursor-pointer hover:text-blue-800" onClick={() => setCategoryFilter("All")} />
               </span>
             )}
 
             {statusFilter !== "All" && (
-              <span className="inline-flex items-center gap-2 px-3 py-1 bg-amber-50 text-amber-700 text-[10px] font-black rounded-full border border-amber-100 uppercase">
+              <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-[9px] font-bold rounded-md border uppercase tracking-tighter ${
+                statusFilter === 'Low Stock' ? 'bg-amber-50 text-amber-600 border-amber-100' : 'bg-emerald-50 text-emerald-600 border-emerald-100'
+              }`}>
                 {statusFilter}
-                <button onClick={() => setStatusFilter("All")} className="hover:text-amber-900"><X className="w-3 h-3" /></button>
+                <X className="w-3 h-3 cursor-pointer" onClick={() => setStatusFilter("All")} />
               </span>
             )}
 
             <button
-              onClick={() => {
-                setSearchTerm("");
-                setCategoryFilter("All");
-                setStatusFilter("All");
-              }}
-              className="text-[10px] font-black text-blue-600 hover:text-blue-800 uppercase tracking-widest ml-auto"
+              onClick={() => { setSearchTerm(""); setCategoryFilter("All"); setStatusFilter("All"); }}
+              className="text-[9px] font-black text-zinc-400 hover:text-rose-500 uppercase tracking-widest transition-colors ml-auto"
             >
-              Reset All
+              Clear All
             </button>
           </div>
-        )
-      }
-    </div >
+        )}
+      </div>
+    </div>
   );
 }

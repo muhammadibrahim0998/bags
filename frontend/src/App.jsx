@@ -4,9 +4,11 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { Sidebar } from "./components/Sidebar";
 import { Navbar } from "./components/Navbar";
 import { Footer } from "./components/Footer";
-import { AdminDashboard } from "./pages/AdminDashboard";
+import { ShopAdminDashboard } from "./pages/ShopAdminDashboard";
 import { Storefront } from "./pages/Storefront";
 import { TeamView } from "./pages/TeamView";
+import { SuperAdminDashboard } from "./pages/SuperAdminDashboard";
+import { ProductDetail } from "./pages/ProductDetail";
 
 import { CartModal } from "./components/CartModal";
 import { ProductModal } from "./components/ProductModal";
@@ -17,8 +19,10 @@ import { ShiftModal } from "./components/ShiftModal";
 import { AuthGuardModal } from "./components/auth/AuthGuardModal";
 import { useUser } from "./contexts/UserContext";
 import { useModals } from "./contexts/ModalContext";
+import { useShift } from "./contexts/ShiftContext";
 import { LoginView } from "./components/auth/LoginView";
 import { SettingsView } from "./pages/SettingsView";
+import { HelpView } from "./pages/HelpView";
 
 import { useProducts } from "./contexts/ProductContext";
 
@@ -36,9 +40,10 @@ import { toast, Toaster } from "sonner";
 
 
 export default function App() {
-  const { user, isAdmin, loading: userLoading } = useUser();
-  const { cart, clearCart, fetchData, sales } = useProducts();
+  const { user, isSuperAdmin, isShopAdmin, loading: userLoading } = useUser();
+  const { cart, clearCart, fetchData, sales, products, categories } = useProducts();
   const { modals, activeData, openModal, closeModal } = useModals();
+  const { refreshSession } = useShift();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   if (userLoading) return null;
@@ -124,6 +129,7 @@ export default function App() {
       clearCart();
       closeModal("cart");
       fetchData();
+      refreshSession();
     } catch (err) {
       console.error(err);
       toast.error("Checkout failed. Please check stock levels.");
@@ -137,6 +143,7 @@ export default function App() {
         await deleteSale(saleId, pw, user?.role);
         toast.success("Sale record deleted!");
         fetchData();
+        refreshSession();
       } catch (err) {
         toast.error(err.message || "Unauthorized delete");
       }
@@ -149,6 +156,7 @@ export default function App() {
         await returnSale(saleId, { reason }, pw, user?.role);
         toast.success("Sale returned & stock restored!");
         fetchData();
+        refreshSession();
       } catch (err) {
         toast.error(err.message || "Unauthorized return");
       }
@@ -165,6 +173,7 @@ export default function App() {
         toast.success("Sale updated successfully!");
         closeModal("editSale");
         fetchData();
+        refreshSession();
       } catch (err) {
         toast.error("Update failed. Check stock or authorization.");
       }
@@ -173,10 +182,7 @@ export default function App() {
 
   // Modernized requireAuth helper
   const requireAuth = (callback, title, message) => {
-    const role = user?.role?.toLowerCase();
-    const isSystemAdmin = ['admin', 'system admin'].includes(role);
-
-    if (isSystemAdmin) {
+    if (isShopAdmin()) {
       return callback('');
     }
     openModal("auth", { callback, title, message });
@@ -184,7 +190,7 @@ export default function App() {
 
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-gray-50 dark:bg-[#030213] w-full">
+    <div className="flex flex-col h-screen overflow-hidden bg-background text-text-primary w-full tracking-tight">
       <Toaster position="top-right" richColors />
 
       <Navbar
@@ -211,32 +217,48 @@ export default function App() {
           isMobileOpen={modals.mobileMenu}
           onCloseMobile={() => closeModal("mobileMenu")}
           isCollapsed={isCollapsed}
+          onToggleSidebar={() => setIsCollapsed(!isCollapsed)}
         />
 
         {/* Main Content Pane */}
         <div className="flex-1 flex flex-col overflow-hidden relative">
-          <main className="flex-1 overflow-y-auto p-6 bg-slate-50 scrollbar-hide">
+          <main className="flex-1 overflow-y-auto p-6 bg-background scrollbar-hide">
             <div className="max-w-7xl mx-auto space-y-6">
               <Routes>
                 <Route path="/" element={
-                  <AdminDashboard
-                    onAddProduct={() => openModal("addProduct")}
-                    onEditProduct={(p) => openModal("editProduct", p)}
-                    onDeleteProduct={handleDeleteProduct}
-                    onViewProduct={(p) => openModal("viewProduct", p)}
-                    onExport={() => openModal("export")}
-                    onEditSale={(sale) => openModal("editSale", sale)}
-                    onDeleteSale={handleDeleteSale}
-                    onReturnSale={handleReturnSale}
-                    onViewSale={(sale) => openModal("receipt", sale)}
-                  />
+                  isSuperAdmin() ? (
+                    <SuperAdminDashboard />
+                  ) : isShopAdmin() ? (
+                    <ShopAdminDashboard
+                      onAddProduct={() => openModal("addProduct")}
+                      onEditProduct={(p) => openModal("editProduct", p)}
+                      onDeleteProduct={handleDeleteProduct}
+                      onViewProduct={(p) => openModal("viewProduct", p)}
+                      onExport={() => openModal("export")}
+                      onEditSale={(sale) => openModal("editSale", sale)}
+                      onDeleteSale={handleDeleteSale}
+                      onReturnSale={handleReturnSale}
+                      onViewSale={(sale) => openModal("receipt", sale)}
+                      dailySales={sumSales(dailySalesList)}
+                      monthlySales={sumSales(monthlySalesList)}
+                      yearlySales={sumSales(yearlySalesList)}
+                      dailyProfit={sumProfit(dailySalesList)}
+                      monthlyProfit={sumProfit(monthlySalesList)}
+                      yearlyProfit={sumProfit(yearlySalesList)}
+                    />
+                  ) : (
+                    <Navigate to="/store" replace />
+                  )
                 } />
 
                 <Route path="/store" element={<Storefront onAdd={() => openModal("addProduct")} />} />
                 <Route path="/store/category/:category" element={<Storefront onAdd={(cat) => openModal("addProduct", { category: cat })} />} />
                 <Route path="/store/status/:status" element={<Storefront onAdd={() => openModal("addProduct")} />} />
+                <Route path="/product/:id" element={<ProductDetail />} />
                 <Route path="/settings" element={<SettingsView />} />
-                <Route path="/team" element={isAdmin() ? <TeamView /> : <Navigate to="/" />} />
+                <Route path="/help" element={<HelpView />} />
+                <Route path="/team" element={isShopAdmin() ? <TeamView /> : <Navigate to="/" />} />
+                <Route path="/shops" element={isSuperAdmin() ? <Navigate to="/" replace /> : <Navigate to="/" replace />} />
               </Routes>
             </div>
           </main>
@@ -257,7 +279,7 @@ export default function App() {
         onClose={() => closeModal("addProduct")}
         onSave={handleAddProduct}
         product={activeData.prefilledProduct}
-        categories={useProducts().categories}
+        categories={categories}
         title="Add New Product"
         mode="add"
       />
@@ -267,7 +289,7 @@ export default function App() {
         onClose={() => closeModal("editProduct")}
         onSave={handleEditProductSubmit}
         product={activeData.product}
-        categories={useProducts().categories}
+        categories={categories}
         title="Edit Product"
         mode="edit"
       />
@@ -276,7 +298,7 @@ export default function App() {
         isOpen={modals.viewProduct}
         onClose={() => closeModal("viewProduct")}
         product={activeData.product}
-        categories={useProducts().categories}
+        categories={categories}
         title="Product Details"
         mode="view"
       />
@@ -298,9 +320,9 @@ export default function App() {
       <ExportModal
         isOpen={modals.export}
         onClose={() => closeModal("export")}
-        products={useProducts().products}
-        sales={useProducts().sales}
-        categories={useProducts().categories}
+        products={products}
+        sales={sales}
+        categories={categories}
       />
 
       <ShiftModal

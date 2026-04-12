@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 import { useUser } from './UserContext';
 
 const ShiftContext = createContext();
@@ -7,12 +7,16 @@ const ShiftContext = createContext();
 export const ShiftProvider = ({ children }) => {
   const { user } = useUser();
   const [currentSession, setCurrentSession] = useState(null);
+  const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001';
 
   const fetchCurrentSession = async () => {
+    if (user?.role === 'super_admin') {
+      setLoading(false);
+      return;
+    }
     try {
-      const res = await axios.get(`${API_URL}/api/cash-sessions/current`);
+      const res = await api.get('/cash-sessions/current');
       setCurrentSession(res.data);
     } catch (err) {
       console.error("Error fetching shift:", err);
@@ -21,13 +25,25 @@ export const ShiftProvider = ({ children }) => {
     }
   };
 
-  const startShift = async (openingCash) => {
+  const fetchHistory = async () => {
+    if (user?.role === 'super_admin') return;
     try {
-      const res = await axios.post(`${API_URL}/api/cash-sessions/start`, { 
+      const res = await api.get('/cash-sessions/history');
+      setHistory(res.data);
+    } catch (err) {
+      console.error("Error fetching history:", err);
+    }
+  };
+
+  const startShift = async (openingCash, shiftType, customCashierId) => {
+    try {
+      const res = await api.post('/cash-sessions/start', {
         openingCash,
-        cashierId: user.id
+        cashierId: customCashierId || user.id,
+        shiftType
       });
       setCurrentSession(res.data);
+      fetchHistory(); // Refresh history
       return res.data;
     } catch (err) {
       throw err.response?.data || err;
@@ -36,12 +52,13 @@ export const ShiftProvider = ({ children }) => {
 
   const endShift = async (actualCash, notes) => {
     try {
-      const res = await axios.post(`${API_URL}/api/cash-sessions/end`, { 
-        actualCash, 
+      const res = await api.post('/cash-sessions/end', {
+        actualCash,
         notes,
         userId: user.id
       });
       setCurrentSession(null);
+      fetchHistory(); // Refresh history
       return res.data;
     } catch (err) {
       throw err.response?.data || err;
@@ -49,16 +66,21 @@ export const ShiftProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    fetchCurrentSession();
-  }, []);
+    if (user) {
+      fetchCurrentSession();
+      fetchHistory();
+    }
+  }, [user]);
 
   return (
-    <ShiftContext.Provider value={{ 
-      currentSession, 
-      loading, 
-      startShift, 
-      endShift, 
-      refreshSession: fetchCurrentSession 
+    <ShiftContext.Provider value={{
+      currentSession,
+      history,
+      loading,
+      startShift,
+      endShift,
+      fetchHistory,
+      refreshSession: fetchCurrentSession
     }}>
       {children}
     </ShiftContext.Provider>

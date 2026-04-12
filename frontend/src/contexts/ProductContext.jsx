@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { getItems, getSales } from '../services/api';
 import { toast } from 'sonner';
 import { useDebounce } from '../hooks/useDebounce';
+import { useUser } from './UserContext';
 
 
 const ProductContext = createContext();
@@ -56,12 +57,22 @@ export function ProductProvider({ children }) {
   // Cart
   const [cart, setCart] = useState([]);
 
+  // Move useUser inside the component to avoid circular dependency if any, 
+  // but it's safe here as UserProvider wraps ProductProvider.
+  const { user } = useUser();
+
   // Fetch logic
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (user) {
+      fetchData();
+    }
+  }, [user]);
 
   const fetchData = async () => {
+    if (!user || user.role === 'super_admin') {
+      setLoading(false);
+      return;
+    }
     try {
       setLoading(true);
       const [productsData, salesData] = await Promise.all([

@@ -1,0 +1,336 @@
+import React, { useState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { shopSchema } from '../schemas/shopSchema';
+import api from '../services/api';
+import {
+    Store, Plus, Building2, Edit2, Trash2, X, Check,
+    LayoutDashboard, Users, Activity
+} from 'lucide-react';
+import { toast } from 'sonner';
+
+export function SuperAdminDashboard() {
+    const [shops, setShops] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [activeTab, setActiveTab] = useState('overview');
+    const [editingShop, setEditingShop] = useState(null);
+    const [editData, setEditData] = useState({ name: '', address: '', contactNumber: '', status: 'active' });
+
+    const {
+        register,
+        handleSubmit,
+        reset,
+        formState: { errors, isSubmitting }
+    } = useForm({
+        resolver: zodResolver(shopSchema),
+        defaultValues: {
+            name: '',
+            address: '',
+            contactNumber: '',
+            adminFullName: '',
+            adminUsername: '',
+            adminPassword: ''
+        }
+    });
+
+    useEffect(() => {
+        fetchShops();
+    }, []);
+
+    const fetchShops = async () => {
+        try {
+            const res = await api.get('/shops');
+            setShops(res.data);
+        } catch (error) {
+            toast.error('Failed to load shops');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const onAddShop = async (data) => {
+        try {
+            await api.post('/shops', data);
+            toast.success('Shop created!');
+            reset();
+            fetchShops();
+        } catch (err) {
+            const serverError = err.response?.data?.message || 'Failed to create shop';
+            toast.error(serverError);
+        }
+    };
+
+    const handleDeleteShop = async (id) => {
+        if (!window.confirm("Are you sure you want to delete this shop and all its users? This cannot be undone.")) return;
+        try {
+            await api.delete(`/shops/${id}`);
+            toast.success("Shop deleted successfully");
+            fetchShops();
+        } catch (err) {
+            toast.error("Failed to delete shop");
+        }
+    };
+
+    const handleUpdateShop = async (id) => {
+        try {
+            await api.put(`/shops/${id}`, editData);
+            toast.success("Shop updated successfully");
+            setEditingShop(null);
+            fetchShops();
+        } catch (err) {
+            toast.error("Failed to update shop");
+        }
+    };
+
+    const startEdit = (shop) => {
+        setEditingShop(shop._id);
+        setEditData({
+            name: shop.name || '',
+            address: shop.address || '',
+            contactNumber: shop.contactNumber || '',
+            status: shop.status
+        });
+    };
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center py-20">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 shadow-[0_0_15px_rgba(37,99,235,0.3)]"></div>
+            </div>
+        );
+    }
+
+    const activeShops = shops.filter(shop => shop.status === 'active').length;
+    const inactiveShops = shops.length - activeShops;
+
+    return (
+        <div className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-in fade-in duration-700">
+            {/* Header Section */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+                <div className="flex items-center gap-5">
+                    <div className="p-4 bg-blue-500/10 rounded-[1.5rem] border border-blue-500/20">
+                        <Building2 className="w-8 h-8 text-[var(--color-primary)]" />
+                    </div>
+                    <div>
+                        <h1 className="text-4xl font-black text-[var(--color-text-primary)] tracking-tighter leading-none uppercase">
+                            Global Dashboard
+                        </h1>
+                        <p className="text-[var(--color-text-secondary)] font-bold uppercase text-[10px] tracking-[0.4em] mt-2">
+                            MERN Inventory Platform Management
+                        </p>
+                    </div>
+                </div>
+
+                {/* Tab Switcher */}
+                <div className="flex items-center gap-2 bg-[var(--color-surface-card)] p-1.5 rounded-[1.5rem] border border-[var(--color-border-subtle)] shadow-sm">
+                    <button
+                        onClick={() => setActiveTab('overview')}
+                        className={`px-6 py-2 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all ${activeTab === 'overview'
+                            ? 'bg-blue-600 text-white shadow-lg'
+                            : 'text-zinc-500 hover:text-zinc-900'
+                            }`}
+                    >
+                        Overview
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('management')}
+                        className={`px-6 py-2 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all ${activeTab === 'management'
+                            ? 'bg-blue-600 text-white shadow-lg'
+                            : 'text-zinc-500 hover:text-zinc-900'
+                            }`}
+                    >
+                        Manage Shops
+                    </button>
+                </div>
+            </div>
+
+            {activeTab === 'overview' ? (
+                /* Overview Content (Integrated from SuperAdminOverview) */
+                <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                        <div className="bg-white border border-zinc-100 rounded-xl p-8 shadow-rich flex items-center gap-6 group">
+                            <div className="p-5 bg-blue-500/10 rounded-2xl border border-blue-500/20 group-hover:scale-110 transition-transform">
+                                <Building2 className="w-8 h-8 text-[var(--color-primary)]" />
+                            </div>
+                            <div>
+                                <p className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em]">Network Shops</p>
+                                <h3 className="text-4xl font-black text-zinc-900 mt-1 tracking-tighter">{shops.length}</h3>
+                            </div>
+                        </div>
+                        <div className="bg-white border border-zinc-100 rounded-xl p-8 shadow-rich flex items-center gap-6 group">
+                            <div className="p-5 bg-emerald-500/10 rounded-2xl border border-emerald-500/20 group-hover:scale-110 transition-transform">
+                                <Activity className="w-8 h-8 text-emerald-500" />
+                            </div>
+                            <div>
+                                <p className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em]">Active Access</p>
+                                <h3 className="text-4xl font-black text-zinc-900 mt-1 tracking-tighter">{activeShops}</h3>
+                            </div>
+                        </div>
+                        <div className="bg-white border border-zinc-100 rounded-xl p-8 shadow-rich flex items-center gap-6 group">
+                            <div className="p-5 bg-rose-500/10 rounded-2xl border border-rose-500/20 group-hover:scale-110 transition-transform">
+                                <Store className="w-8 h-8 text-rose-500" />
+                            </div>
+                            <div>
+                                <p className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em]">Suspended Stores</p>
+                                <h3 className="text-4xl font-black text-zinc-900 mt-1 tracking-tighter">{inactiveShops}</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="bg-white border border-zinc-100 rounded-[2.5rem] p-8 sm:p-10 shadow-rich">
+                        <h3 className="text-2xl font-black text-zinc-900 uppercase tracking-[0.2em] mb-10">Registered Store Network</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {shops.map(shop => (
+                                <div key={shop._id} className="p-8 rounded-xl border border-zinc-100 bg-zinc-50/50 hover:bg-white hover:border-blue-500/30 transition-all shadow-sm hover:shadow-rich group/card">
+                                    <div className="flex items-center justify-between mb-6">
+                                        <div className="p-4 bg-white rounded-2xl border border-zinc-100 group-hover/card:scale-110 transition-transform shadow-inner">
+                                            <Store className="w-7 h-7 text-zinc-400 group-hover/card:text-blue-500 transition-colors" />
+                                        </div>
+                                        <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] border ${shop.status === 'active' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-rose-500/10 text-rose-500 border-rose-500/20'}`}>
+                                            {shop.status}
+                                        </span>
+                                    </div>
+                                    <h4 className="text-xl font-black text-zinc-900 mb-2 truncate tracking-tight uppercase">{shop.name}</h4>
+                                    <p className="text-[11px] font-black text-zinc-400 truncate tracking-[0.1em] uppercase">{shop.address || "Global Access"}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            ) : (
+                /* Management Content (Integrated from SuperAdminDashboard) */
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    {/* Create Shop Form */}
+                    <div className="bg-white p-8 rounded-[2.5rem] border border-zinc-100 shadow-rich h-fit">
+                        <h2 className="text-xl font-black mb-6 text-zinc-900 flex items-center gap-3 uppercase tracking-tight">
+                            <Plus className="w-6 h-6 text-blue-600" />
+                            Register New Shop
+                        </h2>
+                        <form onSubmit={handleSubmit(onAddShop)} className="space-y-4">
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1.5 pl-1">Shop Name</label>
+                                    <input
+                                        {...register('name')}
+                                        className={`w-full px-5 py-3 rounded-xl border ${errors.name ? 'border-rose-500/50 bg-rose-50/50' : 'border-zinc-100 bg-zinc-50'} text-zinc-900 text-sm font-bold placeholder:text-zinc-300 outline-none focus:bg-white focus:border-blue-500/40 transition-all`}
+                                        placeholder="Ex: Premium Supermarket"
+                                    />
+                                    {errors.name && <p className="text-[9px] font-bold text-rose-500 mt-1 pl-1 uppercase tracking-tighter">{errors.name.message}</p>}
+                                </div>
+                                <div>
+                                    <label className="block text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1.5 pl-1">Address</label>
+                                    <input
+                                        {...register('address')}
+                                        className={`w-full px-5 py-3 rounded-xl border ${errors.address ? 'border-rose-500/50 bg-rose-50/50' : 'border-zinc-100 bg-zinc-50'} text-zinc-900 text-sm font-bold placeholder:text-zinc-300 outline-none focus:bg-white focus:border-blue-500/40 transition-all`}
+                                        placeholder="123 Business Avenue"
+                                    />
+                                    {errors.address && <p className="text-[9px] font-bold text-rose-500 mt-1 pl-1 uppercase tracking-tighter">{errors.address.message}</p>}
+                                </div>
+                                <div>
+                                    <label className="block text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1.5 pl-1">Phone</label>
+                                    <input
+                                        {...register('contactNumber')}
+                                        type="tel"
+                                        className={`w-full px-5 py-3 rounded-xl border ${errors.contactNumber ? 'border-rose-500/50 bg-rose-50/50' : 'border-zinc-100 bg-zinc-50'} text-zinc-900 text-sm font-bold placeholder:text-zinc-300 outline-none focus:bg-white focus:border-blue-500/40 transition-all`}
+                                        placeholder="+92 300 1234567"
+                                    />
+                                    {errors.contactNumber && <p className="text-[9px] font-bold text-rose-500 mt-1 pl-1 uppercase tracking-tighter">{errors.contactNumber.message}</p>}
+                                </div>
+                            </div>
+                            <div className="pt-6 border-t border-zinc-50">
+                                <h3 className="text-[10px] font-black text-blue-600 uppercase tracking-[0.2em] mb-4">Admin Credentials</h3>
+                                <div className="space-y-4">
+                                    <div>
+                                        <input
+                                            {...register('adminFullName')}
+                                            className={`w-full px-5 py-3 rounded-xl border ${errors.adminFullName ? 'border-rose-500/50 bg-rose-50/50' : 'border-zinc-100 bg-zinc-50'} text-zinc-900 text-sm font-bold outline-none focus:bg-white focus:border-blue-500/40 transition-all`}
+                                            placeholder="Full Name"
+                                        />
+                                        {errors.adminFullName && <p className="text-[9px] font-bold text-rose-500 mt-1 pl-1 uppercase tracking-tighter">{errors.adminFullName.message}</p>}
+                                    </div>
+                                    <div>
+                                        <input
+                                            {...register('adminUsername')}
+                                            className={`w-full px-5 py-3 rounded-xl border ${errors.adminUsername ? 'border-rose-500/50 bg-rose-50/50' : 'border-zinc-100 bg-zinc-50'} text-zinc-900 text-sm font-bold outline-none focus:bg-white focus:border-blue-500/40 transition-all`}
+                                            placeholder="username"
+                                        />
+                                        {errors.adminUsername && <p className="text-[9px] font-bold text-rose-500 mt-1 pl-1 uppercase tracking-tighter">{errors.adminUsername.message}</p>}
+                                    </div>
+                                    <div>
+                                        <input
+                                            {...register('adminPassword')}
+                                            type="password"
+                                            className={`w-full px-5 py-3 rounded-xl border ${errors.adminPassword ? 'border-rose-500/50 bg-rose-50/50' : 'border-zinc-100 bg-zinc-50'} text-zinc-900 text-sm font-bold outline-none focus:bg-white focus:border-blue-500/40 transition-all`}
+                                            placeholder="password"
+                                        />
+                                        {errors.adminPassword && <p className="text-[9px] font-bold text-rose-500 mt-1 pl-1 uppercase tracking-tighter">{errors.adminPassword.message}</p>}
+                                    </div>
+                                </div>
+                            </div>
+                            <button
+                                type="submit"
+                                disabled={isSubmitting}
+                                className="w-full py-4 bg-blue-600 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-blue-700 shadow-lg shadow-blue-500/20 active:scale-95 transition-all mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                {isSubmitting ? 'Registering...' : 'Create Shop'}
+                            </button>
+                        </form>
+                    </div>
+
+                    {/* Shops List for Management */}
+                    <div className="lg:col-span-2 space-y-4">
+                        <h3 className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em] mb-4 pl-2">Modify Existing Access</h3>
+                        {shops.map(shop => {
+                            const isEditing = editingShop === shop._id;
+                            return (
+                                <div key={shop._id} className="bg-white p-5 rounded-2xl border border-zinc-100 flex items-center justify-between shadow-sm hover:shadow-rich hover:border-blue-500/20 transition-all group/shop relative overflow-hidden">
+                                    <div className="flex items-center gap-5 flex-1 min-w-0">
+                                        <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-100 transition-colors group-hover/shop:bg-blue-50/50 flex-shrink-0">
+                                            <Store className="w-6 h-6 text-zinc-400 group-hover/shop:text-blue-500 transition-colors" />
+                                        </div>
+                                        {isEditing ? (
+                                            <div className="flex-1 grid grid-cols-1 sm:grid-cols-4 gap-3">
+                                                <input value={editData.name} onChange={(e) => setEditData({ ...editData, name: e.target.value })} className="px-3 py-2 rounded-lg border border-zinc-100 bg-zinc-50 text-zinc-900 text-xs font-bold focus:bg-white outline-none" placeholder="Name" />
+                                                <input value={editData.address} onChange={(e) => setEditData({ ...editData, address: e.target.value })} className="px-3 py-2 rounded-lg border border-zinc-100 bg-zinc-50 text-zinc-900 text-xs font-bold focus:bg-white outline-none" placeholder="Address" />
+                                                <input value={editData.contactNumber} onChange={(e) => setEditData({ ...editData, contactNumber: e.target.value })} className="px-3 py-2 rounded-lg border border-zinc-100 bg-zinc-50 text-zinc-900 text-xs font-bold focus:bg-white outline-none" placeholder="Phone" />
+                                                <select value={editData.status} onChange={(e) => setEditData({ ...editData, status: e.target.value })} className="px-3 py-2 rounded-lg border border-zinc-100 bg-zinc-50 text-zinc-900 text-xs font-bold focus:bg-white outline-none">
+                                                    <option value="active">Active</option>
+                                                    <option value="inactive">Inactive</option>
+                                                </select>
+                                            </div>
+                                        ) : (
+                                            <div className="min-w-0 flex-1">
+                                                <h3 className="font-bold text-zinc-900 text-sm uppercase tracking-tight truncate">{shop.name}</h3>
+                                                <p className="text-[10px] font-medium text-zinc-400 uppercase tracking-widest mt-0.5 truncate">
+                                                    {shop.address || 'Global'} {shop.contactNumber && `• ${shop.contactNumber}`}
+                                                </p>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="flex items-center gap-3 ml-4 flex-shrink-0">
+                                        {isEditing ? (
+                                            <>
+                                                <button onClick={() => handleUpdateShop(shop._id)} className="p-2.5 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 rounded-lg transition-all border border-emerald-100"><Check className="w-4 h-4" /></button>
+                                                <button onClick={() => setEditingShop(null)} className="p-2.5 bg-zinc-50 text-zinc-400 hover:text-zinc-600 rounded-lg transition-all border border-zinc-100"><X className="w-4 h-4" /></button>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <span className={`px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-widest border transition-all group-hover/shop:opacity-0 group-hover/shop:scale-90 ${shop.status === 'active' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-rose-50 text-rose-600 border-rose-100'}`}>
+                                                    {shop.status}
+                                                </span>
+                                                <div className="flex items-center gap-2 opacity-0 group-hover/shop:opacity-100 absolute right-5 transition-all translate-x-4 group-hover/shop:translate-x-0">
+                                                    <button onClick={() => startEdit(shop)} className="p-2.5 bg-zinc-50 text-zinc-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all border border-zinc-100"><Edit2 className="w-4 h-4" /></button>
+                                                    <button onClick={() => handleDeleteShop(shop._id)} className="p-2.5 bg-zinc-50 text-zinc-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all border border-zinc-100"><Trash2 className="w-4 h-4" /></button>
+                                                </div>
+                                            </>
+                                        )}
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}

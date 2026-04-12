@@ -23,7 +23,14 @@ export const ModalProvider = ({ children }) => {
         prefilledProduct: null,
     });
 
+    const timeoutsRef = React.useRef({});
+
     const openModal = (name, data = null) => {
+        if (timeoutsRef.current[name]) {
+            clearTimeout(timeoutsRef.current[name]);
+            delete timeoutsRef.current[name];
+        }
+
         if (data) {
             if (name === 'editProduct' || name === 'viewProduct') setActiveData(prev => ({ ...prev, product: data }));
             if (name === 'editSale' || name === 'receipt') setActiveData(prev => ({ ...prev, sale: data }));
@@ -37,11 +44,15 @@ export const ModalProvider = ({ children }) => {
         setModals(prev => ({ ...prev, [name]: false }));
         // Optionally clear data after delay to avoid flicker
         if (['editProduct', 'viewProduct', 'editSale', 'receipt', 'auth', 'addProduct'].includes(name)) {
-            setTimeout(() => {
+            if (timeoutsRef.current[name]) {
+                clearTimeout(timeoutsRef.current[name]);
+            }
+            timeoutsRef.current[name] = setTimeout(() => {
                 setActiveData(prev => ({
                     ...prev,
                     [name === 'addProduct' ? 'prefilledProduct' : (name.includes('Product') ? 'product' : (name.includes('Sale') || name === 'receipt' ? 'sale' : 'authAction'))]: null
                 }));
+                delete timeoutsRef.current[name];
             }, 300);
         }
     };

@@ -12,16 +12,18 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 import Settings from '../models/Settings.js';
+import { authenticate, requireShopAdmin, preventSuperAdmin } from '../middleware/auth.js';
 
 // Helper to verify Owner Password (Anti-Theft)
+// We now use `authenticate` and `requireShopAdmin` standard RBAC for powerful actions
+// If you want to keep the literal pin-based password logic, you can combine them, but for Multi-Tenant RBAC
+// checking user roles (requireShopAdmin) is standard. We'll leave the password check wrapped over the new system to preserve feature parity.
 const verifyOwnerPassword = async (req, res, next) => {
   try {
     const password = req.headers['x-owner-password'];
-    const userRole = req.headers['x-user-role']?.toLowerCase();
-
-    // Bypass if user is admin
-    const isAdmin = ['admin', 'system admin'].includes(userRole);
-    if (isAdmin) return next();
+    
+    // Bypass if user is super admin or shop admin from token
+    if (['super_admin', 'shop_admin'].includes(req.user.role)) return next();
 
     let settings = await Settings.findOne();
     if (!settings) {
@@ -40,9 +42,9 @@ const verifyOwnerPassword = async (req, res, next) => {
 };
 
 // Get all sales
-router.get('/', async (req, res) => {
+router.get('/', authenticate, preventSuperAdmin, async (req, res) => {
   try {
-    const sales = await Sale.find().sort({ saleDate: -1 });
+    const sales = await Sale.find({ shopId: req.user.shopId }).sort({ saleDate: -1 });
     res.json(sales);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -50,7 +52,7 @@ router.get('/', async (req, res) => {
 });
 
 // Create a new sale
-router.post('/', async (req, res) => {
+router.post('/', authenticate, preventSuperAdmin, async (req, res) => {
   const { items, totalAmount, totalProfit, cashierName } = req.body;
   
   try {
@@ -63,6 +65,7 @@ router.post('/', async (req, res) => {
 
     // 2. Create the sale record
     const sale = new Sale({
+      shopId: req.user.shopId,
       items,
       totalAmount,
       totalProfit,
@@ -116,7 +119,7 @@ router.post('/', async (req, res) => {
 });
 
 // Return a sale (and reverse stock) - REQUIRE OWNER PASSWORD
-router.put('/:id/return', verifyOwnerPassword, async (req, res) => {
+router.put('/:id/return', authenticate, preventSuperAdmin, verifyOwnerPassword, async (req, res) => {
   const { reason } = req.body;
   
   try {
@@ -153,7 +156,7 @@ router.put('/:id/return', verifyOwnerPassword, async (req, res) => {
 });
 
 // Edit a sale (and adjust stock) - REQUIRE OWNER PASSWORD
-router.put('/:id', verifyOwnerPassword, async (req, res) => {
+router.put('/:id', authenticate, preventSuperAdmin, verifyOwnerPassword, async (req, res) => {
   const { items, totalAmount, totalProfit } = req.body;
   
   try {
@@ -206,7 +209,7 @@ router.put('/:id', verifyOwnerPassword, async (req, res) => {
 });
 
 // Delete a sale (and reverse stock) - REQUIRE OWNER PASSWORD
-router.delete('/:id', verifyOwnerPassword, async (req, res) => {
+router.delete('/:id', authenticate, preventSuperAdmin, verifyOwnerPassword, async (req, res) => {
   try {
     const sale = await Sale.findById(req.params.id);
     if (!sale) {

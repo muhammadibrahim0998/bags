@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { UserPlus, Trash2, Shield, User as UserIcon, AlertCircle, CheckCircle2, ChevronRight } from 'lucide-react';
 import api from '../services/api';
+import { MemberForm } from './MemberForm';
+import { toast } from 'sonner';
 
 export function TeamManagement() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isAdding, setIsAdding] = useState(false);
-  const [formData, setFormData] = useState({ username: '', password: '', fullName: '', role: 'cashier' });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
@@ -25,18 +26,17 @@ export function TeamManagement() {
     fetchUsers();
   }, []);
 
-  const handleCreate = async (e) => {
-    e.preventDefault();
+  const handleCreate = async (data) => {
     setError('');
-    setSuccess('');
     try {
-      await api.post('/users', formData);
-      setSuccess('Staff member added successfully!');
-      setFormData({ username: '', password: '', fullName: '', role: 'cashier' });
+      await api.post('/users', data);
+      toast.success('Member successfully registered to NexusOS');
       setIsAdding(false);
       fetchUsers();
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to create user');
+      const msg = err.response?.data?.message || 'Authorization Protocol Failed';
+      setError(msg);
+      toast.error(msg);
     }
   };
 
@@ -51,128 +51,85 @@ export function TeamManagement() {
   };
 
   return (
-    <div className="bg-white rounded-[2.5rem] p-8 lg:p-10 shadow-xl border border-gray-100 animate-in fade-in slide-in-from-bottom-5">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-6 bg-blue-600 rounded-full"></div>
-            <h2 className="text-3xl font-black text-slate-900 tracking-tighter">Team Management</h2>
+    <div className="bg-surface-card rounded-[2.5rem] p-8 sm:p-10 shadow-2xl border border-[var(--color-border-subtle)] animate-in fade-in slide-in-from-bottom-6 duration-700">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-12">
+        <div className="space-y-3">
+          <div className="flex items-center gap-4">
+            <div className="w-2.5 h-12 bg-blue-500 rounded-full shadow-[0_0_20px_rgba(37,99,235,0.4)]"></div>
+            <h2 className="text-4xl font-black text-[var(--color-text-primary)] tracking-tighter uppercase leading-none">Team Personnel</h2>
           </div>
-          <p className="text-slate-400 font-bold tracking-widest uppercase text-[10px] pl-4">Manage your POS staff and permissions</p>
+          <p className="text-[var(--color-text-muted)] font-bold tracking-[0.4em] uppercase text-[10px] pl-6">Access Control & Authorization Layer</p>
         </div>
         {!isAdding && (
-          <button 
+          <button
             onClick={() => setIsAdding(true)}
-            className="flex items-center justify-center gap-2 px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg shadow-blue-600/20 active:scale-95 transition-all"
+            className="flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-hover)] text-[var(--color-text-primary)] rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-2xl shadow-[var(--color-primary)]/20 hover:scale-[1.05] active:scale-95 transition-all"
           >
-            <UserPlus className="w-5 h-5" />
-            Add Staff Member
+            <UserPlus className="w-5 h-5 transition-transform hover:rotate-12" />
+            Add Member
           </button>
         )}
       </div>
 
       {isAdding && (
-        <div className="mb-12 bg-slate-50/50 rounded-3xl p-8 border border-slate-100 animate-in zoom-in-95 duration-300">
-           <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-black text-slate-900 tracking-tight">Add New Personnel</h3>
-              <button onClick={() => setIsAdding(false)} className="text-slate-400 hover:text-slate-900 font-black text-[10px] uppercase tracking-widest">Cancel</button>
-           </div>
-
-           <form onSubmit={handleCreate} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="space-y-2">
-                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Full Name</label>
-                 <input
-                   type="text"
-                   required
-                   value={formData.fullName}
-                   onChange={(e) => setFormData({...formData, fullName: e.target.value})}
-                   placeholder="e.g. Maria Khan"
-                   className="w-full bg-white border border-transparent focus:border-blue-600/10 rounded-2xl py-3.5 px-4 text-sm font-bold text-slate-900 shadow-sm outline-none"
-                 />
-              </div>
-              <div className="space-y-2">
-                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Username</label>
-                 <input
-                   type="text"
-                   required
-                   value={formData.username}
-                   onChange={(e) => setFormData({...formData, username: e.target.value})}
-                   placeholder="maria_nex"
-                   className="w-full bg-white border border-transparent focus:border-blue-600/10 rounded-2xl py-3.5 px-4 text-sm font-bold text-slate-900 shadow-sm outline-none"
-                 />
-              </div>
-              <div className="space-y-2">
-                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Password</label>
-                 <input
-                   type="password"
-                   required
-                   value={formData.password}
-                   onChange={(e) => setFormData({...formData, password: e.target.value})}
-                   placeholder="Create password"
-                   className="w-full bg-white border border-transparent focus:border-blue-600/10 rounded-2xl py-3.5 px-4 text-sm font-bold text-slate-900 shadow-sm outline-none"
-                 />
-              </div>
-              <div className="space-y-2">
-                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Role</label>
-                 <select
-                   value={formData.role}
-                   onChange={(e) => setFormData({...formData, role: e.target.value})}
-                   className="w-full bg-white border border-transparent focus:border-blue-600/10 rounded-2xl py-3.5 px-4 text-sm font-bold text-slate-900 shadow-sm outline-none cursor-pointer"
-                 >
-                   <option value="cashier">Cashier</option>
-                   <option value="admin">Administrator</option>
-                 </select>
-              </div>
-              <div className="md:col-span-2 lg:col-span-4 mt-2">
-                 {error && (
-                   <div className="mb-4 flex items-center gap-2 text-red-600 text-[10px] font-black uppercase"><AlertCircle className="w-3" /> {error}</div>
-                 )}
-                 <button type="submit" className="px-10 py-4 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-slate-900/10 hover:bg-black transition-all">
-                    Register Personnel
-                 </button>
-              </div>
-           </form>
+        <div className="mb-12">
+          <MemberForm
+            onSubmit={handleCreate}
+            onCancel={() => setIsAdding(false)}
+            isSubmitting={loading}
+          />
         </div>
       )}
 
       {loading ? (
-        <div className="py-20 flex justify-center"><div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div></div>
+        <div className="py-20 flex flex-col items-center justify-center bg-[var(--color-surface-base)] rounded-xl border border-[var(--color-border-subtle)]">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 shadow-[0_0_15px_rgba(37,99,235,0.3)] mb-4"></div>
+          <p className="text-[10px] font-black text-[var(--color-text-muted)] uppercase tracking-widest">Identifying Members...</p>
+        </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {users.map((u) => (
-            <div key={u._id} className="group relative bg-slate-50/50 hover:bg-white p-6 rounded-3xl border border-transparent hover:border-slate-100 transition-all hover:shadow-xl hover:shadow-slate-200/50">
-               <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-4">
-                     <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shadow-sm border border-white ${u.role === 'admin' ? 'bg-blue-600 text-white' : 'bg-white text-slate-400'}`}>
-                        {u.role === 'admin' ? <Shield className="w-6 h-6" /> : <UserIcon className="w-6 h-6" />}
-                     </div>
-                     <div className="min-w-0">
-                        <h4 className="text-sm font-black text-slate-900 truncate tracking-tight">{u.fullName}</h4>
-                        <p className="text-[10px] font-bold text-slate-400">@{u.username}</p>
-                     </div>
+            <div key={u._id} className="group relative bg-[var(--color-surface-base)] hover:bg-[var(--color-surface-base)] p-8 rounded-xl border border-[var(--color-border-subtle)] hover:border-blue-500/30 transition-all shadow-2xl overflow-hidden">
+              <div className="flex items-start justify-between relative z-10">
+                <div className="flex items-center gap-5">
+                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner border border-[var(--color-border-subtle)] transition-transform group-hover:scale-110 ${u.role === 'admin' ? 'bg-blue-500/20 text-[var(--color-primary)]' : 'bg-[var(--color-surface-base)] text-[var(--color-text-muted)]'}`}>
+                    {u.role === 'admin' ? <Shield className="w-7 h-7" /> : <UserIcon className="w-7 h-7" />}
                   </div>
-                  <div className="flex flex-col items-end gap-2">
-                     <span className={`px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest ${u.role === 'admin' ? 'bg-blue-100 text-blue-600' : 'bg-slate-200 text-slate-600'}`}>
-                        {u.role}
-                     </span>
-                     {u.username !== 'admin' && (
-                        <button 
-                          onClick={() => handleDelete(u._id)}
-                          className="p-2 text-slate-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
-                        >
-                           <Trash2 className="w-4 h-4" />
-                        </button>
-                     )}
+                  <div className="min-w-0">
+                    <h4 className="text-lg font-black text-[var(--color-text-primary)] truncate tracking-tighter uppercase">{u.fullName}</h4>
+                    <p className="text-[10px] font-black text-[var(--color-text-muted)] uppercase tracking-[0.2em] mt-1 flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 bg-blue-500/40 rounded-full"></span>
+                      @{u.username} • {u.preferredShift === 'day' ? '☀️ Day' : u.preferredShift === 'night' ? '🌙 Night' : '🔄 Both'}
+                    </p>
+                    {u.phoneNumber && (
+                      <p className="text-[9px] font-bold text-[var(--color-text-muted)] mt-1 flex items-center gap-1.5 opacity-60">
+                        <Phone className="w-3 h-3" /> {u.phoneNumber}
+                      </p>
+                    )}
                   </div>
-               </div>
-               
-               <div className="mt-6 pt-6 border-t border-slate-100 flex items-center justify-between text-[9px] font-bold text-slate-300">
-                  <div className="flex items-center gap-1 uppercase tracking-widest">
-                     <div className={`w-1.5 h-1.5 rounded-full ${u.status === 'active' ? 'bg-green-500' : 'bg-slate-300'}`}></div>
-                     {u.status}
-                  </div>
-                  <span className="uppercase">NexFlow Staff ID: {u._id.slice(-6).toUpperCase()}</span>
-               </div>
+                </div>
+                <div className="flex flex-col items-end gap-3">
+                  <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] border ${u.role === 'admin' ? 'bg-blue-500/10 text-[var(--color-primary)] border-blue-500/20' : 'bg-[var(--color-surface-base)] text-[var(--color-text-secondary)] border-[var(--color-border-subtle)]'}`}>
+                    {u.role}
+                  </span>
+                  {u.username !== 'admin' && (
+                    <button
+                      onClick={() => handleDelete(u._id)}
+                      className="p-3 bg-[var(--color-surface-base)] text-[var(--color-text-muted)] hover:text-rose-500 hover:bg-rose-500/10 rounded-xl transition-all border border-[var(--color-border-subtle)] opacity-0 group-hover:opacity-100 shadow-sm"
+                    >
+                      <Trash2 className="w-5 h-5 transition-transform hover:rotate-12" />
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              <div className="mt-8 pt-8 border-t border-[var(--color-border-subtle)] flex items-center justify-between text-[10px] font-black text-[var(--color-text-muted)] relative z-10">
+                <div className="flex items-center gap-2 uppercase tracking-[0.2em]">
+                  <div className={`w-2 h-2 rounded-full shadow-[0_0_8px] ${u.status === 'active' ? 'bg-emerald-500 shadow-emerald-500/50' : 'bg-slate-700 shadow-slate-700/50'}`}></div>
+                  {u.status}
+                </div>
+                <span className="uppercase tracking-[0.1em] opacity-40">Personnel ID: {u._id.slice(-6).toUpperCase()}</span>
+              </div>
             </div>
           ))}
         </div>

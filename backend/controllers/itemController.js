@@ -3,7 +3,7 @@ import Item from '../models/Item.js';
 // @desc    Get all items
 const getItems = async (req, res) => {
   try {
-    const items = await Item.find().sort({ createdAt: -1 });
+    const items = await Item.find({ shopId: req.user.shopId }).sort({ createdAt: -1 });
     res.json(items);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -13,7 +13,7 @@ const getItems = async (req, res) => {
 // @desc    Get single item
 const getItem = async (req, res) => {
   try {
-    const item = await Item.findById(req.params.id);
+    const item = await Item.findOne({ _id: req.params.id, shopId: req.user.shopId });
     if (!item) return res.status(404).json({ message: 'Item not found' });
     res.json(item);
   } catch (error) {
@@ -24,7 +24,9 @@ const getItem = async (req, res) => {
 // @desc    Create new item
 const createItem = async (req, res) => {
   try {
-    const newItem = await Item.create(req.body);
+    // Inject shopId automatically
+    const newItemData = { ...req.body, shopId: req.user.shopId };
+    const newItem = await Item.create(newItemData);
     res.status(201).json(newItem);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -34,12 +36,12 @@ const createItem = async (req, res) => {
 // @desc    Update item
 const updateItem = async (req, res) => {
   try {
-    const updatedItem = await Item.findByIdAndUpdate(
-      req.params.id,
+    const updatedItem = await Item.findOneAndUpdate(
+      { _id: req.params.id, shopId: req.user.shopId },
       req.body,
       { new: true, runValidators: true }
     );
-    if (!updatedItem) return res.status(404).json({ message: 'Item not found' });
+    if (!updatedItem) return res.status(404).json({ message: 'Item not found or unauthorized' });
     res.json(updatedItem);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -49,8 +51,8 @@ const updateItem = async (req, res) => {
 // @desc    Delete item
 const deleteItem = async (req, res) => {
   try {
-    const item = await Item.findByIdAndDelete(req.params.id);
-    if (!item) return res.status(404).json({ message: 'Item not found' });
+    const item = await Item.findOneAndDelete({ _id: req.params.id, shopId: req.user.shopId });
+    if (!item) return res.status(404).json({ message: 'Item not found or unauthorized' });
     res.json({ message: 'Item deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });

@@ -1,25 +1,34 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/api';
+import { useUser } from './UserContext';
 
 const SettingsContext = createContext();
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5001';
-const API_URL = `${API_BASE}/api/settings`;
+const API_URL = '/settings';
 
 export function SettingsProvider({ children }) {
+  const { user } = useUser();
   const [settings, setSettings] = useState({
     shopName: 'NexFlow POS',
     currency: '$',
     address: '',
     phone: '',
     email: '',
-    taxRate: 0
+    taxRate: 0,
+    logoUrl: '',
+    ownerFullName: '',
+    ownerEmail: '',
+    ownerPhone: ''
   });
   const [loading, setLoading] = useState(true);
 
   const fetchSettings = async () => {
+    if (user?.role === 'super_admin') {
+      setLoading(false);
+      return;
+    }
     try {
-      const res = await axios.get(API_URL);
+      const res = await api.get(API_URL);
       setSettings(res.data);
     } catch (err) {
       console.error("Failed to fetch settings:", err);
@@ -30,7 +39,7 @@ export function SettingsProvider({ children }) {
 
   const updateSettings = async (updates, currentPassword, role) => {
     try {
-      const res = await axios.put(API_URL, 
+      const res = await api.put(API_URL,
         { ...updates, currentPassword },
         { headers: { 'x-user-role': role } }
       );
@@ -43,8 +52,8 @@ export function SettingsProvider({ children }) {
 
   const getSecureSettings = async (ownerPassword, role) => {
     try {
-      const res = await axios.get(`${API_URL}/secure`, {
-        headers: { 
+      const res = await api.get(`${API_URL}/secure`, {
+        headers: {
           'x-owner-password': ownerPassword,
           'x-user-role': role
         }
@@ -57,8 +66,10 @@ export function SettingsProvider({ children }) {
   };
 
   useEffect(() => {
-    fetchSettings();
-  }, []);
+    if (user) {
+      fetchSettings();
+    }
+  }, [user]);
 
   return (
     <SettingsContext.Provider value={{ settings, loading, updateSettings, fetchSettings, getSecureSettings }}>

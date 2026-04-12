@@ -152,82 +152,89 @@ export function ExportModal({ isOpen, onClose, products = [], sales = [], catego
     const url = `https://wa.me/${phone.replace("+", "")}?text=${encodeURIComponent(message)}`;
     window.open(url, "_blank");
   };
-  // --- END LOGIC ---
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
-      <div className="absolute inset-0" onClick={onClose} />
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-zinc-900/40 backdrop-blur-md" onClick={onClose} />
 
-      {/* Explicit width 'max-w-md' and flex-col ensures no width collapse */}
-      <div className="relative w-full max-w-md min-w-[320px] bg-white rounded-[2.5rem] shadow-premium overflow-hidden animate-in zoom-in-95 duration-300 flex flex-col">
+      <div className="relative w-[95%] sm:w-[440px] bg-[var(--color-surface-card)] rounded-xl shadow-sm border border-[var(--color-border-subtle)] overflow-hidden animate-in fade-in zoom-in-95 duration-300 flex flex-col z-10 mx-auto">
 
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-slate-100 bg-white shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-blue-50 rounded-2xl">
-              <Download className="w-5 h-5 text-blue-600" />
+        {/* Header Section */}
+        <div className="bg-[var(--color-surface-card)] p-6 sm:p-8 text-[var(--color-text-primary)] relative shrink-0 border-b border-[var(--color-border-subtle)]">
+          <button
+            type="button"
+            onClick={onClose}
+            className="absolute top-6 right-6 p-2 bg-[var(--color-surface-base)] hover:bg-[var(--color-surface-base)] rounded-xl transition-all border border-[var(--color-border-subtle)] group/close"
+          >
+            <X className="w-4 h-4 text-[var(--color-text-secondary)] group-hover:text-[var(--color-text-primary)] transition-colors" />
+          </button>
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-blue-500 rounded-xl shadow-lg shadow-[var(--color-primary)]/20">
+              <Download className="w-5 h-5 text-[var(--color-text-primary)]" />
             </div>
             <div>
-              <h2 className="text-lg font-black text-slate-900 tracking-tight">Export Reports</h2>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">NexusOS Intelligence</p>
+              <h2 className="text-2xl font-black uppercase tracking-tight">
+                Reports <span className="text-[var(--color-primary)]">Center</span>
+              </h2>
+              <p className="text-[var(--color-text-muted)] text-[8px] font-bold uppercase tracking-[0.2em] mt-1">
+                NexusOS Data Intelligence
+              </p>
             </div>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-400">
-            <X className="w-5 h-5" />
-          </button>
         </div>
 
         {/* Action Body */}
-        <div className="p-6 space-y-6">
+        <div className="p-6 sm:p-8 space-y-6 bg-[var(--color-surface-card)]">
 
-          {/* Inventory Excel Export */}
+          {/* Asset Management Section */}
           <div className="space-y-3">
-            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Inventory Assets</h3>
+            <h3 className="text-[9px] font-bold text-[var(--color-text-muted)] uppercase tracking-widest pl-1">Inventory Management</h3>
             <button
               onClick={exportInventoryToExcel}
-              className="w-full flex items-center justify-center gap-3 py-4 bg-blue-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-blue-700 shadow-premium transition-all active:scale-[0.98]"
+              className="group w-full flex items-center justify-center gap-3 py-4 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-hover)] text-[var(--color-text-primary)] rounded-xl font-bold text-[11px] uppercase tracking-wider shadow-lg shadow-[var(--color-primary)]/10 hover:shadow-[var(--color-primary)]/20 hover:scale-[1.01] active:scale-95 transition-all outline-none"
             >
-              <FileSpreadsheet className="w-5 h-5" />
-              Download Inventory Spreadsheet
+              <FileSpreadsheet className="w-4 h-4" />
+              Export Inventory Records
             </button>
           </div>
 
-          {/* Sales Excel Export */}
+          {/* Fiscal Performance Section */}
           <div className="space-y-3">
-            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Financial Data</h3>
+            <h3 className="text-[9px] font-bold text-[var(--color-text-muted)] uppercase tracking-widest pl-1">Financial Analysis</h3>
             <button
               onClick={exportSalesToExcel}
               disabled={sales.length === 0}
-              className="w-full flex items-center justify-center gap-3 py-4 bg-slate-900 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-black shadow-premium transition-all active:scale-[0.98] disabled:opacity-40"
+              className="w-full flex items-center justify-center gap-3 py-4 bg-[var(--color-surface-base)] hover:bg-[var(--color-surface-base)] text-[var(--color-text-primary)] rounded-xl font-bold text-[11px] uppercase tracking-wider border border-[var(--color-border-subtle)] transition-all active:scale-95 disabled:opacity-20 outline-none group"
             >
-              <TrendingUp className="w-5 h-5" />
-              Generate Sales Performance Report
+              <TrendingUp className="w-4 h-4 text-[var(--color-text-secondary)] group-hover:text-emerald-500 transition-colors" />
+              Download Sales Audit
             </button>
           </div>
 
-          {/* WhatsApp */}
+          {/* WhatsApp Communications */}
           <div className="space-y-3">
-            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Social Distribution</h3>
+            <h3 className="text-[9px] font-bold text-[var(--color-text-muted)] uppercase tracking-widest pl-1">Instant Briefing</h3>
             <button
               onClick={handleWhatsAppExport}
-              className="w-full flex items-center justify-between p-5 border border-emerald-100 bg-emerald-50/50 hover:bg-emerald-50 rounded-[2rem] transition-all group"
+              className="w-full flex items-center justify-between p-4 bg-emerald-500/5 hover:bg-emerald-500/10 rounded-2xl border border-emerald-500/10 transition-all group outline-none"
             >
               <div className="flex items-center gap-4">
-                <div className="p-3 bg-emerald-500 rounded-2xl shadow-lg shadow-emerald-200 text-white group-hover:scale-110 transition-transform">
+                <div className="p-3 bg-emerald-500 rounded-xl shadow-md text-[var(--color-text-primary)]">
                   <MessageCircle className="w-5 h-5" />
                 </div>
                 <div className="text-left">
-                  <p className="text-sm font-black text-emerald-900">WhatsApp Summary</p>
-                  <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-tight">Send instant stock alerts</p>
+                  <p className="text-sm font-bold text-[var(--color-text-primary)] uppercase tracking-tight">WhatsApp Summary</p>
+                  <p className="text-[8px] font-medium text-emerald-500 uppercase tracking-wider mt-0.5">Live Status Update</p>
                 </div>
               </div>
+              <Download className="w-4 h-4 text-emerald-500/50 group-hover:text-emerald-500 transition-colors mr-2" />
             </button>
           </div>
 
         </div>
 
         {/* Simple Footer Spacer */}
-        <div className="h-6 shrink-0" />
+        <div className="h-8 shrink-0 bg-surface-card" />
       </div>
     </div>
   );

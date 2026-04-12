@@ -1,6 +1,11 @@
 import mongoose from 'mongoose';
 
 const CashSessionSchema = new mongoose.Schema({
+  shopId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Shop',
+    required: true
+  },
   startTime: {
     type: Date,
     default: Date.now
@@ -50,6 +55,11 @@ const CashSessionSchema = new mongoose.Schema({
   notes: {
     type: String,
     default: ''
+  },
+  shiftType: {
+    type: String,
+    enum: ['day', 'night'],
+    default: 'day'
   }
 }, { timestamps: true });
 
