@@ -55,8 +55,8 @@ export function ProductCard({ product }) {
 
         {/* Content Section */}
         <div className="flex flex-col space-y-3">
-          <div>
-            <h3 className="text-[13px] font-bold text-zinc-900 line-clamp-1 leading-tight">{product.name}</h3>
+          <div className="mb-0">
+            <h3 className="text-[13px] font-bold text-zinc-900 pb-0 line-clamp-1 leading-tight">{product.name}</h3>
             <div className="flex items-center gap-0.5 mt-1">
               {[1, 2, 3, 4].map((i) => (
                 <Star key={i} className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
@@ -66,7 +66,7 @@ export function ProductCard({ product }) {
           </div>
 
           {/* Consolidated Metadata Grid */}
-          <div className="grid grid-cols-2 gap-x-2 border-t border-zinc-50 pt-2.5">
+          <div className="grid grid-cols-2 gap-x-2 border-t border-zinc-50 pt-1">
             <div className="space-y-0.5">
               <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest">Expiry</span>
               <div className="flex items-center gap-1">
@@ -84,7 +84,7 @@ export function ProductCard({ product }) {
           </div>
 
           {/* Condition Badge */}
-          <div className="flex items-center gap-2 bg-zinc-50 px-2 py-1.5 rounded-lg border border-zinc-100">
+          <div className="flex items-center gap-2 bg-zinc-50 px-2 py-1 rounded-lg border border-zinc-100">
             <Tag className="w-2.5 h-2.5 text-blue-600" />
             <span className="text-[9px] font-bold text-zinc-700 uppercase tracking-tight truncate">{status.label}</span>
           </div>

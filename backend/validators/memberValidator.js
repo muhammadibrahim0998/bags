@@ -19,7 +19,7 @@ export const memberSchema = z.object({
     .optional()
     .or(z.literal('')),
   
-  role: z.enum(['admin', 'cashier', 'salesman'], {
+  role: z.enum(['admin', 'cashier', 'salesman', 'shop_admin', 'super_admin'], {
     errorMap: () => ({ message: "Select a valid authorization tier" })
   }),
   

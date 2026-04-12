@@ -24,7 +24,8 @@ import {
   Layers,
   Footprints,
   Building2,
-  Package
+  Package,
+  Search
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 
@@ -99,24 +100,12 @@ export function Sidebar({ isMobileOpen, onCloseMobile, isCollapsed, onToggleSide
       )}
 
       <aside
-        className={`fixed md:relative top-20 md:top-0 h-[calc(100vh-80px)] md:h-full flex flex-col bg-[var(--color-surface-card)] text-[var(--color-text-primary)] transition-[transform,width] duration-300 ease-[cubic-bezier(0.4,0,0,2,1)] transform-gpu will-change-transform border-r border-[var(--color-border-subtle)] z-30 md:z-20 overflow-hidden ${isCollapsed ? 'w-16' : 'w-56'
+        className={`fixed md:relative top-16 md:top-0 h-[calc(100vh-64px)] md:h-full flex flex-col bg-[var(--color-surface-card)] text-[var(--color-text-primary)] transition-[transform,width] duration-300 ease-[cubic-bezier(0.4,0,0,2,1)] transform-gpu will-change-transform border-r border-[var(--color-border-subtle)] z-[100] md:z-20 overflow-hidden ${isCollapsed ? 'w-16' : 'w-56'
           } ${isMobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}
       >
-        {/* Hamburger Toggle at top of sidebar */}
-        {onToggleSidebar && (
-          <div className={`md:hidden flex pt-3 pb-1 ${isCollapsed ? 'justify-center' : 'px-4'}`}>
-            <button
-              onClick={onToggleSidebar}
-              className="p-2.5 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-base)] rounded-xl bg-[var(--color-surface-base)] border border-[var(--color-border-subtle)] transition-all hover:shadow-md active:scale-95"
-              title={isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
-            >
-              <Menu className="w-5 h-5" />
-            </button>
-          </div>
-        )}
 
         {/* User Profile */}
-        <div className={`mx-4 mb-6 mt-4 rounded-2xl flex items-center ${isCollapsed ? 'justify-center mx-auto w-12 h-12' : 'px-4 py-4 gap-4'} transition-all duration-300 border border-[var(--color-border-subtle)] bg-[var(--color-surface-base)] shadow-inner`}>
+        <div className={`mx-4 mb-6 mt-2 rounded-2xl flex items-center ${isCollapsed ? 'justify-center mx-auto w-12 h-12' : 'px-4 py-3 gap-4'} transition-all duration-300 border border-[var(--color-border-subtle)] bg-[var(--color-surface-base)] shadow-inner`}>
           <div className="relative">
             <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 border-2 border-[var(--color-surface-base)] rounded-full shadow-sm"></div>
             <UserCircle2 className="w-8 h-8 text-[var(--color-text-secondary)]" />
@@ -129,14 +118,11 @@ export function Sidebar({ isMobileOpen, onCloseMobile, isCollapsed, onToggleSide
           )}
         </div>
 
+
         {/* Navigation Main Block */}
         <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide py-2">
 
-          {/* Menu Section */}
           <div className="mb-6">
-            {!isCollapsed && (
-              <p className="px-8 text-[11px] font-bold text-[var(--color-text-secondary)] mb-4 tracking-wider uppercase">Menu</p>
-            )}
             <div className="space-y-1">
               {/* Everyone but pure cashier sees Dashboard */}
               {(isShopAdmin() || isSuperAdmin()) && (

@@ -9,6 +9,7 @@ import { TeamManagement } from '../components/TeamManagement';
 import { ShiftHistory } from '../components/ShiftHistory';
 import { useUser } from '../contexts/UserContext';
 import { Users, LayoutDashboard, Plus, History } from 'lucide-react';
+import { IntelligenceFeed } from '../components/IntelligenceFeed';
 
 export function ShopAdminDashboard({
   onAddProduct, onEditProduct, onDeleteProduct, onViewProduct, onExport,
@@ -115,6 +116,8 @@ export function ShopAdminDashboard({
             yearlyProfit={yearlyProfit}
           />
 
+          <IntelligenceFeed products={products} />
+
           <AnalyticsCards
             totalProducts={products.length}
             totalValue={totalValue}
@@ -122,14 +125,6 @@ export function ShopAdminDashboard({
             outOfStockProducts={products.filter(p => p.stock === 0)}
           />
 
-          {/* Low Stock Banner - With the NEW Pulse Animation */}
-          <div className="mt-8 animate-pulse-soft">
-            <LowStockBanner
-              products={products}
-              getStockStatus={getStockStatus}
-              totalValue={totalValue}
-            />
-          </div>
 
           {/* Vertical Stack: Table & Activity - Upgraded spacing and card containers */}
           <div className="flex flex-col gap-12 mt-10">

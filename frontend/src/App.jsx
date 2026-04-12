@@ -20,6 +20,7 @@ import { AuthGuardModal } from "./components/auth/AuthGuardModal";
 import { useUser } from "./contexts/UserContext";
 import { useModals } from "./contexts/ModalContext";
 import { useShift } from "./contexts/ShiftContext";
+import { DeleteConfirmationModal } from "./components/DeleteConfirmationModal";
 import { LoginView } from "./components/auth/LoginView";
 import { SettingsView } from "./pages/SettingsView";
 import { HelpView } from "./pages/HelpView";
@@ -45,6 +46,8 @@ export default function App() {
   const { modals, activeData, openModal, closeModal } = useModals();
   const { refreshSession } = useShift();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [deleteDialog, setDeleteDialog] = useState({ isOpen: false, type: '', id: null, name: '', data: null });
+  const [isDeleting, setIsDeleting] = useState(false);
 
   if (userLoading) return null;
   if (!user) return <LoginView />;
@@ -90,14 +93,29 @@ export default function App() {
     }, "Authorize Update", "Owner permission required to edit stock/price.");
   };
 
-  const handleDeleteProduct = async (id) => {
+  const handleDeleteProduct = (product) => {
+    setDeleteDialog({
+      isOpen: true,
+      type: 'product',
+      id: product._id,
+      name: product.name,
+      data: product
+    });
+  };
+
+  const confirmDeleteProduct = async () => {
+    const { id } = deleteDialog;
     requireAuth(async (pw) => {
+      setIsDeleting(true);
       try {
         await apiDeleteItem(id, pw, user?.role);
         toast.success("Product deleted successfully!");
+        setDeleteDialog({ ...deleteDialog, isOpen: false });
         fetchData();
       } catch (err) {
         toast.error(err.message || "Failed to delete product");
+      } finally {
+        setIsDeleting(false);
       }
     }, "Authorize Deletion", "Owner permission required to delete inventory items.");
   };
@@ -137,15 +155,30 @@ export default function App() {
   };
 
 
-  const handleDeleteSale = async (saleId) => {
+  const handleDeleteSale = (sale) => {
+    setDeleteDialog({
+      isOpen: true,
+      type: 'sale',
+      id: sale._id,
+      name: `Sale #${sale._id.slice(-6).toUpperCase()}`,
+      data: sale
+    });
+  };
+
+  const confirmDeleteSale = async () => {
+    const { id } = deleteDialog;
     requireAuth(async (pw) => {
+      setIsDeleting(true);
       try {
-        await deleteSale(saleId, pw, user?.role);
+        await deleteSale(id, pw, user?.role);
         toast.success("Sale record deleted!");
+        setDeleteDialog({ ...deleteDialog, isOpen: false });
         fetchData();
         refreshSession();
       } catch (err) {
         toast.error(err.message || "Unauthorized delete");
+      } finally {
+        setIsDeleting(false);
       }
     }, "Confirm Destruction", "Deleting a sale reverses stock. Owner password required.");
   };
@@ -209,6 +242,7 @@ export default function App() {
         monthlyProfit={sumProfit(monthlySalesList)}
         yearlyProfit={sumProfit(yearlySalesList)}
         onMenuClick={() => openModal("mobileMenu")}
+        onSearchToggle={(expanded) => expanded && closeModal("mobileMenu")}
       />
 
       <div className="flex flex-1 overflow-hidden relative">
@@ -333,9 +367,19 @@ export default function App() {
       <AuthGuardModal
         isOpen={modals.auth}
         onClose={() => closeModal("auth")}
-        title={activeData.authAction.title}
-        message={activeData.authAction.message}
-        onConfirm={activeData.authAction.callback}
+        title={activeData.authAction?.title || "Authentication"}
+        message={activeData.authAction?.message || "Permission required."}
+        onConfirm={activeData.authAction?.callback}
+      />
+
+      <DeleteConfirmationModal
+        isOpen={deleteDialog.isOpen}
+        onClose={() => setDeleteDialog({ ...deleteDialog, isOpen: false })}
+        onConfirm={deleteDialog.type === 'product' ? confirmDeleteProduct : confirmDeleteSale}
+        title={deleteDialog.type === 'product' ? "Confirm Product Deletion" : "Confirm Sale Deletion"}
+        message={deleteDialog.type === 'product' ? "Are you sure you want to remove this product from inventory?" : "Deleting this sale will reverse stock changes. Proceed?"}
+        itemName={deleteDialog.name}
+        isDeleting={isDeleting}
       />
 
     </div>

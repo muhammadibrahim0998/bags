@@ -153,7 +153,7 @@ export function InventoryTable({ onEdit, onDelete, onView, onExport }) {
                     <td className="pr-6 py-4">
                       <div className="flex items-center justify-center gap-2">
                         <button onClick={() => addToCart(product)} className="p-2 text-zinc-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"><ShoppingCart className="w-4 h-4" /></button>
-                        <RowActions onView={() => onView(product)} onEdit={() => onEdit(product)} onDelete={() => onDelete(product._id)} isShopAdmin={isShopAdmin()} />
+                        <RowActions onView={() => onView(product)} onEdit={() => onEdit(product)} onDelete={() => onDelete(product)} isShopAdmin={isShopAdmin()} />
                       </div>
                     </td>
                   </motion.tr>

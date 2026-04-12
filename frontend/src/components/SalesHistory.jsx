@@ -122,7 +122,7 @@ export function SalesHistory({
                       <Download className="w-4 h-4" />
                     </button>
                   )}
-                  <button onClick={() => handleDeleteSale(sale._id)} className="p-2.5 bg-[var(--color-surface-base)] hover:bg-rose-600 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] rounded-xl transition-all border border-[var(--color-border-subtle)]" title="Purge Record"><Trash2 className="w-4 h-4" /></button>
+                  <button onClick={() => handleDeleteSale(sale)} className="p-2.5 bg-[var(--color-surface-base)] hover:bg-rose-600 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] rounded-xl transition-all border border-[var(--color-border-subtle)]" title="Purge Record"><Trash2 className="w-4 h-4" /></button>
                 </div>
               </div>
             </div>

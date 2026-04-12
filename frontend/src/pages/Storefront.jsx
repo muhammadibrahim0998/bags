@@ -14,6 +14,8 @@ export function Storefront({ onAdd }) {
     filteredProducts,
     setCategoryFilter,
     setStatusFilter,
+    searchTerm,
+    setSearchTerm,
     loading
   } = useProducts();
 
@@ -76,13 +78,25 @@ export function Storefront({ onAdd }) {
 
       {filteredProducts.length === 0 ? (
         <div className="text-center py-20 bg-surface-card rounded-3xl border border-[var(--color-border-subtle)] shadow-2xl mt-6">
-          <p className="text-[var(--color-text-secondary)] font-bold mb-2">No products match your criteria.</p>
-          <button
-            onClick={() => navigate('/store')}
-            className="mt-4 text-xs font-black uppercase tracking-widest text-[var(--color-primary)] hover:text-blue-500 transition-colors"
-          >
-            Clear all filters
-          </button>
+          <p className="text-[var(--color-text-secondary)] font-bold mb-2">
+            {searchTerm ? `No results found for "${searchTerm}"` : "No products match your criteria."}
+          </p>
+          <div className="flex flex-col items-center gap-4 mt-4">
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm("")}
+                className="text-xs font-black uppercase tracking-widest text-blue-600 hover:text-blue-700 transition-colors"
+              >
+                Clear Search Term
+              </button>
+            )}
+            <button
+              onClick={() => navigate('/store')}
+              className="text-xs font-black uppercase tracking-widest text-[var(--color-text-secondary)] hover:text-rose-500 transition-colors"
+            >
+              Show All Products
+            </button>
+          </div>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 mt-2">
