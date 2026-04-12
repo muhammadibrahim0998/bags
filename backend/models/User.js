@@ -5,8 +5,18 @@ const UserSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   fullName: { type: String, required: true },
-  role: { type: String, enum: ['admin', 'cashier'], default: 'cashier' },
+  role: { type: String, enum: ['super_admin', 'shop_admin', 'cashier', 'salesman'], default: 'cashier' },
+  shopId: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Shop',
+    required: function() {
+      // Super admins do not belong to a single shop
+      return this.role !== 'super_admin';
+    }
+  },
   status: { type: String, enum: ['active', 'inactive'], default: 'active' },
+  preferredShift: { type: String, enum: ['day', 'night', 'both'], default: 'both' },
+  phoneNumber: { type: String },
   lastLogged: { type: Date }
 }, { timestamps: true });
 

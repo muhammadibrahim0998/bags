@@ -3,19 +3,17 @@ import User from "../models/User.js";
 
 const router = express.Router();
 
-// Middleware to check for Admin role
-const isAdmin = (req, res, next) => {
-  const userRole = req.get('x-user-role')?.toLowerCase();
-  if (!['admin', 'system admin'].includes(userRole)) {
-    return res.status(403).json({ message: "Access denied. Admins only." });
-  }
-  next();
-};
+import { authenticate, requireShopAdmin } from "../middleware/auth.js";
+import { memberSchema, validate } from "../validators/memberValidator.js";
 
 // Get all users
-router.get("/", isAdmin, async (req, res) => {
+router.get("/", authenticate, requireShopAdmin, async (req, res) => {
   try {
-    const users = await User.find({}, '-password').sort({ createdAt: -1 });
+    const shopId = req.user.role === 'super_admin' ? req.query.shopId : req.user.shopId;
+    if (!shopId) {
+      return res.status(400).json({ message: "shopId is required for this operation" });
+    }
+    const users = await User.find({ shopId }, '-password').sort({ createdAt: -1 });
     res.json(users);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -23,28 +21,46 @@ router.get("/", isAdmin, async (req, res) => {
 });
 
 // Create new user
-router.post("/", isAdmin, async (req, res) => {
+router.post("/", authenticate, requireShopAdmin, validate(memberSchema), async (req, res) => {
   try {
-    const { username, password, fullName, role, status } = req.body;
-    const user = new User({ username, password, fullName, role, status });
+    const { username, password, fullName, role, status, preferredShift } = req.body;
+    
+    // Prevent shop_admin from creating super_admin
+    if (req.user.role === 'shop_admin' && (role === 'super_admin' || role === 'shop_admin')) {
+      return res.status(403).json({ message: "Shop admins cannot create other admins" });
+    }
+
+    const shopId = req.user.role === 'super_admin' ? req.body.shopId : req.user.shopId;
+    if (!shopId && role !== 'super_admin') 
+      return res.status(400).json({ message: "shopId is required" });
+
+    const user = new User({ username, password, fullName, role, status, shopId, preferredShift });
     await user.save();
-    res.status(201).json({ message: "User created successfully", user: { id: user._id, username: user.username, role: user.role } });
+    res.status(201).json({ 
+      message: "User created successfully", 
+      user: { id: user._id, username: user.username, role: user.role } 
+    });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 });
 
 // Update user details
-router.put("/:id", isAdmin, async (req, res) => {
+router.put("/:id", authenticate, requireShopAdmin, validate(memberSchema), async (req, res) => {
   try {
-    const { username, password, fullName, role, status } = req.body;
-    const user = await User.findById(req.params.id);
-    if (!user) return res.status(404).json({ message: "User not found" });
+    const { username, password, fullName, role, status, preferredShift } = req.body;
+    
+    // Security: Only super_admin or shop_admin of the same shop
+    const query = req.user.role === 'super_admin' ? 
+    { _id: req.params.id } : { _id: req.params.id, shopId: req.user.shopId };
+    const user = await User.findOne(query);
+    if (!user) return res.status(404).json({ message: "User not found or unauthorized" });
 
     if (username) user.username = username;
     if (fullName) user.fullName = fullName;
     if (role) user.role = role;
     if (status) user.status = status;
+    if (preferredShift) user.preferredShift = preferredShift;
     if (password) user.password = password; // Will be hashed by pre-save hook
 
     await user.save();
@@ -55,9 +71,12 @@ router.put("/:id", isAdmin, async (req, res) => {
 });
 
 // Delete user
-router.delete("/:id", isAdmin, async (req, res) => {
+router.delete("/:id", authenticate, requireShopAdmin, async (req, res) => {
   try {
-    await User.findByIdAndDelete(req.params.id);
+    const query = req.user.role === 'super_admin' ? 
+    { _id: req.params.id } : { _id: req.params.id, shopId: req.user.shopId };
+    const user = await User.findOneAndDelete(query);
+    if (!user) return res.status(404).json({ message: "User not found or unauthorized" });
     res.json({ message: "User deleted" });
   } catch (error) {
     res.status(500).json({ message: error.message });

@@ -1,15 +1,21 @@
 import express from "express";
 import Settings from "../models/Settings.js";
+import Shop from "../models/Shop.js";
+import { authenticate, preventSuperAdmin } from "../middleware/auth.js";
+import { validateSettings } from "../validators/settingsValidator.js";
 
 const router = express.Router();
 
 // GET settings (public info)
-router.get("/", async (req, res) => {
+router.get("/", authenticate, async (req, res) => {
   try {
-    let settings = await Settings.findOne();
+    const shopId = req.user.shopId;
+    if (!shopId) return res.status(400).json({ message: "Shop ID required" });
+
+    let settings = await Settings.findOne({ shopId });
     if (!settings) {
-      // Create default settings if none exist
-      settings = new Settings();
+      // Create default settings if none exist for this shop
+      settings = new Settings({ shopId });
       await settings.save();
     }
     // Don't send ownerPassword to the frontend unless specifically requested/authorized
@@ -21,21 +27,21 @@ router.get("/", async (req, res) => {
 });
 
 // GET sensitive settings (requires owner password or admin role)
-router.get("/secure", async (req, res) => {
+router.get("/secure", authenticate, preventSuperAdmin, async (req, res) => {
   try {
     const providedPassword = req.get('x-owner-password');
-    const userRole = req.get('x-user-role')?.toLowerCase();
+    const shopId = req.user.shopId;
     
-    let settings = await Settings.findOne();
+    let settings = await Settings.findOne({ shopId });
     if (!settings) {
-      settings = new Settings();
+      settings = new Settings({ shopId });
       await settings.save();
     }
 
-    // Bypass if user is admin
-    const isAdmin = ['admin', 'system admin'].includes(userRole);
-
-    if (!isAdmin && providedPassword !== settings.ownerPassword) {
+    // Role-based check: Shop Admin is the owner of this tenant
+    const isOwner = req.user.role === 'shop_admin';
+    
+    if (!isOwner && providedPassword !== settings.ownerPassword) {
       return res.status(401).json({ message: "Invalid owner password" });
     }
 
@@ -46,28 +52,38 @@ router.get("/secure", async (req, res) => {
 });
 
 // UPDATE settings
-router.put("/", async (req, res) => {
+router.put("/", authenticate, preventSuperAdmin, validateSettings, async (req, res) => {
   try {
     const { currentPassword, ...updates } = req.body;
-    const userRole = req.get('x-user-role')?.toLowerCase();
-    console.log("SETTINGS UPDATE ATTEMPT - Role:", userRole, "Updates:", updates);
+    const shopId = req.user.shopId;
     
-    let settings = await Settings.findOne();
+    let settings = await Settings.findOne({ shopId });
     if (!settings) {
-      settings = new Settings();
+      settings = new Settings({ shopId });
     }
 
-    const isAdmin = ['admin', 'system admin'].includes(userRole);
-
-    // Verify current password to allow updates (unless Admin)
-    if (!isAdmin && currentPassword !== settings.ownerPassword) {
-      console.log("UPDATE AUTH FAILED: IsAdmin:", isAdmin, "Provided Pwd:", currentPassword, "Stored Pwd:", settings.ownerPassword);
+    // Verify current password to allow updates (Bypass for Shop Admin)
+    const isOwner = req.user.role === 'shop_admin';
+    if (!isOwner && currentPassword !== settings.ownerPassword) {
       return res.status(401).json({ message: "Current owner password incorrect" });
     }
 
     Object.assign(settings, updates);
     await settings.save();
-    console.log("SETTINGS UPDATED SUCCESSFULLY");
+
+    // Sync with Shop model if relevant fields were updated
+    const shopUpdates = {};
+    if (updates.shopName) shopUpdates.name = updates.shopName;
+    if (updates.address) shopUpdates.address = updates.address;
+    if (updates.phone) shopUpdates.contactNumber = updates.phone;
+    if (updates.ownerFullName || updates.ownerEmail || updates.ownerPhone) {
+      shopUpdates['ownerDetails.fullName'] = updates.ownerFullName;
+      shopUpdates['ownerDetails.email'] = updates.ownerEmail;
+      shopUpdates['ownerDetails.phone'] = updates.ownerPhone;
+    }
+    if (Object.keys(shopUpdates).length > 0) {
+      await Shop.findByIdAndUpdate(shopId, shopUpdates);
+    }
     
     const { ownerPassword, ...publicSettings } = settings.toObject();
     res.json(publicSettings);

@@ -42,6 +42,7 @@ import cashSessionsRoutes from './routes/cashSessions.js';
 import usersRoutes from './routes/users.js';
 import authRoutes from './routes/auth.js';
 import settingsRoutes from './routes/settings.js';
+import shopsRoutes from './routes/shops.js';
 
 // Routes
 app.use('/api/items', itemsRoutes);
@@ -51,6 +52,7 @@ app.use('/api/cash-sessions', cashSessionsRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/settings', settingsRoutes);
+app.use('/api/shops', shopsRoutes);
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {
@@ -66,7 +68,7 @@ app.get('/', (req, res) => {
   res.send('Inventory API is running...');
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

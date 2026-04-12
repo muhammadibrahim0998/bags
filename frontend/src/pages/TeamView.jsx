@@ -3,6 +3,18 @@ import { getUsers, createUser, updateUser, deleteUser } from '../services/api';
 import { useUser } from '../contexts/UserContext';
 import { UserPlus, ShieldCheck, User as UserIcon, Edit2, Trash2, X, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+
+const userSchema = z.object({
+  username: z.string().min(3, "Username must be at least 3 characters"),
+  fullName: z.string().min(3, "Full name must be at least 3 characters"),
+  password: z.string().min(6, "Password must be at least 6 characters").optional().or(z.literal('')),
+  role: z.string(), // Allowing flexibility for different modules
+  status: z.enum(['active', 'inactive']),
+  preferredShift: z.enum(['day', 'night', 'both']).optional()
+});
 
 export function TeamView() {
   const [users, setUsers] = useState([]);
@@ -11,14 +23,24 @@ export function TeamView() {
   const [isViewMode, setIsViewMode] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
-  const { user: currentUser } = useUser();
+  const { user: currentUser, isSuperAdmin } = useUser();
 
-  const [formData, setFormData] = useState({
-    username: '',
-    fullName: '',
-    password: '',
-    role: 'cashier',
-    status: 'active'
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    formState: { errors, isSubmitting }
+  } = useForm({
+    resolver: zodResolver(userSchema),
+    defaultValues: {
+      username: '',
+      fullName: '',
+      password: '',
+      role: 'cashier',
+      status: 'active',
+      preferredShift: 'day'
+    }
   });
 
   const fetchUsers = async () => {
@@ -39,36 +61,42 @@ export function TeamView() {
   const handleOpenModal = (user = null, viewOnly = false) => {
     setIsViewMode(viewOnly);
     setShowPassword(false);
+    setEditingUser(user);
+
     if (user) {
-      setEditingUser(user);
-      setFormData({
+      reset({
         username: user.username,
         fullName: user.fullName,
-        password: '', // Leave empty unless changing
+        password: '',
         role: user.role,
-        status: user.status
+        status: user.status,
+        preferredShift: user.preferredShift || 'day'
       });
     } else {
-      setEditingUser(null);
-      setFormData({
+      reset({
         username: '',
         fullName: '',
         password: '',
         role: 'cashier',
-        status: 'active'
+        status: 'active',
+        preferredShift: 'day'
       });
     }
     setIsModalOpen(true);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  // Renamed to avoid conflict with hook form's handleSubmit
+  const onSubmit = async (data) => {
     try {
       if (editingUser) {
-        await updateUser(editingUser._id, formData, currentUser?.role);
+        // Remove password from update if it's empty
+        const updateData = { ...data };
+        if (!updateData.password) delete updateData.password;
+
+        await updateUser(editingUser._id, updateData, currentUser?.role);
         toast.success("Team member updated!");
       } else {
-        await createUser(formData, currentUser?.role);
+        await createUser(data, currentUser?.role);
         toast.success("Team member added!");
       }
       setIsModalOpen(false);
@@ -90,62 +118,52 @@ export function TeamView() {
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="flex items-center justify-between">
+    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-6 duration-700">
+      {/* Header Section */}
+      <div className="flex items-center justify-between pb-8 border-b border-[var(--color-border-subtle)]">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight">Team Management</h1>
-          <p className="text-slate-500 font-medium">Manage staff accounts and access levels.</p>
+          <h1 className="text-4xl font-black text-[var(--color-text-primary)] tracking-tighter uppercase leading-none">
+            Team Management
+          </h1>
+          <div className="text-[var(--color-text-muted)] font-bold uppercase text-[10px] tracking-[0.4em] mt-3 flex items-center gap-2">
+            <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></div>
+            Staff Accounts & Access Control
+          </div>
         </div>
         <button
           onClick={() => handleOpenModal()}
-          className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-lg shadow-blue-500/30 transition-all flex items-center gap-2"
+          className="px-8 py-4 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-hover)] text-[var(--color-text-primary)] rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-2xl shadow-[var(--color-primary)]/20 hover:scale-[1.05] active:scale-95 transition-all flex items-center gap-3"
         >
-          <UserPlus className="w-4 h-4" />
+          <UserPlus className="w-5 h-5" />
           Add Member
         </button>
       </div>
 
+      {/* Main Content Grid */}
       {loading ? (
-        <div className="flex items-center justify-center p-20">
-          <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+        <div className="flex flex-col items-center justify-center p-20 bg-surface-card rounded-[2.5rem] border border-[var(--color-border-subtle)]">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4"></div>
+          <p className="text-[10px] font-black text-[var(--color-text-muted)] uppercase tracking-widest">Identifying Team Personnel...</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {users.map((u) => (
-            <div key={u._id} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all group">
-              <div className="flex justify-between items-start mb-4">
-                <div className={`p-3 rounded-xl ${u.role === 'admin' ? 'bg-indigo-50 text-indigo-600' : 'bg-blue-50 text-blue-600'}`}>
-                  {u.role === 'admin' ? <ShieldCheck className="w-6 h-6" /> : <UserIcon className="w-6 h-6" />}
+            <div key={u._id} className="bg-surface-card p-8 rounded-xl shadow-2xl border border-[var(--color-border-subtle)] group/card relative overflow-hidden">
+              <div className="flex justify-between items-start mb-8 relative z-10">
+                <div className={`p-4 bg-[var(--color-surface-base)] rounded-2xl border border-[var(--color-border-subtle)]`}>
+                  {['admin', 'shop_admin', 'super_admin'].includes(u.role) ? <ShieldCheck className="w-7 h-7 text-[var(--color-primary)]" /> : <UserIcon className="w-7 h-7 text-[var(--color-primary)]" />}
                 </div>
-                <div className="flex gap-1 transition-opacity">
-                  <button onClick={() => handleOpenModal(u, true)} className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-lg transition-all" title="View">
-                    <Eye className="w-4 h-4" />
-                  </button>
-                  <button onClick={() => handleOpenModal(u)} className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all" title="Edit">
-                    <Edit2 className="w-4 h-4" />
-                  </button>
-                  <button 
-                    onClick={() => handleDelete(u._id)} 
-                    disabled={u._id === currentUser?.id}
-                    className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all disabled:opacity-30 disabled:cursor-not-allowed"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+                <div className="flex gap-2 opacity-0 group-hover/card:opacity-100 transition-opacity">
+                  <button onClick={() => handleOpenModal(u, true)} className="p-3 bg-[var(--color-surface-base)] rounded-xl border border-[var(--color-border-subtle)]"><Eye className="w-5 h-5" /></button>
+                  <button onClick={() => handleOpenModal(u)} className="p-3 bg-[var(--color-surface-base)] rounded-xl border border-[var(--color-border-subtle)]"><Edit2 className="w-5 h-5" /></button>
+                  <button onClick={() => handleDelete(u._id)} disabled={u._id === currentUser?.id} className="p-3 bg-[var(--color-surface-base)] rounded-xl border border-[var(--color-border-subtle)] disabled:opacity-20"><Trash2 className="w-5 h-5" /></button>
                 </div>
               </div>
-
-              <div>
-                <h3 className="text-lg font-black text-slate-800">{u.fullName}</h3>
-                <p className="text-sm font-bold text-slate-400">@{u.username}</p>
-              </div>
-
-              <div className="mt-6 flex items-center justify-between">
-                <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full ${u.role === 'admin' ? 'bg-indigo-100 text-indigo-700' : 'bg-blue-100 text-blue-700'}`}>
-                  {u.role}
-                </span>
-                <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full ${u.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                  {u.status}
-                </span>
+              <h3 className="text-2xl font-black text-[var(--color-text-primary)] uppercase tracking-tighter">{u.fullName}</h3>
+              <p className="text-[11px] font-black text-[var(--color-text-muted)] uppercase tracking-widest mb-4">@{u.username}</p>
+              <div className="flex gap-2">
+                <span className="text-[9px] font-black uppercase px-3 py-1 bg-blue-500/10 text-blue-500 rounded-full">{u.role}</span>
+                <span className={`text-[9px] font-black uppercase px-3 py-1 rounded-full ${u.status === 'active' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}`}>{u.status}</span>
               </div>
             </div>
           ))}
@@ -154,104 +172,75 @@ export function TeamView() {
 
       {/* Add/Edit Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setIsModalOpen(false)} />
-          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md relative animate-in zoom-in-95 duration-200 overflow-hidden">
-            <div className="bg-slate-900 p-8 text-white relative">
-              <button onClick={() => setIsModalOpen(false)} className="absolute top-6 right-6 p-2 hover:bg-white/10 rounded-xl transition-all">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 backdrop-blur-md">
+          <div className="absolute inset-0 bg-zinc-900/40" onClick={() => setIsModalOpen(false)} />
+          <div className="bg-surface-card rounded-[2.5rem] shadow-2xl w-[95%] sm:w-[420px] relative z-70 border border-[var(--color-border-subtle)] flex flex-col max-h-[90vh]">
+            <div className="p-7 border-b border-[var(--color-border-subtle)] relative">
+              <button onClick={() => setIsModalOpen(false)} className="absolute top-6 right-6 p-2 text-rose-500 hover:bg-rose-500/10 rounded-xl transition-all">
                 <X className="w-5 h-5" />
               </button>
-              <h2 className="text-2xl font-black mb-1">
-                {isViewMode ? "Member Profile" : editingUser ? "Edit Profile" : "New Team Member"}
+              <h2 className="text-2xl font-black uppercase tracking-tighter italic mr-8">
+                {isViewMode ? "Protocol Archive" : editingUser ? "Mod. Auth" : "Access Request"}
               </h2>
-              <p className="text-slate-400 text-sm font-medium">
-                {isViewMode ? "View staff account details." : "Give your staff access to NexFlow."}
-              </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-8 space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1.5 col-span-2">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Full Name</label>
-                  <input
-                    type="text"
-                    required
-                    disabled={isViewMode}
-                    value={formData.fullName}
-                    onChange={(e) => setFormData({...formData, fullName: e.target.value})}
-                    className="block w-full px-4 py-3 bg-slate-50 border-0 rounded-xl text-slate-900 focus:ring-2 focus:ring-blue-500 transition-all font-medium disabled:opacity-60"
-                    placeholder="John Doe"
-                  />
+            <form onSubmit={handleSubmit(onSubmit)} className="p-7 space-y-6 overflow-y-auto">
+              <div className="space-y-4">
+                <div>
+                  <label className="text-[8px] font-black text-[var(--color-text-muted)] uppercase tracking-widest pl-1">Full Identity Name</label>
+                  <input {...register("fullName")} disabled={isViewMode} className="w-full px-4 py-3 bg-[var(--color-surface-base)] border border-[var(--color-border-subtle)] rounded-xl outline-none" />
+                  {errors.fullName && <p className="text-red-500 text-[10px] mt-1">{errors.fullName.message}</p>}
                 </div>
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Username</label>
-                  <input
-                    type="text"
-                    required
-                    disabled={isViewMode}
-                    value={formData.username}
-                    onChange={(e) => setFormData({...formData, username: e.target.value})}
-                    className="block w-full px-4 py-3 bg-slate-50 border-0 rounded-xl text-slate-900 focus:ring-2 focus:ring-blue-500 transition-all font-medium disabled:opacity-60"
-                    placeholder="johndoe"
-                  />
+
+                <div>
+                  <label className="text-[8px] font-black text-[var(--color-text-muted)] uppercase tracking-widest pl-1">System Handle</label>
+                  <input {...register("username")} disabled={isViewMode} className="w-full px-4 py-3 bg-[var(--color-surface-base)] border border-[var(--color-border-subtle)] rounded-xl outline-none" />
+                  {errors.username && <p className="text-red-500 text-[10px] mt-1">{errors.username.message}</p>}
                 </div>
-                <div className="space-y-1.5 relative">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Password</label>
+
+                <div className="space-y-1">
+                  <label className="text-[8px] font-black text-[var(--color-text-muted)] uppercase tracking-widest pl-1">Access Pass</label>
                   <div className="relative">
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      required={!editingUser && !isViewMode}
-                      disabled={isViewMode}
-                      value={formData.password}
-                      onChange={(e) => setFormData({...formData, password: e.target.value})}
-                      className="block w-full px-4 py-3 bg-slate-50 border-0 rounded-xl text-slate-900 focus:ring-2 focus:ring-blue-500 transition-all font-medium disabled:opacity-60 pr-14"
-                      placeholder={isViewMode ? "••••••••" : editingUser ? "••••••••" : "Admin only"}
-                    />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-blue-600 transition-colors focus:outline-none group/pass"
-                      >
-                        {showPassword ? (
-                          <EyeOff className="w-4 h-4 group-hover/pass:scale-110 transition-transform" />
-                        ) : (
-                          <Eye className="w-4 h-4 group-hover/pass:scale-110 transition-transform" />
-                        )}
-                      </button>
+                    <input type={showPassword ? "text" : "password"} {...register("password")} disabled={isViewMode} className="w-full px-4 py-3 pr-10 bg-[var(--color-surface-base)] border border-[var(--color-border-subtle)] rounded-xl outline-none focus:border-[var(--color-primary)]/40 transition-all font-bold text-sm tracking-widest" />
+                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors">
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                  {errors.password && <p className="text-rose-500 text-[10px] pl-1 font-bold">{errors.password.message}</p>}
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-[8px] font-black text-[var(--color-text-muted)] uppercase tracking-widest pl-1">Auth Tier</label>
+                    <select {...register("role")} disabled={isViewMode} className="w-full px-4 py-3 bg-[var(--color-surface-base)] border border-[var(--color-border-subtle)] rounded-xl outline-none">
+                      <option value="cashier">Cashier</option>
+                      <option value="shop_admin">Shop Admin</option>
+                      {isSuperAdmin && <option value="super_admin">Super Admin</option>}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-[8px] font-black text-[var(--color-text-muted)] uppercase tracking-widest pl-1">System State</label>
+                    <select {...register("status")} disabled={isViewMode} className="w-full px-4 py-3 bg-[var(--color-surface-base)] border border-[var(--color-border-subtle)] rounded-xl outline-none">
+                      <option value="active">Active</option>
+                      <option value="inactive">Suspended</option>
+                    </select>
                   </div>
                 </div>
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Role</label>
-                  <select
-                    disabled={isViewMode}
-                    value={formData.role}
-                    onChange={(e) => setFormData({...formData, role: e.target.value})}
-                    className="block w-full px-4 py-3 bg-slate-50 border-0 rounded-xl text-slate-900 focus:ring-2 focus:ring-blue-500 transition-all font-medium disabled:opacity-60"
-                  >
-                    <option value="cashier">Cashier</option>
-                    <option value="admin">Admin</option>
+
+                <div>
+                  <label className="text-[8px] font-black text-[var(--color-text-muted)] uppercase tracking-widest pl-1">Operational Shift</label>
+                  <select {...register("preferredShift")} disabled={isViewMode} className="w-full px-4 py-3 bg-[var(--color-surface-base)] border border-[var(--color-border-subtle)] rounded-xl outline-none">
+                    <option value="day">Day Shift</option>
+                    <option value="night">Night Shift</option>
+                    <option value="both">Flexible / Both</option>
                   </select>
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Status</label>
-                  <select
-                    disabled={isViewMode}
-                    value={formData.status}
-                    onChange={(e) => setFormData({...formData, status: e.target.value})}
-                    className="block w-full px-4 py-3 bg-slate-50 border-0 rounded-xl text-slate-900 focus:ring-2 focus:ring-blue-500 transition-all font-medium disabled:opacity-60"
-                  >
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                  </select>
+                  {errors.preferredShift && <p className="text-rose-500 text-[10px] mt-1 pl-1 font-bold">{errors.preferredShift.message}</p>}
                 </div>
               </div>
 
               {!isViewMode && (
-                <button
-                  type="submit"
-                  className="w-full py-4 bg-slate-900 text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-slate-800 transition-all shadow-xl shadow-slate-200"
-                >
-                  {editingUser ? "Update Profile" : "Create Account"}
+                <button type="submit" disabled={isSubmitting} className="w-full py-4 bg-blue-600 text-white rounded-xl font-black text-[10px] uppercase tracking-widest">
+                  {isSubmitting ? "Processing..." : editingUser ? "Finalize Update" : "Authorize Member"}
                 </button>
               )}
             </form>

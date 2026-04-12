@@ -1,5 +1,6 @@
 import express from "express";
 import User from "../models/User.js";
+import { validateLogin } from "../validators/authValidator.js";
 
 const router = express.Router();
 
@@ -19,7 +20,8 @@ router.get("/me", async (req, res) => {
       id: user._id,
       username: user.username,
       fullName: user.fullName,
-      role: user.role
+      role: user.role,
+      shopId: user.shopId
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -27,7 +29,7 @@ router.get("/me", async (req, res) => {
 });
 
 // Login
-router.post("/login", async (req, res) => {
+router.post("/login", validateLogin, async (req, res) => {
   try {
     const { username, password } = req.body;
     const user = await User.findOne({ username });
@@ -48,6 +50,7 @@ router.post("/login", async (req, res) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
+      path: '/',
       maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
     });
 
@@ -55,7 +58,8 @@ router.post("/login", async (req, res) => {
       id: user._id,
       username: user.username,
       fullName: user.fullName,
-      role: user.role
+      role: user.role,
+      shopId: user.shopId
     });
   } catch (error) {
     res.status(500).json({ message: error.message });

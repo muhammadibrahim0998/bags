@@ -1,6 +1,11 @@
 import mongoose from 'mongoose';
 
 const SaleSchema = new mongoose.Schema({
+  shopId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Shop',
+    required: true
+  },
   items: [{
     productId: {
       type: mongoose.Schema.Types.ObjectId,

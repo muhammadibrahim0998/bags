@@ -44,13 +44,16 @@ export const UserProvider = ({ children }) => {
   };
 
 
-  const isAdmin = () => {
-    const role = user?.role?.toLowerCase();
-    return role === 'admin' || role === 'system admin';
+  const isSuperAdmin = () => {
+    return user?.role === 'super_admin';
+  };
+
+  const isShopAdmin = () => {
+    return user?.role === 'shop_admin';
   };
 
   return (
-    <UserContext.Provider value={{ user, login, logout, isAdmin, loading }}>
+    <UserContext.Provider value={{ user, login, logout, isSuperAdmin, isShopAdmin, loading }}>
       {!loading && children}
     </UserContext.Provider>
   );

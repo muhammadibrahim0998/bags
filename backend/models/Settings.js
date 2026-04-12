@@ -6,8 +6,13 @@ const SettingsSchema = new mongoose.Schema({
   phone: { type: String, default: '' },
   email: { type: String, default: '' },
   currency: { type: String, default: '$' },
-  ownerPassword: { type: String, default: 'admin123' }, // Stored as plain text for simplicity as per current requirement, but could be hashed later
-  taxRate: { type: Number, default: 0 }
+  logoUrl: { type: String, default: '' },
+  ownerPassword: { type: String, default: 'admin123' },
+  taxRate: { type: Number, default: 0 },
+  ownerFullName: { type: String, default: '' },
+  ownerEmail: { type: String, default: '' },
+  ownerPhone: { type: String, default: '' },
+  shopId: { type: mongoose.Schema.Types.ObjectId, ref: 'Shop', required: true, unique: true }
 }, { timestamps: true });
 
 const Settings = mongoose.model('Settings', SettingsSchema);

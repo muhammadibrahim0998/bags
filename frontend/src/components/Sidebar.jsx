@@ -13,8 +13,7 @@ import {
   HelpCircle,
   Moon,
   Sun,
-  ChevronLeft,
-  ChevronRight,
+  Menu,
   UserCircle2,
   // Category Icons
   ShoppingBasket,
@@ -24,13 +23,14 @@ import {
   Smartphone,
   Layers,
   Footprints,
+  Building2,
   Package
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 
-export function Sidebar({ isMobileOpen, onCloseMobile, isCollapsed }) {
+export function Sidebar({ isMobileOpen, onCloseMobile, isCollapsed, onToggleSidebar }) {
   const { categories } = useProducts();
-  const { user, isAdmin, logout } = useUser();
+  const { user, isSuperAdmin, isShopAdmin, logout } = useUser();
   const location = useLocation();
   const { theme, setTheme } = useTheme();
 
@@ -40,10 +40,6 @@ export function Sidebar({ isMobileOpen, onCloseMobile, isCollapsed }) {
     : theme;
 
   const isActive = (path) => location.pathname === path;
-
-  const toggleTheme = () => {
-    setTheme(currentTheme === 'dark' ? 'light' : 'dark');
-  };
 
   const handleLinkClick = () => {
     if (window.innerWidth < 768 && onCloseMobile) {
@@ -64,7 +60,6 @@ export function Sidebar({ isMobileOpen, onCloseMobile, isCollapsed }) {
     return Layers;
   };
 
-  // Modern pill-shaped Nav Item taking inspiration from provided design
   const NavItem = ({ to, icon: Icon, label, alert = false, onClick }) => {
     const active = isActive(to);
 
@@ -76,19 +71,19 @@ export function Sidebar({ isMobileOpen, onCloseMobile, isCollapsed }) {
           if (onClick) onClick(e);
         }}
         className={`flex items-center group px-3 py-3 mx-4 rounded-2xl text-[13px] font-bold transition-all duration-500 ease-out ${active
-          ? "bg-blue-600 text-white shadow-lg shadow-blue-500/20"
-          : "text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 hover:bg-blue-600/10 hover:shadow-[0_0_20px_-5px_rgba(37,99,235,0.4)] border border-transparent hover:border-blue-500/20"
-          } ${isCollapsed ? 'justify-center mx-auto w-12 h-12 px-0 md:flex hidden' : 'gap-4'}
+          ? "btn-primary hover:scale-[1.02] shadow-sm transform transition-all duration-300"
+          : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-base)] border border-transparent hover:border-[var(--color-border-subtle)]"
+          } ${isCollapsed ? 'justify-center mx-auto w-12 h-12 px-0' : 'gap-4'}
         ${!active && !isCollapsed ? 'hover:translate-x-1' : ''}`}
         title={isCollapsed ? label : undefined}
       >
         <div className="relative flex items-center justify-center">
-          <Icon className={`w-5 h-5 transition-all duration-500 ${active ? "text-white" : "group-hover:scale-110 group-hover:drop-shadow-[0_0_8px_rgba(37,99,235,0.6)]"}`} />
+          <Icon className={`w-5 h-5 transition-all duration-500 ${active ? "text-[var(--color-surface-card)]" : "group-hover:scale-110"}`} />
           {alert && (
-            <div className={`absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full border-2 border-white dark:border-[#030213] ${alert === 'low' ? 'bg-amber-500' : 'bg-red-500'}`}></div>
+            <div className={`absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full border-2 border-[var(--color-surface-card)] ${alert === 'low' ? 'bg-[var(--color-warning)]' : 'bg-[var(--color-danger)]'}`}></div>
           )}
         </div>
-        <span className={`flex-1 whitespace-nowrap tracking-wide ${isCollapsed ? 'md:hidden' : ''}`}>{label}</span>
+        <span className={`flex-1 whitespace-nowrap tracking-wide ${isCollapsed ? 'hidden' : ''}`}>{label}</span>
       </Link>
     );
   };
@@ -104,21 +99,32 @@ export function Sidebar({ isMobileOpen, onCloseMobile, isCollapsed }) {
       )}
 
       <aside
-        className={`fixed md:relative top-20 md:top-0 h-[calc(100vh-80px)] md:h-full flex flex-col bg-white dark:bg-[#030213] text-slate-900 dark:text-white transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] border-r border-slate-200/60 dark:border-slate-800/60 z-30 md:z-20 overflow-hidden ${isCollapsed ? 'w-0' : 'w-56'
+        className={`fixed md:relative top-20 md:top-0 h-[calc(100vh-80px)] md:h-full flex flex-col bg-[var(--color-surface-card)] text-[var(--color-text-primary)] transition-[transform,width] duration-300 ease-[cubic-bezier(0.4,0,0,2,1)] transform-gpu will-change-transform border-r border-[var(--color-border-subtle)] z-30 md:z-20 overflow-hidden ${isCollapsed ? 'w-16' : 'w-56'
           } ${isMobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}
       >
-        {/* Removed Brand Header because it moved to Navbar */}
+        {/* Hamburger Toggle at top of sidebar */}
+        {onToggleSidebar && (
+          <div className={`md:hidden flex pt-3 pb-1 ${isCollapsed ? 'justify-center' : 'px-4'}`}>
+            <button
+              onClick={onToggleSidebar}
+              className="p-2.5 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-base)] rounded-xl bg-[var(--color-surface-base)] border border-[var(--color-border-subtle)] transition-all hover:shadow-md active:scale-95"
+              title={isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+          </div>
+        )}
 
-        {/* User Profile moved down and renamed */}
-        <div className={`mx-4 mb-6 mt-4 rounded-2xl flex items-center ${isCollapsed ? 'justify-center mx-auto w-12 h-12' : 'px-3 py-3 gap-3'} transition-all duration-300 border border-slate-100 dark:border-slate-800/50 bg-slate-50/50 dark:bg-slate-900/20`}>
+        {/* User Profile */}
+        <div className={`mx-4 mb-6 mt-4 rounded-2xl flex items-center ${isCollapsed ? 'justify-center mx-auto w-12 h-12' : 'px-4 py-4 gap-4'} transition-all duration-300 border border-[var(--color-border-subtle)] bg-[var(--color-surface-base)] shadow-inner`}>
           <div className="relative">
-            <div className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white dark:border-[#030213] rounded-full"></div>
-            <UserCircle2 className="w-8 h-8 text-slate-400" />
+            <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 border-2 border-[var(--color-surface-base)] rounded-full shadow-sm"></div>
+            <UserCircle2 className="w-8 h-8 text-[var(--color-text-secondary)]" />
           </div>
           {!isCollapsed && (
             <div className="flex flex-col flex-1 overflow-hidden min-w-0">
-              <span className="text-sm font-bold text-slate-800 dark:text-slate-100 truncate">{user?.fullName || "Jhon Doe"}</span>
-              <span className="text-[11px] font-medium text-blue-600 dark:text-blue-400 truncate">Super Admin</span>
+              <span className="text-sm font-bold text-[var(--color-text-primary)] truncate">{user?.fullName || "Jhon Doe"}</span>
+              <span className="text-[11px] font-medium text-[var(--color-primary)] max-w-[120px] whitespace-normal uppercase tracking-widest">{user?.role?.replace('_', ' ') || "Staff"}</span>
             </div>
           )}
         </div>
@@ -129,22 +135,31 @@ export function Sidebar({ isMobileOpen, onCloseMobile, isCollapsed }) {
           {/* Menu Section */}
           <div className="mb-6">
             {!isCollapsed && (
-              <p className="px-8 text-[11px] font-bold text-slate-400 dark:text-slate-500 mb-4 tracking-wider uppercase">Menu</p>
+              <p className="px-8 text-[11px] font-bold text-[var(--color-text-secondary)] mb-4 tracking-wider uppercase">Menu</p>
             )}
             <div className="space-y-1">
-              <NavItem to="/" icon={LayoutDashboard} label="Dashboard" />
-              <NavItem to="/store" icon={Store} label="My Product" />
-              {isAdmin() && (
+              {/* Everyone but pure cashier sees Dashboard */}
+              {(isShopAdmin() || isSuperAdmin()) && (
+                <NavItem to="/" icon={LayoutDashboard} label="Dashboard" />
+              )}
+
+              {/* Cashiers only need POS/Store. Admins see everything */}
+              {!isSuperAdmin() && (
+                <NavItem to="/store" icon={Store} label="All Products" />
+              )}
+
+              {/* Only Shop Admin & Super Admin can manage teams */}
+              {isShopAdmin() && (
                 <NavItem to="/team" icon={Users} label="Team Management" />
               )}
             </div>
           </div>
 
           {/* Categories Section (Only if filtering makes sense, mapped logically to "Order History/Sales" from img) */}
-          {categories.filter(c => c !== "All").length > 0 && (
+          {!isSuperAdmin() && categories.filter(c => c !== "All").length > 0 && (
             <div className="mb-6">
               {!isCollapsed && (
-                <p className="px-8 text-[11px] font-bold text-slate-400 dark:text-slate-500 mb-4 tracking-wider uppercase">Categories</p>
+                <p className="px-8 text-[11px] font-bold text-[var(--color-text-secondary)] mb-4 tracking-wider uppercase">Categories</p>
               )}
               <div className="space-y-1">
                 {categories.filter(c => c !== "All").map(cat => {
@@ -155,16 +170,16 @@ export function Sidebar({ isMobileOpen, onCloseMobile, isCollapsed }) {
                       to={`/store/category/${cat}`}
                       onClick={handleLinkClick}
                       className={`flex items-center group px-3 py-2.5 mx-4 rounded-xl text-[13px] font-bold transition-all duration-500 ease-out ${active
-                        ? "bg-blue-600 text-white shadow-lg shadow-blue-500/20"
-                        : "text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-600/10 hover:shadow-[0_0_20px_-5px_rgba(37,99,235,0.4)] border border-transparent hover:border-blue-500/20"
-                        } ${isCollapsed ? 'justify-center mx-auto w-10 h-10 px-0 md:flex hidden' : 'gap-4'}
+                        ? "btn-primary hover:scale-[1.02] shadow-sm transform transition-all duration-300"
+                        : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-base)] border border-transparent hover:border-[var(--color-border-subtle)]"
+                        } ${isCollapsed ? 'justify-center mx-auto w-10 h-10 px-0' : 'gap-4'}
                       ${!active && !isCollapsed ? 'hover:translate-x-1' : ''}`}
                       title={isCollapsed ? cat : undefined}
                     >
                       <div className="relative flex items-center justify-center w-5 h-5">
                         {(() => {
                           const CategoryIcon = getCategoryIcon(cat);
-                          return <CategoryIcon className={`w-4 h-4 transition-all duration-300 ${active ? "text-white" : "group-hover:scale-110 group-hover:drop-shadow-[0_0_8px_rgba(37,99,235,0.6)]"}`} />;
+                          return <CategoryIcon className={`w-4 h-4 transition-all duration-300 ${active ? "text-[var(--color-surface-card)]" : "group-hover:scale-110"}`} />;
                         })()}
                       </div>
                       {!isCollapsed && <span className="capitalize whitespace-nowrap tracking-wide">{cat}</span>}
@@ -176,39 +191,32 @@ export function Sidebar({ isMobileOpen, onCloseMobile, isCollapsed }) {
           )}
 
           {/* Health / Notifications like in image */}
-          <div className="mb-6">
-            {!isCollapsed && (
-              <p className="px-8 text-[11px] font-bold text-slate-400 dark:text-slate-500 mb-4 tracking-wider uppercase">Notifications</p>
-            )}
-            <div className="space-y-1">
-              <NavItem to="/store/status/low" icon={AlertTriangle} label="Low Stock Alerts" alert="low" />
-              <NavItem to="/store/status/out" icon={XCircle} label="Deficit List" alert="high" />
+          {!isSuperAdmin() && (
+            <div className="mb-6">
+              {!isCollapsed && (
+                <p className="px-8 text-[11px] font-bold text-[var(--color-text-secondary)] mb-4 tracking-wider uppercase">Notifications</p>
+              )}
+              <div className="space-y-1">
+                <NavItem to="/store/status/low" icon={AlertTriangle} label="Low Stock" alert="low" />
+                <NavItem to="/store/status/out" icon={XCircle} label="Out of Stock" alert="high" />
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Settings / Footer Area - now part of the scroll flow */}
-          <div className="pb-6 pt-4 border-t border-slate-100 dark:border-slate-800/50 mt-4">
+          <div className="pb-6 pt-4 border-t border-[var(--color-border-subtle)] mt-4">
             {!isCollapsed && (
-              <p className="px-8 text-[11px] font-bold text-slate-400 dark:text-slate-500 mb-4 tracking-wider uppercase">Settings</p>
+              <p className="px-8 text-[11px] font-bold text-[var(--color-text-secondary)] mb-4 tracking-wider uppercase">Settings</p>
             )}
 
             <div className="space-y-1">
-              <NavItem to="#" icon={HelpCircle} label="Help" />
-              <NavItem to="/settings" icon={Settings} label="Settings" />
+              <NavItem to="/help" icon={HelpCircle} label="Help" />
+              {(isShopAdmin() || isSuperAdmin()) && (
+                <NavItem to="/settings" icon={Settings} label="Settings" />
+              )}
               <NavItem to="#" icon={LogOut} label="Logout" onClick={logout} />
             </div>
 
-            {/* The Theme Toggle  */}
-            <div className={`flex flex-col items-center mt-6 ${isCollapsed ? 'gap-6' : 'px-8 flex-row justify-between'}`}>
-              <button
-                onClick={toggleTheme}
-                type="button"
-                className={`p-2.5 rounded-full text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors bg-slate-100 dark:bg-slate-800 shadow-sm`}
-                title={currentTheme === 'dark' ? "Switch to Light Mode" : "Switch to Dark Mode"}
-              >
-                {currentTheme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-              </button>
-            </div>
           </div>
         </div>
       </aside>

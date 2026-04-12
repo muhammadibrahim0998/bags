@@ -43,9 +43,11 @@ const upload = multer({
   },
 });
 
+import { authenticate, preventSuperAdmin } from '../middleware/auth.js';
+
 // @desc    Upload images
 // @route   POST /api/upload
-router.post('/', upload.array('images', 5), (req, res) => {
+router.post('/', authenticate, preventSuperAdmin, upload.array('images', 5), (req, res) => {
   if (!req.files || req.files.length === 0) {
     return res.status(400).send({ message: 'Please upload at least one image' });
   }

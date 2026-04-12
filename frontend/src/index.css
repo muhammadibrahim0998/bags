@@ -3,75 +3,121 @@
 @plugin "tailwindcss-animate";
 
 @theme {
-  /* --- Premium Colors --- */
-  --color-primary: #2563eb;
+  /* --- Professional Cobalt & Zinc Palette (Light Theme) --- */
+  --color-primary: #2563eb;           /* Brand Cobalt */
   --color-primary-hover: #1d4ed8;
-  --color-success: #16a34a;
-  --color-warning: #f59e0b;
-  --color-danger: #ef4444;
-  --color-info: #0ea5e9;
-  --color-dark: #0f172a;
-  --color-background: #f8fafc;
-  --color-card: #ffffff;
-  --color-text: #1e293b;
-  --color-muted: #64748b;
-  --color-border: #e2e8f0;
+  --color-success: #10b981;           /* Emerald */
+  --color-warning: #f59e0b;           /* Amber */
+  --color-danger: #ef4444;            /* Rose */
+  --color-info: #3b82f6;
+  
+  /* Neutral Surfaces (Refined Zinc - Light Theme) */
+  --color-background: #fafafa;        /* Cleanest background */
+  --color-surface-base: #f4f4f5;      /* Zinc-100 */
+  --color-surface-card: #ffffff;      /* Pure White */
+  --color-surface-overlay: #fdfdfd;
+  
+  /* Text & Typography (Zinc-900 Scale) */
+  --color-text-primary: #09090b;      /* Zinc-950 (Crisp) */
+  --color-text-secondary: #52525b;    /* Zinc-600 */
+  --color-text-muted: #a1a1aa;        /* Zinc-400 */
+  --color-border-subtle: #e4e4e7;     /* Zinc-200 */
+  --color-border-focus: #2563eb;
 
-  /* --- Layout & Spacing --- */
-  --spacing-xs: 0.5rem;   /* 8px */
-  --spacing-sm: 1rem;     /* 16px */
-  --spacing-md: 1.5rem;   /* 24px */
-  --spacing-lg: 2rem;     /* 32px */
-  --spacing-xl: 3rem;     /* 48px */
+  /* --- The "Rich" Shadow System --- */
+  /* Multi-layered for a soft, high-end feel */
+  --shadow-rich: 0 1px 2px 0 rgba(0, 0, 0, 0.05),
+                 0 4px 12px -2px rgba(0, 0, 0, 0.03),
+                 0 12px 24px -4px rgba(0, 0, 0, 0.02);
+  
+  --shadow-float: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 
+                  0 10px 10px -5px rgba(0, 0, 0, 0.02);
 
-  /* --- Modern Shadows --- */
-  --shadow-premium: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --shadow-soft: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+  /* --- Layout & Radii --- */
+  --radius-premium: 0.75rem;          /* Standard SaaS rounding */
+  --radius-2xl: 1.25rem;
 
-  /* --- Border Radii --- */
-  --radius-premium: 1rem;
-  --radius-2xl: 1.5rem;
+  /* --- Motion --- */
+  --animate-soft-fade: soft-fade 0.4s ease-out forwards;
 
-  /* --- Custom Animations --- */
-  --animate-pulse-soft: pulse-soft 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-
-  @keyframes pulse-soft {
-    0%, 100% { 
-      opacity: 1; 
-      transform: scale(1); 
-    }
-    50% { 
-      opacity: 0.85; 
-      transform: scale(0.99); 
-    }
+  @keyframes soft-fade {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 }
 
 html, body, #root {
   height: 100%;
   width: 100%;
-  margin: 0;
-  padding: 0;
-}
-
-body {
   background-color: var(--color-background);
-  color: var(--color-text);
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  overflow-x: hidden;
+  color: var(--color-text-primary);
+  font-family: 'Geist', 'Inter', system-ui, sans-serif; /* Geist is the current gold standard for dev tools */
+  -webkit-font-smoothing: antialiased;
+  
+  /* Global Scrollbar Hiding */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
 }
 
-
-/* Hide scrollbar globally for scrollbar-hide class */
-.scrollbar-hide::-webkit-scrollbar {
+/* Hide scrollbars for Chrome, Safari and Opera */
+*::-webkit-scrollbar {
   display: none;
 }
-.scrollbar-hide {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+
+/* --- The "Rich Card" Class --- */
+.rich-card {
+  background: var(--color-surface-card);
+  border: 1px solid var(--color-border-subtle);
+  border-top: 2px solid var(--color-primary); /* Brand accent */
+  border-radius: var(--radius-premium);
+  box-shadow: var(--shadow-rich);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: var(--animate-soft-fade);
 }
 
-/* Force hide on root if needed */
-body.scrollbar-hide {
-  overflow: -moz-scrollbars-none;
+.rich-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-float);
+  border-color: #d4d4d8; /* Zinc-300 */
+}
+
+/* --- Clean Modern Scrollbar (Hidden) --- */
+.premium-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.premium-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* --- Utility for your modular headers --- */
+.glass-header {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--color-border-subtle);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+/* --- Added Glass Light Utility --- */
+.glass-light {
+  background: rgba(255, 255, 255, 0.85); /* Light transparent base */
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--color-border-subtle);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); /* Very soft shadow */
+}
+
+/* --- Enhanced Primary Button --- */
+.btn-primary {
+  background-color: var(--color-primary);
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 4px 14px 0 rgba(37, 99, 235, 0.39);
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-primary:active {
+  transform: scale(0.95);
+  box-shadow: none; /* Shadow disappears on click */
 }

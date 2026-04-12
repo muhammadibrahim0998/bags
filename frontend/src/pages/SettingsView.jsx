@@ -1,22 +1,56 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { settingsSchema } from '../schemas/settingsSchema';
 import { useSettings } from '../contexts/SettingsContext';
 import { useUser } from '../contexts/UserContext';
-import { Save, Shield, Store, Phone, Mail, MapPin, Calculator, Key, Eye, EyeOff, ChevronDown } from 'lucide-react';
+import { Save, Shield, Store, Phone, Mail, MapPin, Calculator, Key, Eye, EyeOff, ChevronDown, AlertCircle, UserCircle, ImagePlus, UploadCloud } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
+import api from '../services/api';
+
+const Section = ({ id, title, icon: Icon, colorClass, bgClass, children, isOpen, onToggle }) => (
+  <div className={`bg-surface-card p-8 rounded-[2.5rem] shadow-2xl border border-[var(--color-border-subtle)] transition-all duration-300`}>
+    <button
+      onClick={() => onToggle(id)}
+      className="w-full flex items-center justify-between group"
+    >
+      <div className="flex items-center gap-4">
+        <div className={`p-4 bg-[var(--color-surface-base)] rounded-2xl border border-[var(--color-border-subtle)] group-hover:scale-110 transition-transform shadow-inner`}>
+          <Icon className={`w-6 h-6 ${colorClass.includes('indigo') ? 'text-[var(--color-primary)]' : colorClass.includes('amber') ? 'text-emerald-500' : 'text-rose-500'}`} />
+        </div>
+        <h3 className="text-2xl font-black text-[var(--color-text-primary)] tracking-tighter text-left uppercase">{title}</h3>
+      </div>
+      <ChevronDown className={`w-6 h-6 text-[var(--color-text-muted)] transition-transform duration-500 ${isOpen ? 'rotate-180 text-[var(--color-primary)]' : ''}`} />
+    </button>
+
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          initial={{ height: 0, opacity: 0 }}
+          animate={{ height: 'auto', opacity: 1 }}
+          exit={{ height: 0, opacity: 0 }}
+          transition={{ duration: 0.3, ease: 'easeInOut' }}
+          className="overflow-hidden"
+        >
+          <div className="pt-10 border-t border-[var(--color-border-subtle)] mt-8">
+            {children}
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  </div>
+);
 
 export function SettingsView() {
   const { settings, updateSettings, getSecureSettings } = useSettings();
   const { user } = useUser();
-  const [formData, setFormData] = useState({
-    shopName: '',
-    address: '',
-    phone: '',
-    email: '',
-    currency: '',
-    taxRate: 0,
-    ownerPassword: ''
-  });
+
+  const role = user?.role?.toLowerCase();
+  const isSystemAdmin = role === 'super_admin';
+  const isShopAdminRole = role === 'shop_admin';
+  const isAdmin = isShopAdminRole || isSystemAdmin;
+
   const [currentPwd, setCurrentPwd] = useState('');
   const [newPwd, setNewPwd] = useState('');
   const [confirmPwd, setConfirmPwd] = useState('');
@@ -26,72 +60,99 @@ export function SettingsView() {
   const [collapsed, setCollapsed] = useState({
     shop: true,
     finances: true,
+    profile: true,
     security: true
+  });
+  const [logoUploading, setLogoUploading] = useState(false);
+  const logoInputRef = useRef(null);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    watch,
+    setValue,
+    formState: { errors, isSubmitting }
+  } = useForm({
+    resolver: zodResolver(settingsSchema),
+    defaultValues: {
+      shopName: '',
+      address: '',
+      phone: '',
+      email: '',
+      currency: '$',
+      taxRate: 0,
+      ownerPassword: '',
+      logoUrl: '',
+      ownerFullName: '',
+      ownerEmail: '',
+      ownerPhone: ''
+    }
   });
 
   const toggleSection = (section) => {
     setCollapsed(prev => ({ ...prev, [section]: !prev[section] }));
   };
 
-  const Section = ({ id, title, icon: Icon, colorClass, bgClass, children, isOpen, onToggle }) => (
-    <div className={`${bgClass} p-8 rounded-2xl shadow-sm border border-slate-100 transition-all duration-300`}>
-      <button
-        onClick={() => onToggle(id)}
-        className="w-full flex items-center justify-between group"
-      >
-        <div className="flex items-center gap-3">
-          <div className={`p-2 ${colorClass} rounded-lg group-hover:scale-110 transition-transform`}>
-            <Icon className="w-5 h-5" />
-          </div>
-          <h3 className="text-xl font-black text-slate-800 tracking-tight text-left">{title}</h3>
-        </div>
-        <ChevronDown className={`w-5 h-5 text-slate-400 transition-transform duration-500 ${isOpen ? 'rotate-180' : ''}`} />
-      </button>
-
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: 'easeInOut' }}
-            className="overflow-hidden"
-          >
-            <div className="pt-8 border-t border-slate-50 mt-6">
-              {children}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
+  const handleLogoUpload = async (file) => {
+    if (!file) return;
+    const formData = new FormData();
+    formData.append('images', file);
+    setLogoUploading(true);
+    try {
+      const res = await api.post('/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      const url = res.data.images?.[0];
+      if (url) {
+        setValue('logoUrl', url);
+        toast.success('Logo uploaded successfully!');
+      }
+    } catch (err) {
+      toast.error('Logo upload failed. Please try again.');
+    } finally {
+      setLogoUploading(false);
+    }
+  };
 
   useEffect(() => {
     if (settings) {
-      setFormData(prev => ({ ...prev, ...settings }));
+      reset({
+        ...settings,
+        // fallback to logged-in user identity if owner fields are not yet saved
+        ownerFullName: settings.ownerFullName || user?.fullName || '',
+        ownerEmail: settings.ownerEmail || user?.email || '',
+        ownerPhone: settings.ownerPhone || '',
+      });
     }
-  }, [settings]);
+  }, [settings, reset, user]);
 
-  // Auto-authorize admins
+  // Auto-authorize Admins (Shop & Super)
   useEffect(() => {
-    const role = user?.role?.toLowerCase();
-    const isSystemAdmin = ['admin', 'system admin'].includes(role);
-
-    if (isSystemAdmin && !isAuthorized) {
-      getSecureSettings('', user.role)
+    if ((isShopAdminRole || isSystemAdmin) && !isAuthorized) {
+      getSecureSettings('', user?.role)
         .then(data => {
-          setFormData(data);
+          reset({
+            ...data,
+            ownerFullName: data.ownerFullName || user?.fullName || '',
+            ownerEmail: data.ownerEmail || user?.email || '',
+            ownerPhone: data.ownerPhone || '',
+          });
+          if (data.ownerPassword) {
+            setNewPwd(data.ownerPassword);
+            setConfirmPwd(data.ownerPassword);
+          }
           setIsAuthorized(true);
         })
         .catch(err => console.error("Auto-auth failed:", err));
     }
-  }, [user, isAuthorized]);
+  }, [user, isAuthorized, reset, getSecureSettings, isShopAdminRole, isSystemAdmin]);
 
   const handleAuthorize = async (e) => {
     e.preventDefault();
     try {
       const secureData = await getSecureSettings(currentPwd, user?.role);
-      setFormData(secureData);
+      reset(secureData);
       setIsAuthorized(true);
       toast.success("Authorized successfully!");
     } catch (err) {
@@ -99,10 +160,9 @@ export function SettingsView() {
     }
   };
 
-  const handleSave = async (e) => {
-    e.preventDefault();
+  const onSubmit = async (data) => {
     try {
-      const updates = { ...formData };
+      const updates = { ...data };
       if (newPwd) {
         if (newPwd !== confirmPwd) {
           toast.error("New passwords do not match");
@@ -125,69 +185,91 @@ export function SettingsView() {
     }
   };
 
-  const role = user?.role?.toLowerCase();
-  const isSystemAdmin = ['admin', 'system admin'].includes(role);
-
-  if (!isAuthorized && !isSystemAdmin) {
+  if (!isAdmin) {
     return (
-      <div className="max-w-md mx-auto mt-20 p-8 bg-white rounded-2xl shadow-xl border border-slate-100 animate-in fade-in zoom-in duration-300">
-        <div className="text-center mb-8">
-          <div className="inline-flex p-4 bg-blue-50 text-blue-600 rounded-full mb-4">
-            <Shield className="w-8 h-8" />
-          </div>
-          <h2 className="text-2xl font-black text-slate-800">Owner Authorization</h2>
-          <p className="text-slate-500 text-sm mt-2">Enter the owner password to access system settings.</p>
+      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center p-8">
+        <div className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mb-6 border border-red-500/20 shadow-inner">
+          <Shield className="w-10 h-10 text-red-500" />
         </div>
+        <h2 className="text-3xl font-black text-[var(--color-text-primary)] uppercase tracking-tighter italic">Access Restricted</h2>
+        <p className="text-[var(--color-text-muted)] font-bold uppercase text-[10px] tracking-[0.4em] mt-4 max-w-sm">
+          System settings are only accessible via Admin-level Identity Protocols.
+        </p>
+      </div>
+    );
+  }
 
-        <form onSubmit={handleAuthorize} className="space-y-6">
-          <div className="relative group">
-            <div className="absolute inset-y-0 left-0 pl-1.5 flex items-center pointer-events-none">
-              <div className="p-1.5 bg-slate-50 text-slate-400 rounded-lg group-focus-within:text-blue-500 transition-colors">
-                <Key className="w-4 h-4" />
-              </div>
+  const isBypassed = isSystemAdmin || isShopAdminRole;
+
+  if (!isAuthorized && !isBypassed) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[50svh] px-4 animate-in fade-in zoom-in duration-500">
+        <div className="w-[95%] sm:w-[380px] bg-surface-card rounded-xl shadow-2xl border border-[var(--color-border-subtle)] relative overflow-hidden p-6 sm:p-8 mx-auto">
+          <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-[var(--color-primary)] to-rose-500"></div>
+          <div className="text-center mb-8">
+            <div className="inline-flex p-3.5 bg-blue-500/10 text-[var(--color-primary)] rounded-full mb-4 border border-blue-500/20 shadow-inner">
+              <Shield className="w-8 h-8" />
             </div>
-            <input
-              type={showPwd ? "text" : "password"}
-              value={currentPwd}
-              onChange={(e) => setCurrentPwd(e.target.value)}
-              className="block w-full pl-11 pr-12 py-3 bg-slate-50 border-0 rounded-xl text-slate-900 focus:ring-2 focus:ring-blue-500 transition-all font-medium"
-              placeholder="Owner Password"
-              required
-              autoFocus
-            />
-            <button
-              type="button"
-              onClick={() => setShowPwd(!showPwd)}
-              className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600"
-            >
-              {showPwd ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-            </button>
+            <h2 className="text-2xl font-black text-[var(--color-text-primary)] uppercase tracking-tighter italic leading-none">Owner Access</h2>
+            <p className="text-[var(--color-text-muted)] text-[8px] font-black uppercase tracking-[0.2em] mt-3">Identity Protocol Required</p>
           </div>
 
-          <button
-            type="submit"
-            className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-lg shadow-blue-500/30 transition-all flex items-center justify-center gap-2 group"
-          >
-            Verify Password
-          </button>
-        </form>
+          <form onSubmit={handleAuthorize} className="space-y-4">
+            <div className="relative group">
+              <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
+                <div className="p-1.5 bg-[var(--color-surface-base)] text-[var(--color-text-muted)] rounded-lg group-focus-within:text-[var(--color-primary)] transition-colors border border-[var(--color-border-subtle)]">
+                  <Key className="w-4 h-4" />
+                </div>
+              </div>
+              <input
+                type={showPwd ? "text" : "password"}
+                value={currentPwd}
+                onChange={(e) => setCurrentPwd(e.target.value)}
+                className="block w-full pl-11 pr-10 py-3 bg-[var(--color-surface-base)] border border-[var(--color-border-subtle)] rounded-xl text-[var(--color-text-primary)] focus:ring-1 focus:ring-blue-500/40 outline-none transition-all font-bold text-sm placeholder:text-slate-800"
+                placeholder="Access Code"
+                required
+                autoFocus
+              />
+              <button
+                type="button"
+                onClick={() => setShowPwd(!showPwd)}
+                className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-600 hover:text-[var(--color-primary)] transition-colors"
+              >
+                {showPwd ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
+
+            <button
+              type="submit"
+              className="w-full py-3.5 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-hover)] text-[var(--color-text-primary)] rounded-xl font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-[var(--color-primary)]/10 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 mt-2"
+            >
+              Authorize Archive
+            </button>
+          </form>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="flex items-center justify-between">
+    <div className="pb-20 space-y-10 animate-in fade-in slide-in-from-bottom-6 duration-700">
+      <div className="flex items-center justify-between pb-8 border-b border-[var(--color-border-subtle)]">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight">System Settings</h1>
-          <p className="text-slate-500 font-medium">Configure your shop details and security policies.</p>
+          <h1 className="text-4xl font-black text-[var(--color-text-primary)] tracking-tighter uppercase leading-none">
+            System Settings
+          </h1>
+          <div className="text-[var(--color-text-muted)] font-bold uppercase text-[10px] tracking-[0.4em] mt-3 flex items-center gap-2">
+            <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></div>
+            Master Configuration Panel
+          </div>
         </div>
         <button
-          onClick={handleSave}
-          className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-lg shadow-blue-500/30 transition-all flex items-center gap-2"
+          onClick={handleSubmit(onSubmit)}
+          disabled={isSubmitting}
+          className="px-8 py-4 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-hover)] text-[var(--color-text-primary)] rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-2xl shadow-[var(--color-primary)]/20 hover:scale-[1.05] active:scale-95 transition-all flex items-center gap-3 disabled:opacity-50"
         >
-          <Save className="w-4 h-4" />
-          Save Changes
+          <Save className="w-5 h-5" />
+          {isSubmitting ? 'Saving...' : 'Save Protocol'}
         </button>
       </div>
 
@@ -204,85 +286,122 @@ export function SettingsView() {
             isOpen={collapsed.shop}
             onToggle={toggleSection}
           >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="text-xs font-black text-slate-400 uppercase tracking-widest px-1">Shop Name</label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+              {/* Logo Upload Widget */}
+              <div className="md:col-span-2 space-y-3">
+                <label className="text-[10px] font-black text-[var(--color-text-muted)] uppercase tracking-widest pl-1">Shop Logo</label>
+                <div className="flex items-center gap-5">
+                  {/* Preview */}
+                  <div className="w-20 h-20 rounded-2xl border-2 border-dashed border-[var(--color-border-subtle)] bg-[var(--color-surface-base)] flex items-center justify-center overflow-hidden shrink-0">
+                    {watch('logoUrl') ? (
+                      <img src={watch('logoUrl')} alt="Shop Logo" className="w-full h-full object-cover" />
+                    ) : (
+                      <Store className="w-8 h-8 text-[var(--color-text-muted)]" />
+                    )}
+                  </div>
+                  {/* Upload & URL inputs */}
+                  <div className="flex-1 space-y-3">
+                    <button
+                      type="button"
+                      onClick={() => logoInputRef.current?.click()}
+                      disabled={logoUploading}
+                      className="w-full flex items-center justify-center gap-2 py-3 border-2 border-dashed border-[var(--color-border-subtle)] rounded-2xl text-[10px] font-black uppercase tracking-widest text-[var(--color-text-muted)] hover:border-blue-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all disabled:opacity-50"
+                    >
+                      <UploadCloud className="w-4 h-4" />
+                      {logoUploading ? 'Uploading...' : 'Click to Upload Logo'}
+                    </button>
+                    <input
+                      ref={logoInputRef}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => handleLogoUpload(e.target.files?.[0])}
+                    />
+                    <input
+                      {...register('logoUrl')}
+                      className="block w-full px-4 py-3 bg-[var(--color-surface-base)] border border-[var(--color-border-subtle)] rounded-2xl text-[var(--color-text-primary)] focus:border-blue-500/40 focus:ring-1 focus:ring-blue-500/40 transition-all font-bold placeholder:text-slate-400 outline-none text-xs"
+                      placeholder="Or paste an image URL directly..."
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <label className="text-[10px] font-black text-[var(--color-text-muted)] uppercase tracking-widest pl-1">Legal Shop Identity</label>
                 <div className="relative group">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-300 group-focus-within:text-indigo-500">
-                    <Store className="w-4 h-4" />
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[var(--color-text-muted)] group-focus-within:text-[var(--color-primary)] transition-colors">
+                    <Store className="w-5 h-5" />
                   </div>
                   <input
-                    type="text"
-                    value={formData.shopName}
-                    onChange={(e) => setFormData({ ...formData, shopName: e.target.value })}
-                    className="block w-full pl-10 pr-4 py-3 bg-slate-50 border-0 rounded-xl text-slate-900 focus:ring-2 focus:ring-indigo-500 transition-all font-medium"
+                    {...register('shopName')}
+                    className={`block w-full pl-12 pr-5 py-4 bg-[var(--color-surface-base)] border ${errors.shopName ? 'border-rose-500/50 bg-rose-50/50' : 'border-[var(--color-border-subtle)]'} rounded-2xl text-[var(--color-text-primary)] focus:border-blue-500/40 focus:ring-1 focus:ring-blue-500/40 transition-all font-bold placeholder:text-slate-700 outline-none`}
                     placeholder="Enter Shop Name"
                   />
+                  {errors.shopName && <p className="text-[9px] font-bold text-rose-500 mt-1 pl-1 uppercase tracking-tighter">{errors.shopName.message}</p>}
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-xs font-black text-slate-400 uppercase tracking-widest px-1">Email Address</label>
+              <div className="space-y-3">
+                <label className="text-[10px] font-black text-[var(--color-text-muted)] uppercase tracking-widest pl-1">Official Email</label>
                 <div className="relative group">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-300 group-focus-within:text-indigo-500">
-                    <Mail className="w-4 h-4" />
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[var(--color-text-muted)] group-focus-within:text-[var(--color-primary)] transition-colors">
+                    <Mail className="w-5 h-5" />
                   </div>
                   <input
+                    {...register('email')}
                     type="email"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="block w-full pl-10 pr-4 py-3 bg-slate-50 border-0 rounded-xl text-slate-900 focus:ring-2 focus:ring-indigo-500 transition-all font-medium"
-                    placeholder="shop@example.com"
+                    className={`block w-full pl-12 pr-5 py-4 bg-[var(--color-surface-base)] border ${errors.email ? 'border-rose-500/50 bg-rose-50/50' : 'border-[var(--color-border-subtle)]'} rounded-2xl text-[var(--color-text-primary)] focus:border-blue-500/40 focus:ring-1 focus:ring-blue-500/40 transition-all font-bold placeholder:text-slate-700 outline-none`}
+                    placeholder="shop@premium.com"
                   />
+                  {errors.email && <p className="text-[9px] font-bold text-rose-500 mt-1 pl-1 uppercase tracking-tighter">{errors.email.message}</p>}
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-xs font-black text-slate-400 uppercase tracking-widest px-1">Phone Number</label>
+              <div className="space-y-3">
+                <label className="text-[10px] font-black text-[var(--color-text-muted)] uppercase tracking-widest pl-1">Contact Line</label>
                 <div className="relative group">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-300 group-focus-within:text-indigo-500">
-                    <Phone className="w-4 h-4" />
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[var(--color-text-muted)] group-focus-within:text-[var(--color-primary)] transition-colors">
+                    <Phone className="w-5 h-5" />
                   </div>
                   <input
-                    type="text"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="block w-full pl-10 pr-4 py-3 bg-slate-50 border-0 rounded-xl text-slate-900 focus:ring-2 focus:ring-indigo-500 transition-all font-medium"
+                    {...register('phone')}
+                    className={`block w-full pl-12 pr-5 py-4 bg-[var(--color-surface-base)] border ${errors.phone ? 'border-rose-500/50 bg-rose-50/50' : 'border-[var(--color-border-subtle)]'} rounded-2xl text-[var(--color-text-primary)] focus:border-blue-500/40 focus:ring-1 focus:ring-blue-500/40 transition-all font-bold placeholder:text-slate-700 outline-none`}
                     placeholder="+1 234 567 890"
                   />
+                  {errors.phone && <p className="text-[9px] font-bold text-rose-500 mt-1 pl-1 uppercase tracking-tighter">{errors.phone.message}</p>}
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-xs font-black text-slate-400 uppercase tracking-widest px-1">Currency Symbol</label>
+              <div className="space-y-3">
+                <label className="text-[10px] font-black text-[var(--color-text-muted)] uppercase tracking-widest pl-1">Currency Format</label>
                 <div className="relative group">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-300 group-focus-within:text-indigo-500 font-bold">
-                    {formData.currency || '$'}
+                  <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-[var(--color-primary)] font-black">
+                    {watch('currency') || 'Rs.'}
                   </div>
                   <input
-                    type="text"
-                    maxLength={3}
-                    value={formData.currency}
-                    onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
-                    className="block w-full pl-10 pr-4 py-3 bg-slate-50 border-0 rounded-xl text-slate-900 focus:ring-2 focus:ring-indigo-500 transition-all font-medium text-center"
-                    placeholder="$"
+                    {...register('currency')}
+                    maxLength={5}
+                    className={`block w-full pl-16 pr-5 py-4 bg-[var(--color-surface-base)] border ${errors.currency ? 'border-rose-500/50 bg-rose-50/50' : 'border-[var(--color-border-subtle)]'} rounded-2xl text-[var(--color-text-primary)] focus:border-blue-500/40 focus:ring-1 focus:ring-blue-500/40 transition-all font-bold placeholder:text-slate-700 outline-none`}
+                    placeholder="Rs."
                   />
+                  {errors.currency && <p className="text-[9px] font-bold text-rose-500 mt-1 pl-1 uppercase tracking-tighter">{errors.currency.message}</p>}
                 </div>
               </div>
 
-              <div className="space-y-2 md:col-span-2">
-                <label className="text-xs font-black text-slate-400 uppercase tracking-widest px-1">Physical Address</label>
+              <div className="space-y-3 md:col-span-2">
+                <label className="text-[10px] font-black text-[var(--color-text-muted)] uppercase tracking-widest pl-1">Global Address</label>
                 <div className="relative group">
-                  <div className="absolute top-3 left-3 flex items-start pointer-events-none text-slate-300 group-focus-within:text-indigo-500">
-                    <MapPin className="w-4 h-4" />
+                  <div className="absolute top-5 left-4 flex items-start pointer-events-none text-[var(--color-text-muted)] group-focus-within:text-[var(--color-primary)] transition-colors">
+                    <MapPin className="w-5 h-5" />
                   </div>
                   <textarea
                     rows={3}
-                    value={formData.address}
-                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                    className="block w-full pl-10 pr-4 py-3 bg-slate-50 border-0 rounded-xl text-slate-900 focus:ring-2 focus:ring-indigo-500 transition-all font-medium resize-none"
-                    placeholder="Enter complete shop address for receipts..."
+                    {...register('address')}
+                    className={`block w-full pl-12 pr-5 py-4 bg-[var(--color-surface-base)] border ${errors.address ? 'border-rose-500/50 bg-rose-50/50' : 'border-[var(--color-border-subtle)]'} rounded-2xl text-[var(--color-text-primary)] focus:border-blue-500/40 focus:ring-1 focus:ring-blue-500/40 transition-all font-bold placeholder:text-slate-700 outline-none resize-none`}
+                    placeholder="Enter complete store location for billing documentation..."
                   />
+                  {errors.address && <p className="text-[9px] font-bold text-rose-500 mt-1 pl-1 uppercase tracking-tighter">{errors.address.message}</p>}
                 </div>
               </div>
             </div>
@@ -297,53 +416,129 @@ export function SettingsView() {
             isOpen={collapsed.finances}
             onToggle={toggleSection}
           >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="text-xs font-black text-slate-400 uppercase tracking-widest px-1">Default Tax Rate (%)</label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-3">
+                <label className="text-[10px] font-black text-[var(--color-text-muted)] uppercase tracking-widest pl-1">Applied Tax Rate (%)</label>
                 <input
                   type="number"
                   step="0.01"
-                  value={formData.taxRate}
-                  onChange={(e) => setFormData({ ...formData, taxRate: parseFloat(e.target.value) })}
-                  className="block w-full px-4 py-3 bg-slate-50 border-0 rounded-xl text-slate-900 focus:ring-2 focus:ring-amber-500 transition-all font-medium"
+                  {...register('taxRate')}
+                  className={`block w-full px-5 py-4 bg-[var(--color-surface-base)] border ${errors.taxRate ? 'border-rose-500/50 bg-rose-50/50' : 'border-[var(--color-border-subtle)]'} rounded-2xl text-[var(--color-text-primary)] focus:border-emerald-500/40 focus:ring-1 focus:ring-emerald-500/40 transition-all font-bold outline-none`}
                   placeholder="0.00"
                 />
+                {errors.taxRate && <p className="text-[9px] font-bold text-rose-500 mt-1 pl-1 uppercase tracking-tighter">{errors.taxRate.message}</p>}
               </div>
             </div>
           </Section>
         </div>
 
-        {/* Security / Password */}
+        {/* Profile & Security column */}
         <div className="space-y-6">
+          <Section
+            id="profile"
+            title="Owner Profile"
+            icon={UserCircle}
+            colorClass="bg-blue-50 text-blue-600"
+            bgClass="bg-white"
+            isOpen={collapsed.profile}
+            onToggle={toggleSection}
+          >
+            <div className="flex items-center gap-4 border-b border-[var(--color-border-subtle)] pb-6 mb-6">
+              <div className="p-4 bg-[var(--color-surface-base)] rounded-2xl border border-[var(--color-border-subtle)]">
+                <UserCircle className="w-8 h-8 text-blue-500" />
+              </div>
+              <div>
+                <h4 className="text-lg font-black text-[var(--color-text-primary)] uppercase leading-none">{user?.fullName || 'System Admin'}</h4>
+                <span className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">{user?.role?.replace('_', ' ') || 'Admin'}</span>
+              </div>
+            </div>
+
+            {/* Read-only auth info */}
+            <div className="grid grid-cols-1 gap-2 mb-6 p-4 bg-[var(--color-surface-base)] rounded-2xl border border-[var(--color-border-subtle)]">
+              <div className="flex justify-between items-center">
+                <span className="text-[10px] font-black text-[var(--color-text-muted)] uppercase tracking-widest">Username</span>
+                <span className="text-xs font-bold text-[var(--color-text-primary)]">{user?.username || 'N/A'}</span>
+              </div>
+              <div className="flex justify-between items-center pt-2 border-t border-[var(--color-border-subtle)]">
+                <span className="text-[10px] font-black text-[var(--color-text-muted)] uppercase tracking-widest">System ID</span>
+                <span className="text-[10px] font-mono text-[var(--color-text-muted)]">{(user?.id || user?._id || '').toString().slice(-8).toUpperCase()}</span>
+              </div>
+            </div>
+
+            {/* Editable owner details */}
+            <div className="space-y-5">
+              <div className="space-y-3">
+                <label className="text-[10px] font-black text-[var(--color-text-muted)] uppercase tracking-widest pl-1">Owner Full Name</label>
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[var(--color-text-muted)] group-focus-within:text-[var(--color-primary)] transition-colors">
+                    <UserCircle className="w-5 h-5" />
+                  </div>
+                  <input
+                    {...register('ownerFullName')}
+                    className="block w-full pl-12 pr-5 py-4 bg-[var(--color-surface-base)] border border-[var(--color-border-subtle)] rounded-2xl text-[var(--color-text-primary)] focus:border-blue-500/40 focus:ring-1 focus:ring-blue-500/40 transition-all font-bold placeholder:text-slate-400 outline-none"
+                    placeholder="Owner Display Name"
+                  />
+                </div>
+              </div>
+              <div className="space-y-3">
+                <label className="text-[10px] font-black text-[var(--color-text-muted)] uppercase tracking-widest pl-1">Owner Email</label>
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[var(--color-text-muted)] group-focus-within:text-[var(--color-primary)] transition-colors">
+                    <Mail className="w-5 h-5" />
+                  </div>
+                  <input
+                    {...register('ownerEmail')}
+                    type="email"
+                    className="block w-full pl-12 pr-5 py-4 bg-[var(--color-surface-base)] border border-[var(--color-border-subtle)] rounded-2xl text-[var(--color-text-primary)] focus:border-blue-500/40 focus:ring-1 focus:ring-blue-500/40 transition-all font-bold placeholder:text-slate-400 outline-none"
+                    placeholder="owner@shop.com"
+                  />
+                </div>
+              </div>
+              <div className="space-y-3">
+                <label className="text-[10px] font-black text-[var(--color-text-muted)] uppercase tracking-widest pl-1">Owner Phone</label>
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[var(--color-text-muted)] group-focus-within:text-[var(--color-primary)] transition-colors">
+                    <Phone className="w-5 h-5" />
+                  </div>
+                  <input
+                    {...register('ownerPhone')}
+                    className="block w-full pl-12 pr-5 py-4 bg-[var(--color-surface-base)] border border-[var(--color-border-subtle)] rounded-2xl text-[var(--color-text-primary)] focus:border-blue-500/40 focus:ring-1 focus:ring-blue-500/40 transition-all font-bold placeholder:text-slate-400 outline-none"
+                    placeholder="+1 234 567 890"
+                  />
+                </div>
+              </div>
+            </div>
+          </Section>
+
           <Section
             id="security"
             title="Security"
             icon={Shield}
             colorClass="bg-red-500/20 text-red-500"
-            bgClass="bg-slate-900 text-white"
+            bgClass="bg-slate-900 text-[var(--color-text-primary)]"
             isOpen={collapsed.security}
             onToggle={toggleSection}
           >
             <div className="space-y-6">
-              <p className="text-sm text-slate-400 leading-relaxed italic">
+              <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed italic">
                 Change the master password used to authorize sensitive actions like price edits, stock adjustments, and sale deletions.
               </p>
 
               <div className="space-y-4">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">New Password</label>
+                  <label className="text-[10px] font-black text-[var(--color-text-muted)] uppercase tracking-widest px-1">New Password</label>
                   <div className="relative">
                     <input
                       type={showPwd ? "text" : "password"}
                       value={newPwd}
                       onChange={(e) => setNewPwd(e.target.value)}
-                      className="block w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all font-medium pr-12"
+                      className="block w-full px-4 py-3 bg-[var(--color-surface-base)] border border-[var(--color-border-subtle)] rounded-xl text-[var(--color-text-primary)] focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all font-medium pr-12"
                       placeholder="••••••••"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPwd(!showPwd)}
-                      className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-red-500 transition-colors focus:outline-none group/pass"
+                      className="absolute inset-y-0 right-0 pr-4 flex items-center text-[var(--color-text-secondary)] hover:text-red-500 transition-colors focus:outline-none group/pass"
                     >
                       {showPwd ? (
                         <EyeOff className="w-4 h-4 group-hover/pass:scale-110 transition-transform" />
@@ -355,19 +550,19 @@ export function SettingsView() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Confirm Password</label>
+                  <label className="text-[10px] font-black text-[var(--color-text-muted)] uppercase tracking-widest px-1">Confirm Password</label>
                   <div className="relative">
                     <input
                       type={showPwd ? "text" : "password"}
                       value={confirmPwd}
                       onChange={(e) => setConfirmPwd(e.target.value)}
-                      className="block w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all font-medium pr-14"
+                      className="block w-full px-4 py-3 bg-[var(--color-surface-base)] border border-[var(--color-border-subtle)] rounded-xl text-[var(--color-text-primary)] focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all font-medium pr-14"
                       placeholder="••••••••"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPwd(!showPwd)}
-                      className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-red-500 transition-colors focus:outline-none group/pass"
+                      className="absolute inset-y-0 right-0 pr-4 flex items-center text-[var(--color-text-secondary)] hover:text-red-500 transition-colors focus:outline-none group/pass"
                     >
                       {showPwd ? (
                         <EyeOff className="w-4 h-4 group-hover/pass:scale-110 transition-transform" />
