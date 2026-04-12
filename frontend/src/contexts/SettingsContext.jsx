@@ -1,6 +1,11 @@
+<<<<<<< HEAD
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import api from '../services/api';
 import { useUser } from './UserContext';
+=======
+import { createContext, useContext, useState, useEffect } from 'react';
+import axios from 'axios';
+>>>>>>> 6e642e748fe646dd154fda8c81092abfb92d27f6
 
 const SettingsContext = createContext();
 
