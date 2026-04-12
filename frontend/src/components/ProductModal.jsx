@@ -317,7 +317,7 @@ export function ProductModal({ isOpen, onClose, onSave, product, mode, categorie
                   type="button"
                   onClick={handleAddImageUrl}
                   disabled={!imageUrlInput.trim()}
-                  className="px-6 bg-[var(--color-surface-base)] border border-[var(--color-border-subtle)] text-[var(--color-text-primary)] font-black text-[10px] uppercase tracking-widest rounded-xl hover:text-[var(--color-primary)] hover:border-[var(--color-primary)]/40 hover:bg-[var(--color-primary)]/5 disabled:opacity-50 transition-all font-bold"
+                  className="px-6 bg-[var(--color-surface-base)] border border-[var(--color-border-subtle)] text-[var(--color-text-primary)] font-black text-[10px] uppercase tracking-widest rounded-xl hover:text-[var(--color-primary)] hover:border-[var(--color-primary)]/40 hover:bg-[var(--color-primary)]/5 disabled:opacity-50 transition-all"
                 >
                   Add URL
                 </button>
