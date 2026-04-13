@@ -417,7 +417,7 @@ export function SuperAdminDashboard() {
                                             </div>
                                         </div>
                                         <div>
-                                            <h4 className="text-[10px] font-black text-emerald-600 uppercase tracking-widest uppercase tracking-[0.2em] mb-4 pl-1">Primary Administrator</h4>
+                                            <h4 className="text-[10px] font-black text-emerald-600 tracking-[0.2em] mb-4 pl-1">Primary Administrator</h4>
                                             <div className="space-y-4">
                                                 <div className="bg-zinc-50/50 p-4 rounded-2xl border border-zinc-100/50">
                                                     <p className="text-[9px] font-black text-zinc-400 uppercase tracking-widest mb-1">Authorized Official</p>
