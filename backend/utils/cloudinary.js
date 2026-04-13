@@ -3,16 +3,18 @@ import {
 } from 'cloudinary';
 import fs from 'fs';
 
-cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET,
-    cloudinary_url: process.env.CLOUDINARY_URL // Optional but nice to have explicitly
-});
-
 const uploadOnCloudinary = async (localFilePath) => {
     try {
         if (!localFilePath) return null;
+
+        console.log(`[Cloudinary] Using Cloud Name: ${process.env.CLOUDINARY_CLOUD_NAME ? 'FOUND' : 'MISSING'}`);
+        // Ensure configuration is set (useful if env vars were loaded late)
+        cloudinary.config({
+            cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+            api_key: process.env.CLOUDINARY_API_KEY,
+            api_secret: process.env.CLOUDINARY_API_SECRET,
+        });
+
         // Upload the file on Cloudinary
         const response = await cloudinary.uploader.upload(localFilePath, {
             resource_type: "auto",
@@ -73,6 +75,13 @@ const extractPublicIdFromUrl = (url) => {
 const deleteFromCloudinary = async (publicId) => {
     try {
         if (!publicId) return null;
+
+        cloudinary.config({
+            cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+            api_key: process.env.CLOUDINARY_API_KEY,
+            api_secret: process.env.CLOUDINARY_API_SECRET,
+        });
+
         console.log(`Attempting to delete Cloudinary asset: ${publicId}`);
         const response = await cloudinary.uploader.destroy(publicId, {
             invalidate: true

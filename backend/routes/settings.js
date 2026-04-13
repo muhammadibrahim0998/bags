@@ -3,6 +3,7 @@ import Settings from "../models/Settings.js";
 import Shop from "../models/Shop.js";
 import { authenticate, preventSuperAdmin } from "../middleware/auth.js";
 import { validateSettings } from "../validators/settingsValidator.js";
+import { extractPublicIdFromUrl, deleteFromCloudinary } from "../utils/cloudinary.js";
 
 const router = express.Router();
 
@@ -68,8 +69,21 @@ router.put("/", authenticate, preventSuperAdmin, validateSettings, async (req, r
       return res.status(401).json({ message: "Current owner password incorrect" });
     }
 
+    const oldLogoUrl = settings.logoUrl;
     Object.assign(settings, updates);
     await settings.save();
+
+    // Cleanup old logo from Cloudinary if it changed
+    if (updates.logoUrl !== undefined && oldLogoUrl && oldLogoUrl !== updates.logoUrl) {
+      console.log(`[Cleanup] Logo changed. Old: ${oldLogoUrl}, New: ${updates.logoUrl}`);
+      const publicId = extractPublicIdFromUrl(oldLogoUrl);
+      if (publicId) {
+        console.log(`[Cleanup] Extracted publicId: ${publicId}`);
+        deleteFromCloudinary(publicId).catch(err => console.error("[Cleanup] Cloudinary cleanup failed:", err));
+      } else {
+        console.warn(`[Cleanup] Could not extract publicId from ${oldLogoUrl}`);
+      }
+    }
 
     // Sync with Shop model if relevant fields were updated
     const shopUpdates = {};

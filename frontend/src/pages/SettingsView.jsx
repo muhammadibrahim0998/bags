@@ -10,7 +10,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import api from '../services/api';
 
 const Section = ({ id, title, icon: Icon, colorClass, bgClass, children, isOpen, onToggle }) => (
-  <div className={`bg-surface-card p-8 rounded-[2.5rem] shadow-2xl border border-[var(--color-border-subtle)] transition-all duration-300`}>
+  <div className={`bg-surface-card p-5 sm:p-8 rounded-[1.5rem] sm:rounded-[2.5rem] shadow-2xl border border-[var(--color-border-subtle)] transition-all duration-300`}>
     <button
       onClick={() => onToggle(id)}
       className="w-full flex items-center justify-between group"
@@ -100,23 +100,25 @@ export function SettingsView() {
     formData.append('images', file);
     setLogoUploading(true);
     try {
-      const res = await api.post('/upload', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
+      const res = await api.post('/upload', formData);
       const url = res.data.images?.[0];
       if (url) {
-        setValue('logoUrl', url);
+        console.log('Logo uploaded successfully. URL:', url);
+        setValue('logoUrl', url, { shouldDirty: true });
         toast.success('Logo uploaded successfully!');
       }
     } catch (err) {
-      toast.error('Logo upload failed. Please try again.');
+      console.error('Logo upload error:', err);
+      toast.error(err.response?.data?.message || 'Logo upload failed. Please try again.');
     } finally {
       setLogoUploading(false);
     }
   };
 
+  const initialResetDone = useRef(false);
+
   useEffect(() => {
-    if (settings) {
+    if (settings && !initialResetDone.current) {
       reset({
         ...settings,
         // fallback to logged-in user identity if owner fields are not yet saved
@@ -124,6 +126,7 @@ export function SettingsView() {
         ownerEmail: settings.ownerEmail || user?.email || '',
         ownerPhone: settings.ownerPhone || '',
       });
+      initialResetDone.current = true;
     }
   }, [settings, reset, user]);
 
@@ -132,12 +135,15 @@ export function SettingsView() {
     if ((isShopAdminRole || isSystemAdmin) && !isAuthorized) {
       getSecureSettings('', user?.role)
         .then(data => {
-          reset({
-            ...data,
-            ownerFullName: data.ownerFullName || user?.fullName || '',
-            ownerEmail: data.ownerEmail || user?.email || '',
-            ownerPhone: data.ownerPhone || '',
-          });
+          if (!initialResetDone.current || isAuthorized) { // Only reset if we haven't or if we just authorized
+            reset({
+              ...data,
+              ownerFullName: data.ownerFullName || user?.fullName || '',
+              ownerEmail: data.ownerEmail || user?.email || '',
+              ownerPhone: data.ownerPhone || '',
+            });
+            initialResetDone.current = true;
+          }
           if (data.ownerPassword) {
             setNewPwd(data.ownerPassword);
             setConfirmPwd(data.ownerPassword);
@@ -252,13 +258,13 @@ export function SettingsView() {
   }
 
   return (
-    <div className="pb-20 space-y-10 animate-in fade-in slide-in-from-bottom-6 duration-700">
-      <div className="flex items-center justify-between pb-8 border-b border-[var(--color-border-subtle)]">
+    <div className="pb-20 space-y-6 sm:space-y-10 animate-in fade-in slide-in-from-bottom-6 duration-700">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-8 border-b border-[var(--color-border-subtle)]">
         <div>
-          <h1 className="text-4xl font-black text-[var(--color-text-primary)] tracking-tighter uppercase leading-none">
+          <h1 className="text-3xl sm:text-4xl font-black text-[var(--color-text-primary)] tracking-tighter uppercase leading-none">
             System Settings
           </h1>
-          <div className="text-[var(--color-text-muted)] font-bold uppercase text-[10px] tracking-[0.4em] mt-3 flex items-center gap-2">
+          <div className="text-[var(--color-text-secondary)] font-bold uppercase text-[9px] sm:text-[10px] tracking-[0.3em] sm:tracking-[0.4em] mt-3 flex items-center gap-2">
             <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></div>
             Master Configuration Panel
           </div>
@@ -266,7 +272,7 @@ export function SettingsView() {
         <button
           onClick={handleSubmit(onSubmit)}
           disabled={isSubmitting}
-          className="px-8 py-4 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-hover)] text-[var(--color-text-primary)] rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-2xl shadow-[var(--color-primary)]/20 hover:scale-[1.05] active:scale-95 transition-all flex items-center gap-3 disabled:opacity-50"
+          className="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-hover)] text-[var(--color-text-primary)] rounded-2xl font-black text-[10px] sm:text-xs uppercase tracking-[0.2em] shadow-2xl shadow-[var(--color-primary)]/20 hover:scale-[1.05] active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-50"
         >
           <Save className="w-5 h-5" />
           {isSubmitting ? 'Saving...' : 'Save Protocol'}
@@ -291,7 +297,7 @@ export function SettingsView() {
               {/* Logo Upload Widget */}
               <div className="md:col-span-2 space-y-3">
                 <label className="text-[10px] font-black text-[var(--color-text-muted)] uppercase tracking-widest pl-1">Shop Logo</label>
-                <div className="flex items-center gap-5">
+                <div className="flex flex-col sm:flex-row items-center gap-5">
                   {/* Preview */}
                   <div className="w-20 h-20 rounded-2xl border-2 border-dashed border-[var(--color-border-subtle)] bg-[var(--color-surface-base)] flex items-center justify-center overflow-hidden shrink-0">
                     {watch('logoUrl') ? (
@@ -302,22 +308,19 @@ export function SettingsView() {
                   </div>
                   {/* Upload & URL inputs */}
                   <div className="flex-1 space-y-3">
-                    <button
-                      type="button"
-                      onClick={() => logoInputRef.current?.click()}
-                      disabled={logoUploading}
-                      className="w-full flex items-center justify-center gap-2 py-3 border-2 border-dashed border-[var(--color-border-subtle)] rounded-2xl text-[10px] font-black uppercase tracking-widest text-[var(--color-text-muted)] hover:border-blue-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all disabled:opacity-50"
+                    <label
+                      className={`w-full flex items-center justify-center gap-2 py-3 border-2 border-dashed border-[var(--color-border-subtle)] rounded-2xl text-[10px] font-black uppercase tracking-widest text-[var(--color-text-muted)] hover:border-blue-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all cursor-pointer ${logoUploading ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                       <UploadCloud className="w-4 h-4" />
                       {logoUploading ? 'Uploading...' : 'Click to Upload Logo'}
-                    </button>
-                    <input
-                      ref={logoInputRef}
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(e) => handleLogoUpload(e.target.files?.[0])}
-                    />
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => !logoUploading && handleLogoUpload(e.target.files?.[0])}
+                        disabled={logoUploading}
+                      />
+                    </label>
                     <input
                       {...register('logoUrl')}
                       className="block w-full px-4 py-3 bg-[var(--color-surface-base)] border border-[var(--color-border-subtle)] rounded-2xl text-[var(--color-text-primary)] focus:border-blue-500/40 focus:ring-1 focus:ring-blue-500/40 transition-all font-bold placeholder:text-slate-400 outline-none text-xs"

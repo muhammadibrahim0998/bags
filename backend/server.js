@@ -33,7 +33,7 @@ app.set('trust proxy', 1);
 
 // Middleware
 const allowedOrigins = [
-  'https://nexflow-inventory.vercel.app',
+  process.env.FRONTEND_URL || 'https://nexflow-inventory.vercel.app',
   'http://localhost:5173'
 ];
 

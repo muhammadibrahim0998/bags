@@ -47,26 +47,33 @@ const upload = multer({ storage, fileFilter });
 router.post(
   '/',
   authenticate,
-  preventSuperAdmin,
   upload.array('images', 5),
   asyncHandler(async (req, res) => {
+    console.log(`[Upload] Body:`, req.body);
+    console.log(`[Upload] Files:`, req.files?.map(f => ({ name: f.originalname, size: f.size, path: f.path })));
+
     if (!req.files || req.files.length === 0) {
+      console.warn(`[Upload] No files received in request`);
       throw new ApiError(400, 'Please upload at least one image');
     }
 
     const uploadedUrls = [];
 
+    console.log(`[Upload] Processing ${req.files.length} files...`);
     for (const file of req.files) {
+      console.log(`[Upload] Uploading to Cloudinary: ${file.originalname}`);
       const result = await uploadOnCloudinary(file.path);
       if (!result) {
-        throw new ApiError(500, `Failed to upload file: ${file.originalname} to Cloudinary`);
+        console.error(`[Upload] Cloudinary upload failed for ${file.originalname}`);
+        throw new ApiError(500, `Failed to upload file: ${file.originalname} to Cloudinary. Check backend logs.`);
       }
       uploadedUrls.push(result.secure_url);
     }
 
-    return res.status(200).json(
-      new ApiResponse(200, { images: uploadedUrls }, 'Images uploaded successfully')
-    );
+    return res.status(200).json({ 
+      images: uploadedUrls,
+      message: 'Images uploaded successfully' 
+    });
   })
 );
 
