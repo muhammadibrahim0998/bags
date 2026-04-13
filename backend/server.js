@@ -43,6 +43,7 @@ import usersRoutes from './routes/users.js';
 import authRoutes from './routes/auth.js';
 import settingsRoutes from './routes/settings.js';
 import shopsRoutes from './routes/shops.js';
+import updatesRoutes from './routes/updates.js';
 
 // Routes
 app.use('/api/items', itemsRoutes);
@@ -53,13 +54,18 @@ app.use('/api/users', usersRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/shops', shopsRoutes);
+app.use('/api/updates', updatesRoutes);
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {
   console.error('SERVER ERROR:', err);
-  res.status(500).json({
-    message: err.message || 'Server Error',
-    error: err
+  const statusCode = err.statusCode || 500;
+  const message = err.message || 'Server Error';
+  res.status(statusCode).json({
+    success: false,
+    message,
+    errors: err.errors || [],
+    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
   });
 });
 
@@ -68,7 +74,7 @@ app.get('/', (req, res) => {
   res.send('Inventory API is running...');
 });
 
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5000
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

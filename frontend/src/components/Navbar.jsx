@@ -57,54 +57,52 @@ export function Navbar({
             <h1 className="text-lg font-black tracking-tighter text-white hidden xl:block uppercase italic">{shopName}</h1>
           </div>
 
-          {!isSuperAdmin() && (
-            <div className={`relative group ${isSearchExpanded ? 'flex-1 md:flex-none' : 'hidden md:block'}`}>
-              <Search
-                className={`absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/50 group-focus-within:text-white transition-colors cursor-pointer md:cursor-default ${!isSearchExpanded ? 'md:block' : ''}`}
+          <div className={`relative group ${isSearchExpanded ? 'flex-1 md:flex-none' : 'hidden md:block'}`}>
+            <Search
+              className={`absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/50 group-focus-within:text-white transition-colors cursor-pointer md:cursor-default ${!isSearchExpanded ? 'md:block' : ''}`}
+              onClick={() => {
+                if (!isSearchExpanded) {
+                  setIsSearchExpanded(true);
+                  onSearchToggle?.(true);
+                }
+              }}
+            />
+            <input
+              type="text"
+              value={searchTerm}
+              autoFocus={isSearchExpanded}
+              onBlur={() => {
+                if (!searchTerm) {
+                  setIsSearchExpanded(false);
+                  onSearchToggle?.(false);
+                }
+              }}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                if (e.target.value && location.pathname.includes('/category/')) {
+                  navigate('/store');
+                }
+              }}
+              placeholder={isSuperAdmin() ? "Search shops..." : "Search inventory..."}
+              className={`transition-all duration-300 outline-none bg-blue-700/60 backdrop-blur-sm border border-white/30 rounded-2xl py-2.5 pl-10 pr-4 text-xs font-medium text-white placeholder:text-white/70 focus:bg-blue-700/80 focus:border-white/50 
+                ${isSearchExpanded ? 'w-full scale-x-100 opacity-100' : 'w-0 md:w-[200px] lg:w-[280px] scale-x-0 md:scale-x-100 opacity-0 md:opacity-100'}`}
+            />
+            {(searchTerm || isSearchExpanded) && (
+              <button
                 onClick={() => {
-                  if (!isSearchExpanded) {
-                    setIsSearchExpanded(true);
-                    onSearchToggle?.(true);
-                  }
+                  setSearchTerm('');
+                  setIsSearchExpanded(false);
+                  onSearchToggle?.(false);
                 }}
-              />
-              <input
-                type="text"
-                value={searchTerm}
-                autoFocus={isSearchExpanded}
-                onBlur={() => {
-                  if (!searchTerm) {
-                    setIsSearchExpanded(false);
-                    onSearchToggle?.(false);
-                  }
-                }}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  if (e.target.value && location.pathname.includes('/category/')) {
-                    navigate('/store');
-                  }
-                }}
-                placeholder="Search inventory..."
-                className={`transition-all duration-300 outline-none bg-blue-700/60 backdrop-blur-sm border border-white/30 rounded-2xl py-2.5 pl-10 pr-4 text-xs font-medium text-white placeholder:text-white/70 focus:bg-blue-700/80 focus:border-white/50 
-                  ${isSearchExpanded ? 'w-full scale-x-100 opacity-100' : 'w-0 md:w-[200px] lg:w-[280px] scale-x-0 md:scale-x-100 opacity-0 md:opacity-100'}`}
-              />
-              {(searchTerm || isSearchExpanded) && (
-                <button
-                  onClick={() => {
-                    setSearchTerm('');
-                    setIsSearchExpanded(false);
-                    onSearchToggle?.(false);
-                  }}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/50 hover:text-white text-xs font-bold transition-all px-1"
-                >
-                  ✕
-                </button>
-              )}
-            </div>
-          )}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/50 hover:text-white text-xs font-bold transition-all px-1"
+              >
+                ✕
+              </button>
+            )}
+          </div>
 
           {/* Dedicated Search Icon Trigger for Mobile (when not expanded) */}
-          {!isSearchExpanded && !isSuperAdmin() && (
+          {!isSearchExpanded && (
             <button
               onClick={() => {
                 setIsSearchExpanded(true);
@@ -133,23 +131,27 @@ export function Navbar({
 
         {/* Right Actions */}
         <div className="flex items-center gap-3">
-          <button onClick={onShiftClick} className="hidden sm:flex items-center gap-2.5 px-3.5 py-2 rounded-2xl border border-white/10 bg-white/10 backdrop-blur-md hover:bg-white/15 transition-all group">
-            <div className={`w-2 h-2 rounded-full ${currentSession ? 'bg-emerald-400 animate-pulse' : 'bg-rose-500 animate-pulse shadow-[0_0_8px_rgba(244,63,94,0.6)]'}`} />
-            <span className="text-[10px] font-black text-white/80 uppercase tracking-widest group-hover:text-white transition-colors">
-              {currentSession?.shiftType || 'No Active Shift'}
-            </span>
-          </button>
+          {!isSuperAdmin() && (
+            <>
+              <button onClick={onShiftClick} className="hidden sm:flex items-center gap-2.5 px-3.5 py-2 rounded-2xl border border-white/10 bg-white/10 backdrop-blur-md hover:bg-white/15 transition-all group">
+                <div className={`w-2 h-2 rounded-full ${currentSession ? 'bg-emerald-400 animate-pulse' : 'bg-rose-500 animate-pulse shadow-[0_0_8px_rgba(244,63,94,0.6)]'}`} />
+                <span className="text-[10px] font-black text-white/80 uppercase tracking-widest group-hover:text-white transition-colors">
+                  {currentSession?.shiftType || 'No Active Shift'}
+                </span>
+              </button>
 
-          <div className="h-6 w-px bg-blue-400/30 mx-1 hidden sm:block"></div>
+              <div className="h-6 w-px bg-blue-400/30 mx-1 hidden sm:block"></div>
 
-          <button onClick={onCartClick} className="relative p-2.5 bg-white text-blue-600 rounded-xl hover:bg-blue-50 transition-all shadow-md shadow-white/10 active:scale-95">
-            <ShoppingCart className="w-4 h-4" />
-            {cartCount > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 bg-zinc-900 text-white text-[9px] font-bold h-4.5 w-4.5 rounded-full flex items-center justify-center border-2 border-blue-500">
-                {cartCount}
-              </span>
-            )}
-          </button>
+              <button onClick={onCartClick} className="relative p-2.5 bg-white text-blue-600 rounded-xl hover:bg-blue-50 transition-all shadow-md shadow-white/10 active:scale-95">
+                <ShoppingCart className="w-4 h-4" />
+                {cartCount > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 bg-zinc-900 text-white text-[9px] font-bold h-4.5 w-4.5 rounded-full flex items-center justify-center border-2 border-blue-500">
+                    {cartCount}
+                  </span>
+                )}
+              </button>
+            </>
+          )}
 
           <div className="flex items-center gap-3 pl-4 border-l border-white/10 ml-1 h-10">
             <div className="hidden md:flex flex-col items-end justify-center">

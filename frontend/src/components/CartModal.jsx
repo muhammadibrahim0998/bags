@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 export function CartModal({ isOpen, onClose, onCheckout }) {
   const { cart, products, addToCart, removeFromCart: onRemove, clearCart: onClear, updateQuantity: onUpdateQuantity } = useProducts();
   const [searchQuery, setSearchQuery] = React.useState('');
+  const [customerName, setCustomerName] = React.useState('');
 
   if (!isOpen) return null;
 
@@ -35,7 +36,7 @@ export function CartModal({ isOpen, onClose, onCheckout }) {
       />
 
       {/* Sidebar */}
-      <motion.div 
+      <motion.div
         initial={{ x: '100%' }}
         animate={{ x: 0 }}
         exit={{ x: '100%' }}
@@ -67,7 +68,7 @@ export function CartModal({ isOpen, onClose, onCheckout }) {
 
             <AnimatePresence>
               {filteredProducts.length > 0 && (
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 10 }}
@@ -147,6 +148,18 @@ export function CartModal({ isOpen, onClose, onCheckout }) {
         {/* Footer */}
         {cart.length > 0 && (
           <div className="p-6 bg-zinc-50 border-t border-zinc-200 space-y-4">
+            {/* Customer Name Input */}
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest pl-1">Customer Identifier</label>
+              <input
+                type="text"
+                placeholder="Ex: Walk-in Customer / Ali Khan"
+                value={customerName}
+                onChange={(e) => setCustomerName(e.target.value)}
+                className="w-full bg-white border border-zinc-200 focus:border-blue-500/50 rounded-xl py-3 px-4 text-xs font-bold text-zinc-900 placeholder:text-zinc-300 outline-none transition-all shadow-inner"
+              />
+            </div>
+
             <div className="flex justify-between items-center px-1">
               <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Grand Total</span>
               <span className="text-2xl font-black text-zinc-900 tracking-tighter">Rs. {total.toLocaleString()}</span>
@@ -160,7 +173,10 @@ export function CartModal({ isOpen, onClose, onCheckout }) {
                 Reset
               </button>
               <button
-                onClick={onCheckout}
+                onClick={() => {
+                  onCheckout(customerName);
+                  setCustomerName(''); // Reset for next sale
+                }}
                 className="flex-[3] py-4 bg-zinc-900 text-white rounded-xl font-bold text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:bg-black transition-all active:scale-95 shadow-xl shadow-zinc-200"
               >
                 Complete Sale

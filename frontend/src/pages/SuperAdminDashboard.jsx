@@ -5,9 +5,11 @@ import { shopSchema } from '../schemas/shopSchema';
 import api from '../services/api';
 import {
     Store, Plus, Building2, Edit2, Trash2, X, Check,
-    LayoutDashboard, Users, Activity
+    LayoutDashboard, Users, Activity, Eye
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useProducts } from '../contexts/ProductContext';
+import { DeleteConfirmationModal } from '../components/DeleteConfirmationModal';
 
 export function SuperAdminDashboard() {
     const [shops, setShops] = useState([]);
@@ -15,6 +17,10 @@ export function SuperAdminDashboard() {
     const [activeTab, setActiveTab] = useState('overview');
     const [editingShop, setEditingShop] = useState(null);
     const [editData, setEditData] = useState({ name: '', address: '', contactNumber: '', status: 'active' });
+    const [viewingShop, setViewingShop] = useState(null);
+    const [deleteDialog, setDeleteDialog] = useState({ isOpen: false, id: null, name: '' });
+    const [isDeleting, setIsDeleting] = useState(false);
+    const { searchTerm } = useProducts();
 
     const {
         register,
@@ -60,14 +66,26 @@ export function SuperAdminDashboard() {
         }
     };
 
-    const handleDeleteShop = async (id) => {
-        if (!window.confirm("Are you sure you want to delete this shop and all its users? This cannot be undone.")) return;
+    const handleDeleteShop = (shop) => {
+        setDeleteDialog({
+            isOpen: true,
+            id: shop._id,
+            name: shop.name
+        });
+    };
+
+    const confirmDeleteShop = async () => {
+        const { id } = deleteDialog;
+        setIsDeleting(true);
         try {
             await api.delete(`/shops/${id}`);
             toast.success("Shop deleted successfully");
+            setDeleteDialog({ isOpen: false, id: null, name: '' });
             fetchShops();
         } catch (err) {
             toast.error("Failed to delete shop");
+        } finally {
+            setIsDeleting(false);
         }
     };
 
@@ -83,6 +101,7 @@ export function SuperAdminDashboard() {
     };
 
     const startEdit = (shop) => {
+        setActiveTab('management'); // Switch to management tab if not there
         setEditingShop(shop._id);
         setEditData({
             name: shop.name || '',
@@ -90,6 +109,11 @@ export function SuperAdminDashboard() {
             contactNumber: shop.contactNumber || '',
             status: shop.status
         });
+        // Scroll to management section if needed - added a slight delay to ensure tab is rendered
+        setTimeout(() => {
+            const el = document.getElementById(`shop-manage-${shop._id}`);
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
     };
 
     if (loading) {
@@ -102,6 +126,12 @@ export function SuperAdminDashboard() {
 
     const activeShops = shops.filter(shop => shop.status === 'active').length;
     const inactiveShops = shops.length - activeShops;
+
+    const filteredShops = shops.filter(shop =>
+        shop.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        shop.address?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        shop.contactNumber?.includes(searchTerm)
+    );
 
     return (
         <div className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-in fade-in duration-700">
@@ -116,7 +146,7 @@ export function SuperAdminDashboard() {
                             Global Dashboard
                         </h1>
                         <p className="text-[var(--color-text-secondary)] font-bold uppercase text-[10px] tracking-[0.4em] mt-2">
-                            MERN Inventory Platform Management
+                            General Management
                         </p>
                     </div>
                 </div>
@@ -180,17 +210,25 @@ export function SuperAdminDashboard() {
                     <div className="bg-white border border-zinc-100 rounded-[2.5rem] p-8 sm:p-10 shadow-rich">
                         <h3 className="text-2xl font-black text-zinc-900 uppercase tracking-[0.2em] mb-10">Registered Store Network</h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            {shops.map(shop => (
+                            {filteredShops.map(shop => (
                                 <div key={shop._id} className="p-8 rounded-xl border border-zinc-100 bg-zinc-50/50 hover:bg-white hover:border-blue-500/30 transition-all shadow-sm hover:shadow-rich group/card">
-                                    <div className="flex items-center justify-between mb-6">
+                                    <div className="flex items-center justify-between mb-6 relative">
                                         <div className="p-4 bg-white rounded-2xl border border-zinc-100 group-hover/card:scale-110 transition-transform shadow-inner">
                                             <Store className="w-7 h-7 text-zinc-400 group-hover/card:text-blue-500 transition-colors" />
                                         </div>
-                                        <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] border ${shop.status === 'active' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-rose-500/10 text-rose-500 border-rose-500/20'}`}>
-                                            {shop.status}
-                                        </span>
+                                        <div className="flex flex-col items-end gap-2">
+                                            <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] border transition-all group-hover/card:opacity-0 group-hover/card:scale-0 ${shop.status === 'active' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-rose-500/10 text-rose-500 border-rose-500/20'}`}>
+                                                {shop.status}
+                                            </span>
+                                            {/* Card Action Overlay */}
+                                            <div className="absolute top-0 right-0 flex items-center gap-1.5 opacity-0 group-hover/card:opacity-100 transition-all scale-75 group-hover/card:scale-100 origin-right">
+                                                <button onClick={() => setViewingShop(shop)} className="p-2.5 bg-white text-zinc-400 hover:text-blue-600 rounded-xl border border-zinc-100 shadow-sm transition-all" title="View Details"><Eye className="w-4 h-4" /></button>
+                                                <button onClick={() => startEdit(shop)} className="p-2.5 bg-white text-zinc-400 hover:text-amber-600 rounded-xl border border-zinc-100 shadow-sm transition-all" title="Edit Shop"><Edit2 className="w-4 h-4" /></button>
+                                                <button onClick={() => handleDeleteShop(shop)} className="p-2.5 bg-white text-zinc-400 hover:text-rose-600 rounded-xl border border-zinc-100 shadow-sm transition-all" title="Delete Shop"><Trash2 className="w-4 h-4" /></button>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <h4 className="text-xl font-black text-zinc-900 mb-2 truncate tracking-tight uppercase">{shop.name}</h4>
+                                    <h4 className="text-xl font-black text-zinc-900 mb-2 truncate tracking-tight uppercase group-hover/card:text-blue-600 transition-colors">{shop.name}</h4>
                                     <p className="text-[11px] font-black text-zinc-400 truncate tracking-[0.1em] uppercase">{shop.address || "Global Access"}</p>
                                 </div>
                             ))}
@@ -248,23 +286,19 @@ export function SuperAdminDashboard() {
                                         />
                                         {errors.adminFullName && <p className="text-[9px] font-bold text-rose-500 mt-1 pl-1 uppercase tracking-tighter">{errors.adminFullName.message}</p>}
                                     </div>
-                                    <div>
-                                        <input
-                                            {...register('adminUsername')}
-                                            className={`w-full px-5 py-3 rounded-xl border ${errors.adminUsername ? 'border-rose-500/50 bg-rose-50/50' : 'border-zinc-100 bg-zinc-50'} text-zinc-900 text-sm font-bold outline-none focus:bg-white focus:border-blue-500/40 transition-all`}
-                                            placeholder="username"
-                                        />
-                                        {errors.adminUsername && <p className="text-[9px] font-bold text-rose-500 mt-1 pl-1 uppercase tracking-tighter">{errors.adminUsername.message}</p>}
-                                    </div>
-                                    <div>
-                                        <input
-                                            {...register('adminPassword')}
-                                            type="password"
-                                            className={`w-full px-5 py-3 rounded-xl border ${errors.adminPassword ? 'border-rose-500/50 bg-rose-50/50' : 'border-zinc-100 bg-zinc-50'} text-zinc-900 text-sm font-bold outline-none focus:bg-white focus:border-blue-500/40 transition-all`}
-                                            placeholder="password"
-                                        />
-                                        {errors.adminPassword && <p className="text-[9px] font-bold text-rose-500 mt-1 pl-1 uppercase tracking-tighter">{errors.adminPassword.message}</p>}
-                                    </div>
+                                    <input
+                                        {...register('adminUsername')}
+                                        autoComplete="off"
+                                        className={`w-full px-5 py-3 rounded-xl border ${errors.adminUsername ? 'border-rose-500/50 bg-rose-50/50' : 'border-zinc-100 bg-zinc-50'} text-zinc-900 text-sm font-bold outline-none focus:bg-white focus:border-blue-500/40 transition-all`}
+                                        placeholder="username"
+                                    />
+                                    <input
+                                        {...register('adminPassword')}
+                                        type="password"
+                                        autoComplete="new-password"
+                                        className={`w-full px-5 py-3 rounded-xl border ${errors.adminPassword ? 'border-rose-500/50 bg-rose-50/50' : 'border-zinc-100 bg-zinc-50'} text-zinc-900 text-sm font-bold outline-none focus:bg-white focus:border-blue-500/40 transition-all`}
+                                        placeholder="password"
+                                    />
                                 </div>
                             </div>
                             <button
@@ -280,10 +314,10 @@ export function SuperAdminDashboard() {
                     {/* Shops List for Management */}
                     <div className="lg:col-span-2 space-y-4">
                         <h3 className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em] mb-4 pl-2">Modify Existing Access</h3>
-                        {shops.map(shop => {
+                        {filteredShops.map(shop => {
                             const isEditing = editingShop === shop._id;
                             return (
-                                <div key={shop._id} className="bg-white p-5 rounded-2xl border border-zinc-100 flex items-center justify-between shadow-sm hover:shadow-rich hover:border-blue-500/20 transition-all group/shop relative overflow-hidden">
+                                <div key={shop._id} id={`shop-manage-${shop._id}`} className="bg-white p-5 rounded-2xl border border-zinc-100 flex items-center justify-between shadow-sm hover:shadow-rich hover:border-blue-500/20 transition-all group/shop relative overflow-hidden">
                                     <div className="flex items-center gap-5 flex-1 min-w-0">
                                         <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-100 transition-colors group-hover/shop:bg-blue-50/50 flex-shrink-0">
                                             <Store className="w-6 h-6 text-zinc-400 group-hover/shop:text-blue-500 transition-colors" />
@@ -319,8 +353,9 @@ export function SuperAdminDashboard() {
                                                     {shop.status}
                                                 </span>
                                                 <div className="flex items-center gap-2 opacity-0 group-hover/shop:opacity-100 absolute right-5 transition-all translate-x-4 group-hover/shop:translate-x-0">
-                                                    <button onClick={() => startEdit(shop)} className="p-2.5 bg-zinc-50 text-zinc-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all border border-zinc-100"><Edit2 className="w-4 h-4" /></button>
-                                                    <button onClick={() => handleDeleteShop(shop._id)} className="p-2.5 bg-zinc-50 text-zinc-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all border border-zinc-100"><Trash2 className="w-4 h-4" /></button>
+                                                    <button onClick={() => setViewingShop(shop)} className="p-2.5 bg-zinc-50 text-zinc-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all border border-zinc-100" title="View Details"><Eye className="w-4 h-4" /></button>
+                                                    <button onClick={() => startEdit(shop)} className="p-2.5 bg-zinc-50 text-zinc-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all border border-zinc-100" title="Edit Shop"><Edit2 className="w-4 h-4" /></button>
+                                                    <button onClick={() => handleDeleteShop(shop)} className="p-2.5 bg-zinc-50 text-zinc-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all border border-zinc-100" title="Delete Shop"><Trash2 className="w-4 h-4" /></button>
                                                 </div>
                                             </>
                                         )}
@@ -329,6 +364,87 @@ export function SuperAdminDashboard() {
                             );
                         })}
                     </div>
+                    {/* Global Delete Confirmation Modal */}
+                    <DeleteConfirmationModal
+                        isOpen={deleteDialog.isOpen}
+                        onClose={() => setDeleteDialog({ ...deleteDialog, isOpen: false })}
+                        onConfirm={confirmDeleteShop}
+                        title="Confirm Shop Deletion"
+                        message="Are you sure you want to delete this shop and all its users? This cannot be undone."
+                        itemName={deleteDialog.name}
+                        isDeleting={isDeleting}
+                    />
+
+                    {/* Shop View Modal */}
+                    {viewingShop && (
+                        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-zinc-900/60 backdrop-blur-sm animate-in fade-in duration-300">
+                            <div className="bg-white w-full max-w-xl rounded-[2.5rem] shadow-2xl overflow-hidden border border-zinc-100 animate-in zoom-in-95 duration-300">
+                                <div className="relative p-10">
+                                    <button
+                                        onClick={() => setViewingShop(null)}
+                                        className="absolute top-8 right-8 p-2 bg-zinc-50 text-zinc-400 hover:text-zinc-600 hover:bg-zinc-100 rounded-xl transition-all"
+                                    >
+                                        <X className="w-5 h-5" />
+                                    </button>
+
+                                    <div className="flex items-center gap-6 mb-10">
+                                        <div className="p-6 bg-blue-500/10 rounded-3xl border border-blue-500/20">
+                                            <Store className="w-10 h-10 text-blue-600" />
+                                        </div>
+                                        <div>
+                                            <div className="flex items-center gap-3 mb-1">
+                                                <h2 className="text-3xl font-black text-zinc-900 uppercase tracking-tighter">{viewingShop.name}</h2>
+                                                <span className={`px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.2em] border ${viewingShop.status === 'active' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-rose-500/10 text-rose-500 border-rose-500/20'}`}>
+                                                    {viewingShop.status}
+                                                </span>
+                                            </div>
+                                            <p className="text-xs font-black text-zinc-400 uppercase tracking-widest">{viewingShop.address || "Global Access Point"}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-8 border-t border-zinc-50">
+                                        <div>
+                                            <h4 className="text-[10px] font-black text-blue-600 uppercase tracking-[0.2em] mb-4 pl-1">Store Identity</h4>
+                                            <div className="space-y-4">
+                                                <div className="bg-zinc-50/50 p-4 rounded-2xl border border-zinc-100/50">
+                                                    <p className="text-[9px] font-black text-zinc-400 uppercase tracking-widest mb-1">Internal Reference</p>
+                                                    <p className="text-xs font-bold text-zinc-600 truncate">#{viewingShop._id.toUpperCase()}</p>
+                                                </div>
+                                                <div className="bg-zinc-50/50 p-4 rounded-2xl border border-zinc-100/50">
+                                                    <p className="text-[9px] font-black text-zinc-400 uppercase tracking-widest mb-1">Contact Access</p>
+                                                    <p className="text-xs font-bold text-zinc-600">{viewingShop.contactNumber || "Not Provided"}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <h4 className="text-[10px] font-black text-emerald-600 uppercase tracking-widest uppercase tracking-[0.2em] mb-4 pl-1">Primary Administrator</h4>
+                                            <div className="space-y-4">
+                                                <div className="bg-zinc-50/50 p-4 rounded-2xl border border-zinc-100/50">
+                                                    <p className="text-[9px] font-black text-zinc-400 uppercase tracking-widest mb-1">Authorized Official</p>
+                                                    <p className="text-xs font-bold text-zinc-800">{viewingShop.adminFullName || "System Owner"}</p>
+                                                </div>
+                                                <div className="bg-zinc-50/50 p-4 rounded-2xl border border-zinc-100/50">
+                                                    <p className="text-[9px] font-black text-zinc-400 uppercase tracking-widest mb-1">System Username</p>
+                                                    <p className="text-xs font-bold text-zinc-800">@{viewingShop.adminUsername || "admin"}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <button
+                                        onClick={() => {
+                                            startEdit(viewingShop);
+                                            setViewingShop(null);
+                                        }}
+                                        className="w-full mt-10 py-4 bg-zinc-900 text-white rounded-[1.5rem] font-black text-[10px] uppercase tracking-[0.2em] hover:bg-zinc-800 transition-all flex items-center justify-center gap-3 shadow-xl active:scale-95"
+                                    >
+                                        <Edit2 className="w-4 h-4" />
+                                        Enter Administrative Bridge
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             )}
         </div>

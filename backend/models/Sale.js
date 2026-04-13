@@ -44,7 +44,11 @@ const SaleSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   },
-  cashierName: String
+  cashierName: String,
+  customerName: {
+    type: String,
+    default: ''
+  }
 }, { timestamps: true });
 
 export default mongoose.model('Sale', SaleSchema);

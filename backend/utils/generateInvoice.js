@@ -10,160 +10,121 @@ const __dirname = path.dirname(__filename);
 export const generateInvoice = async (sale, filePath, settings = {}) => {
   return new Promise(async (resolve, reject) => {
     try {
+      // 📐 DYNAMIC HEIGHT
+      const baseHeight = 500; 
+      const dynamicHeight = baseHeight + (sale.items.length * 35);
+
       const doc = new PDFDocument({ 
-        size: 'A4', 
-        margin: 50,
+        size: [226, dynamicHeight],
+        margins: { top: 20, left: 15, right: 15, bottom: 20 },
         bufferPages: true 
       });
 
       const stream = fs.createWriteStream(filePath);
       doc.pipe(stream);
 
-      // Default values from settings
-      const shopName = settings.shopName || "NEXFLOW INVENTORY";
-      const shopAddress = settings.address || "Smart Inventory & POS System";
-      const shopPhone = settings.phone ? `Contact: ${settings.phone}` : "WhatsApp: +92 301 3241531";
-      const currency = settings.currency || "Rs.";
+      const bold = "Helvetica-Bold";
+      const normal = "Helvetica";
+      const shopName = settings.shopName || "COSMETICS SHOP";
+      const shopAddress = settings.address || "Inventory Management System";
+      const shopPhone = settings.phone ? `Contact: ${settings.phone}` : "Contact: +923014455631";
+      const currency = settings.currency || "PKR";
+
+      const drawDashLine = () => {
+        doc.moveDown(0.5);
+        doc.strokeColor("#cccccc").lineWidth(0.5).dash(2, { space: 2 })
+           .moveTo(15, doc.y).lineTo(211, doc.y).stroke().undash();
+        doc.moveDown(0.8);
+      };
 
       // ======================
-      // 🏪 LOGO & HEADER
+      // 🏪 HEADER
       // ======================
-      const logoPath = path.join(__dirname, '..', 'assets', 'logo.png');
-      if (fs.existsSync(logoPath)) {
-        doc.image(logoPath, 50, 45, { width: 60 });
-      }
-
-      doc
-        .fillColor("#444444")
-        .fontSize(20)
-        .text(shopName.toUpperCase(), 115, 50, { align: "right" })
-        .fontSize(10)
-        .text(shopAddress, 200, 70, { align: "right" })
-        .text(shopPhone, 200, 85, { align: "right" })
-        .moveDown();
-
-      // Horizontal Line
-      doc.strokeColor("#eeeeee").lineWidth(1).moveTo(50, 110).lineTo(550, 110).stroke();
-
-      // ======================
-      // INVOICE INFO
-      // ======================
-      doc.moveDown(2);
+      doc.font(bold).fontSize(16).text(shopName.toUpperCase(), { align: "center" });
+      doc.font(normal).fontSize(8).fillColor("#777777").text(shopAddress, { align: "center" });
+      doc.font(bold).fillColor("#2563eb").fontSize(8).text(shopPhone, { align: "center" });
       
-      const customerName = sale.customer || "Walk-in Customer";
-      const cashierName = sale.cashierName || "System Admin";
-      const invoiceId = sale._id.toString().slice(-8).toUpperCase();
-      const date = new Date(sale.saleDate).toLocaleDateString('en-PK', { 
-        day: '2-digit', 
-        month: 'short', 
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
+      drawDashLine();
+
+      // ======================
+      // 📊 META INFO
+      // ======================
+      const drawMetaRow = (label, value, color = "#222222") => {
+        const y = doc.y;
+        doc.font(bold).fontSize(7).fillColor("#999999").text(label.toUpperCase() + ":", 15, y);
+        doc.font(bold).fontSize(8).fillColor(color).text(value.toUpperCase(), 15, y, { align: "right" });
+        doc.moveDown(0.5);
+      };
+
+      const dateObj = new Date(sale.saleDate);
+      drawMetaRow("Date", dateObj.toLocaleDateString('en-PK', { day: '2-digit', month: 'short', year: 'numeric' }));
+      drawMetaRow("Time", dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+      drawMetaRow("Cashier", sale.cashierName || "System Admin");
+      drawMetaRow("Customer", sale.customerName || "Walk-in Customer");
+      drawMetaRow("ID", `#${sale._id.toString().slice(-8).toUpperCase()}`, "#2563eb");
+
+      drawDashLine();
+
+      // ======================
+      // 📦 ITEMS TABLE
+      // ======================
+      doc.font(bold).fontSize(7).fillColor("#999999");
+      const tableHeaderY = doc.y;
+      doc.text("ITEM", 15, tableHeaderY);
+      doc.text("QTY", 100, tableHeaderY, { width: 25, align: "center" });
+      doc.text("PRICE", 130, tableHeaderY, { width: 40, align: "right" });
+      doc.text("TOTAL", 170, tableHeaderY, { width: 41, align: "right" });
+      
+      doc.moveDown(0.5);
+      doc.strokeColor("#eeeeee").lineWidth(0.5).moveTo(15, doc.y).lineTo(211, doc.y).stroke();
+      doc.moveDown(0.5);
+
+      sale.items.forEach(item => {
+        const rowY = doc.y;
+        doc.font(bold).fontSize(8).fillColor("#222222").text(item.name.toUpperCase(), 15, rowY, { width: 80, height: 10, ellipsis: true });
+        doc.font(normal).fontSize(8).text(item.quantity.toString(), 100, rowY, { width: 25, align: "center" });
+        doc.fontSize(7).fillColor("#777777").text(`${item.price.toLocaleString()}`, 130, rowY, { width: 40, align: "right" });
+        doc.font(bold).fontSize(8).fillColor("#2563eb").text(`${item.subtotal.toLocaleString()}`, 170, rowY, { width: 41, align: "right" });
+        
+        doc.moveDown(0.5);
+        doc.strokeColor("#f0f0f0").lineWidth(0.5).dash(1, { space: 1 }).moveTo(15, doc.y).lineTo(211, doc.y).stroke().undash();
       });
 
-      doc
-        .fontSize(12)
-        .font("Helvetica-Bold")
-        .text("INVOICE DETAILS", 50, 140)
-        .font("Helvetica")
-        .fontSize(10)
-        .text(`Invoice ID: #${invoiceId}`, 50, 160)
-        .text(`Date & Time: ${date}`, 50, 175)
-        .text(`Cashier: ${cashierName}`, 50, 190);
-
-      doc
-        .font("Helvetica-Bold")
-        .text("BILL TO:", 350, 140)
-        .font("Helvetica")
-        .text(customerName, 350, 160)
-        .text("Pakistan", 350, 175);
-
-      doc.moveDown(4);
+      drawDashLine();
 
       // ======================
-      // ITEMS TABLE HEADER
+      // 💰 TOTAL SECTION
       // ======================
-      const tableTop = 250;
-      doc.font("Helvetica-Bold");
+      const totalY = doc.y;
+      doc.font(bold).fontSize(10).fillColor("#999999").text("GRAND TOTAL", 15, totalY + 2);
+      doc.font(bold).fontSize(16).fillColor("#2563eb").text(`${currency} ${sale.totalAmount.toLocaleString()}`, 15, totalY, { align: "right" });
       
-      doc.text("Item Description", 50, tableTop);
-      doc.text("Qty", 280, tableTop, { width: 50, align: "center" });
-      doc.text("Price", 350, tableTop, { width: 80, align: "right" });
-      doc.text("Total", 450, tableTop, { width: 100, align: "right" });
+      doc.moveDown(0.5);
+      drawDashLine();
 
-      doc.strokeColor("#aaaaaa").lineWidth(1).moveTo(50, tableTop + 15).lineTo(550, tableTop + 15).stroke();
-
-      // ======================
-      // ITEMS TABLE ROWS
-      // ======================
-      let i;
-      let invoiceTableTop = 275;
-      doc.font("Helvetica");
-
-      for (i = 0; i < sale.items.length; i++) {
-        const item = sale.items[i];
-        const position = invoiceTableTop + (i * 25);
-        
-        doc.text(item.name, 50, position);
-        doc.text(item.quantity.toString(), 280, position, { width: 50, align: "center" });
-        doc.text(`${currency} ${item.price.toLocaleString('en-PK')}`, 350, position, { width: 80, align: "right" });
-        doc.text(`${currency} ${(item.price * item.quantity).toLocaleString('en-PK')}`, 450, position, { width: 100, align: "right" });
-
-        // Dotted line between items
-        doc.strokeColor("#eeeeee").lineWidth(0.5).moveTo(50, position + 18).lineTo(550, position + 18).stroke();
-      }
-
-      // ======================
-      // TOTAL SECTION
-      // ======================
-      const subtotalOverTop = invoiceTableTop + (i * 25) + 20;
-      
-      doc
-        .strokeColor("#444444")
-        .lineWidth(1)
-        .moveTo(350, subtotalOverTop)
-        .lineTo(550, subtotalOverTop)
-        .stroke();
-
-      doc
-        .fontSize(14)
-        .font("Helvetica-Bold")
-        .text("TOTAL AMOUNT", 300, subtotalOverTop + 10)
-        .text(`${currency} ${sale.totalAmount.toLocaleString('en-PK')}`, 450, subtotalOverTop + 10, { width: 100, align: "right" });
-
-      doc.moveDown(4);
-
-      // ======================
-      // QR / BARCODE SECTION
-      // ======================
+      // ==========================
+      // 📱 QR CODE
+      // ==========================
       try {
-        const qrData = await QRCode.toDataURL(`Invoice:${invoiceId}|Total:${sale.totalAmount}|Date:${date}`);
-        doc.image(qrData, 50, subtotalOverTop + 50, { width: 80 });
-        doc.fontSize(8).fillColor("#aaaaaa").text("Scan to verify invoice authenticity", 50, subtotalOverTop + 135);
-      } catch (err) {
-        console.error("QR Generation failed:", err);
+        const qrContent = `Shop: ${shopName}\nID: #${sale._id.toString().slice(-8).toUpperCase()}\nTotal: ${currency} ${sale.totalAmount}`;
+        const qrData = await QRCode.toDataURL(qrContent, { margin: 1 });
+        // Center the QR code
+        const qrSize = 80;
+        const qrX = (226 - qrSize) / 2;
+        doc.image(qrData, qrX, doc.y, { width: qrSize });
+        doc.moveDown(0.5); 
+      } catch (qrErr) {
+        console.error("QR Generation failed:", qrErr);
       }
 
-      // ======================
-      // SIGNATURE SECTION
-      // ======================
-      doc
-        .fillColor("#444444")
-        .fontSize(10)
-        .font("Helvetica")
-        .text("------------------------------------", 350, subtotalOverTop + 100)
-        .font("Helvetica-Bold")
-        .text("Authorized Signature", 350, subtotalOverTop + 115)
-        .text(`${shopName}`, 350, subtotalOverTop + 130);
-
-      // Footer
-      doc
-        .fontSize(8)
-        .fillColor("#aaaaaa")
-        .text("Thank you for your business! This is a computer generated invoice.", 50, 780, { align: "center", width: 500 });
+      // ==========================
+      // 📝 FOOTER TEXT
+      // ==========================
+      doc.moveDown(4.5);
+      doc.font(bold).fontSize(10).fillColor("#222222").text("THANK YOU FOR YOUR BUSINESS!", { align: "center" });
+      doc.font(normal).fontSize(7).fillColor("#999999").text(`POWERED BY ${shopName.toUpperCase()}`, { align: "center" });
 
       doc.end();
-      
       stream.on('finish', () => resolve(filePath));
       stream.on('error', (err) => reject(err));
 

@@ -1,4 +1,5 @@
 import Item from '../models/Item.js';
+import { logSystemUpdate } from '../utils/updateHelper.js';
 
 // @desc    Get all items
 const getItems = async (req, res) => {
@@ -27,6 +28,28 @@ const createItem = async (req, res) => {
     // Inject shopId automatically
     const newItemData = { ...req.body, shopId: req.user.shopId };
     const newItem = await Item.create(newItemData);
+    
+    // Log system update for new product
+    await logSystemUpdate(
+      "New Features", 
+      "zap", 
+      `New Product deployed: ${newItem.name} (${newItem.category})`
+    );
+
+    // Check if this is a new category for the shop (optional but requested)
+    const categoryCount = await Item.countDocuments({ 
+      shopId: req.user.shopId, 
+      category: newItem.category 
+    });
+    
+    if (categoryCount === 1) {
+      await logSystemUpdate(
+        "UI Improvements", 
+        "sparkles", 
+        `New Category established: ${newItem.category}`
+      );
+    }
+
     res.status(201).json(newItem);
   } catch (error) {
     res.status(400).json({ message: error.message });

@@ -1,5 +1,6 @@
 import express from "express";
 import User from "../models/User.js";
+import { logSystemUpdate } from "../utils/updateHelper.js";
 
 const router = express.Router();
 
@@ -36,6 +37,14 @@ router.post("/", authenticate, requireShopAdmin, validate(memberSchema), async (
 
     const user = new User({ username, password, fullName, role, status, shopId, preferredShift });
     await user.save();
+
+    // Log system update for new team member
+    await logSystemUpdate(
+      "Security & Logic", 
+      "shield", 
+      `New Terminal access granted: ${user.fullName} (@${user.username})`
+    );
+
     res.status(201).json({ 
       message: "User created successfully", 
       user: { id: user._id, username: user.username, role: user.role } 

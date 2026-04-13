@@ -120,7 +120,7 @@ export default function App() {
     }, "Authorize Deletion", "Owner permission required to delete inventory items.");
   };
 
-  const checkoutCart = async () => {
+  const checkoutCart = async (customerName) => {
     try {
       const totalAmount = cart.reduce((sum, item) => sum + item.subtotal, 0);
       const totalProfit = cart.reduce((sum, item) => sum + ((item.price - (item.costPrice || 0)) * item.quantity), 0);
@@ -138,7 +138,8 @@ export default function App() {
         totalAmount,
         totalProfit,
         cashierId: user.id,
-        cashierName: user.fullName
+        cashierName: user.fullName,
+        customerName: customerName?.trim() || "Walk-in Customer"
       };
 
       const newSale = await createSale(saleData);

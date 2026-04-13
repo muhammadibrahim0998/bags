@@ -50,7 +50,7 @@ const itemSchema = new mongoose.Schema({
   },
   lastUpdated: { 
     type: String, 
-    required: true 
+    default: () => new Date().toISOString().split('T')[0]
   }
 }, { timestamps: true });
 

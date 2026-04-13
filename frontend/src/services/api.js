@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5001';
+const API_BASE = import.meta.env.VITE_API_URL;
 
 const api = axios.create({
   baseURL: `${API_BASE}/api`,
@@ -141,6 +141,11 @@ export const deleteUser = async (id, role) => {
   const response = await api.delete(`/users/${id}`, {
     headers: { 'x-user-role': role }
   });
+  return response.data;
+};
+
+export const getSystemUpdates = async () => {
+  const response = await api.get('/updates');
   return response.data;
 };
 

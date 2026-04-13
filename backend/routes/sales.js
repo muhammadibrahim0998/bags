@@ -25,7 +25,7 @@ const verifyOwnerPassword = async (req, res, next) => {
     // Bypass if user is super admin or shop admin from token
     if (['super_admin', 'shop_admin'].includes(req.user.role)) return next();
 
-    let settings = await Settings.findOne();
+    let settings = await Settings.findOne({ shopId: req.user.shopId });
     if (!settings) {
       settings = new Settings();
       await settings.save();
@@ -53,11 +53,11 @@ router.get('/', authenticate, preventSuperAdmin, async (req, res) => {
 
 // Create a new sale
 router.post('/', authenticate, preventSuperAdmin, async (req, res) => {
-  const { items, totalAmount, totalProfit, cashierName } = req.body;
+  const { items, totalAmount, totalProfit, cashierName, customerName } = req.body;
   
   try {
     // 1. Fetch current settings for the invoice
-    let settings = await Settings.findOne();
+    let settings = await Settings.findOne({ shopId: req.user.shopId });
     if (!settings) {
       settings = new Settings();
       await settings.save();
@@ -69,7 +69,8 @@ router.post('/', authenticate, preventSuperAdmin, async (req, res) => {
       items,
       totalAmount,
       totalProfit,
-      cashierName: cashierName || "System Admin"
+      cashierName: cashierName || "System Admin",
+      customerName: customerName || "Walk-in Customer"
     });
     
     // 3. Update stock for each item
@@ -82,6 +83,7 @@ router.post('/', authenticate, preventSuperAdmin, async (req, res) => {
         throw new Error(`Insufficient stock for ${item.name}`);
       }
       product.stock -= item.quantity;
+      product.lastUpdated = new Date().toISOString().split('T')[0];
       await product.save();
     }
     
@@ -131,7 +133,8 @@ router.put('/:id/return', authenticate, preventSuperAdmin, verifyOwnerPassword, 
     // 1. Reverse stock for each item
     for (const item of sale.items) {
       await Item.findByIdAndUpdate(item.productId, {
-        $inc: { stock: item.quantity }
+        $inc: { stock: item.quantity },
+        lastUpdated: new Date().toISOString().split('T')[0]
       });
     }
 
@@ -179,6 +182,7 @@ router.put('/:id', authenticate, preventSuperAdmin, verifyOwnerPassword, async (
               throw new Error(`Insufficient stock for ${newItem.name}`);
             }
             product.stock -= qtyDifference;
+            product.lastUpdated = new Date().toISOString().split('T')[0];
             await product.save();
           }
         }
@@ -221,11 +225,24 @@ router.delete('/:id', authenticate, preventSuperAdmin, verifyOwnerPassword, asyn
     // Reverse stock
     for (const item of sale.items) {
       await Item.findByIdAndUpdate(item.productId, {
-        $inc: { stock: item.quantity }
+        $inc: { stock: item.quantity },
+        lastUpdated: new Date().toISOString().split('T')[0]
       });
     }
 
     await Sale.findByIdAndDelete(req.params.id);
+
+    // Delete associated Invoice PDF if it exists
+    const fileName = `invoice-${req.params.id}.pdf`;
+    const filePath = path.join(__dirname, '..', 'invoices', fileName);
+    if (fs.existsSync(filePath)) {
+      try {
+        fs.unlinkSync(filePath);
+        console.log(`Deleted invoice file: ${fileName}`);
+      } catch (fileErr) {
+        console.error(`Failed to delete invoice file: ${fileErr.message}`);
+      }
+    }
 
     // Update active CashSession
     const activeSession = await CashSession.findOne({ status: 'open' });

@@ -84,7 +84,7 @@ export function ReceiptModal({ isOpen, onClose, sale }) {
             </div>
             <h2 className="text-xl font-black text-[var(--color-text-primary)] tracking-tight uppercase italic truncate max-w-[200px]">{settings.shopName}</h2>
           </div>
-          <button onClick={onClose} className="p-2.5 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-base)] rounded-xl border border-[var(--color-border-subtle)] transition-colors">
+          <button onClick={onClose} className="p-2.5 text-[var(--color-danger)] hover:bg-rose-50 rounded-xl border border-[var(--color-danger)]/20 transition-colors">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -114,6 +114,12 @@ export function ReceiptModal({ isOpen, onClose, sale }) {
                 <span className="font-black text-[11px] uppercase">{sale.cashierName || "System Admin"}</span>
               </div>
               <div className="flex justify-between items-center h-6">
+                <span className="text-[var(--color-text-muted)] text-[10px] uppercase font-black tracking-[0.2em]">Customer:</span>
+                <span className="font-black text-[11px] uppercase truncate ml-4 text-right">
+                  {sale.customerName || "Walk-in Customer"}
+                </span>
+              </div>
+              <div className="flex justify-between items-center h-6">
                 <span className="text-[var(--color-text-muted)] text-[10px] uppercase font-black tracking-[0.2em]">ID:</span>
                 <span className="font-black text-[11px] text-[var(--color-primary)]">#{sale._id?.slice(-8).toUpperCase() || 'N/A'}</span>
               </div>
@@ -137,8 +143,8 @@ export function ReceiptModal({ isOpen, onClose, sale }) {
                   <tr key={idx} className="border-b border-dotted border-[var(--color-border-subtle)]">
                     <td className="py-3 text-[11px] font-black text-[var(--color-text-primary)] max-w-[120px] truncate uppercase tracking-tight">{item.name}</td>
                     <td className="py-3 text-center text-[11px] font-black text-[var(--color-text-primary)]">{item.quantity}</td>
-                    <td className="py-3 text-right text-[11px] text-[var(--color-text-secondary)]">{currency}{item.price?.toLocaleString('en-PK')}</td>
-                    <td className="py-3 text-right text-[12px] font-black text-[var(--color-primary)]">{currency}{item.subtotal?.toLocaleString('en-PK')}</td>
+                    <td className="py-3 text-right text-[11px] text-[var(--color-text-secondary)]">{currency} {item.price?.toLocaleString('en-PK')}</td>
+                    <td className="py-3 text-right text-[12px] font-black text-[var(--color-primary)]">{currency} {item.subtotal?.toLocaleString('en-PK')}</td>
                   </tr>
                 ))}
               </tbody>
@@ -162,10 +168,11 @@ export function ReceiptModal({ isOpen, onClose, sale }) {
                   src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(
                     `--- ${settings.shopName} ---\n` +
                     `Invoice: #${sale._id?.slice(-8).toUpperCase()}\n` +
+                    `Customer: ${sale.customerName || 'Walk-in Customer'}\n` +
                     `Date: ${new Date(sale.saleDate).toLocaleString('en-PK')}\n\n` +
                     `ITEMS:\n` +
-                    sale.items.map(i => `${i.name}\n${i.quantity} x ${currency}${i.price} = ${currency}${i.subtotal}`).join('\n') +
-                    `\n\nTOTAL: ${currency}${sale.totalAmount?.toLocaleString('en-PK')}\n` +
+                    sale.items.map(i => `${i.name}\n${i.quantity} x ${currency} ${i.price} = ${currency} ${i.subtotal}`).join('\n') +
+                    `\n\nTOTAL: ${currency} ${sale.totalAmount?.toLocaleString('en-PK')}\n` +
                     (sale.invoiceUrl ? `\nVIEW ONLINE:\n${import.meta.env.VITE_API_URL || 'http://localhost:5001'}${sale.invoiceUrl}` : '') +
                     `\n\nThank you for shopping!`
                   )}`}

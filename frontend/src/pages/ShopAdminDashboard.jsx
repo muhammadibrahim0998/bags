@@ -10,6 +10,7 @@ import { ShiftHistory } from '../components/ShiftHistory';
 import { useUser } from '../contexts/UserContext';
 import { Users, LayoutDashboard, Plus, History } from 'lucide-react';
 import { IntelligenceFeed } from '../components/IntelligenceFeed';
+import { UpdateBanner } from '../components/UpdateBanner';
 
 export function ShopAdminDashboard({
   onAddProduct, onEditProduct, onDeleteProduct, onViewProduct, onExport,
@@ -37,6 +38,9 @@ export function ShopAdminDashboard({
 
   return (
     <div className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-in fade-in duration-700 bg-[var(--color-background)] min-h-screen text-[var(--color-text-primary)]">
+
+      {/* Premium Update Banner */}
+      <UpdateBanner />
 
       {/* Main Overview Section - Upgraded with @container and Premium Tokens */}
       <div className="@container mb-10 flex flex-col @md:flex-row @md:items-center justify-between gap-6">

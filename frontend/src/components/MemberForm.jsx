@@ -16,7 +16,7 @@ import {
     X
 } from 'lucide-react';
 
-export function MemberForm({ onSubmit, initialData, onCancel, isSubmitting }) {
+export function MemberForm({ onSubmit, initialData, onCancel, isSubmitting, isViewMode }) {
     const {
         register,
         handleSubmit,
@@ -86,7 +86,8 @@ export function MemberForm({ onSubmit, initialData, onCancel, isSubmitting }) {
                     >
                         <input
                             {...register('fullName')}
-                            className="w-full bg-[var(--color-surface-base)]/50 border border-[var(--color-border-subtle)] focus:border-[var(--color-primary)]/50 rounded-2xl py-4.5 px-12 text-sm font-bold text-[var(--color-text-primary)] outline-none transition-all placeholder:text-slate-700 backdrop-blur-md"
+                            disabled={isViewMode}
+                            className="w-full bg-[var(--color-surface-base)]/50 border border-[var(--color-border-subtle)] focus:border-[var(--color-primary)]/50 rounded-2xl py-4.5 px-12 text-sm font-bold text-[var(--color-text-primary)] outline-none transition-all placeholder:text-slate-700 backdrop-blur-md disabled:opacity-50"
                             placeholder="Ex: Alexander Pierce"
                         />
                     </InputWrapper>
@@ -99,7 +100,8 @@ export function MemberForm({ onSubmit, initialData, onCancel, isSubmitting }) {
                     >
                         <input
                             {...register('username')}
-                            className="w-full bg-[var(--color-surface-base)]/50 border border-[var(--color-border-subtle)] focus:border-[var(--color-primary)]/50 rounded-2xl py-4.5 px-12 text-sm font-bold text-[var(--color-text-primary)] outline-none transition-all placeholder:text-slate-700 backdrop-blur-md"
+                            disabled={isViewMode}
+                            className="w-full bg-[var(--color-surface-base)]/50 border border-[var(--color-border-subtle)] focus:border-[var(--color-primary)]/50 rounded-2xl py-4.5 px-12 text-sm font-bold text-[var(--color-text-primary)] outline-none transition-all placeholder:text-slate-700 backdrop-blur-md disabled:opacity-50"
                             placeholder="alex_nexus"
                         />
                     </InputWrapper>
@@ -113,7 +115,8 @@ export function MemberForm({ onSubmit, initialData, onCancel, isSubmitting }) {
                         <input
                             type="password"
                             {...register('password')}
-                            className="w-full bg-[var(--color-surface-base)]/50 border border-[var(--color-border-subtle)] focus:border-[var(--color-primary)]/50 rounded-2xl py-4.5 px-12 text-sm font-bold text-[var(--color-text-primary)] outline-none transition-all placeholder:text-slate-700 backdrop-blur-md"
+                            disabled={isViewMode}
+                            className="w-full bg-[var(--color-surface-base)]/50 border border-[var(--color-border-subtle)] focus:border-[var(--color-primary)]/50 rounded-2xl py-4.5 px-12 text-sm font-bold text-[var(--color-text-primary)] outline-none transition-all placeholder:text-slate-700 backdrop-blur-md disabled:opacity-50"
                             placeholder="••••••••"
                         />
                     </InputWrapper>
@@ -126,7 +129,8 @@ export function MemberForm({ onSubmit, initialData, onCancel, isSubmitting }) {
                     >
                         <input
                             {...register('phoneNumber')}
-                            className="w-full bg-[var(--color-surface-base)]/50 border border-[var(--color-border-subtle)] focus:border-[var(--color-primary)]/50 rounded-2xl py-4.5 px-12 text-sm font-bold text-[var(--color-text-primary)] outline-none transition-all placeholder:text-slate-700 backdrop-blur-md"
+                            disabled={isViewMode}
+                            className="w-full bg-[var(--color-surface-base)]/50 border border-[var(--color-border-subtle)] focus:border-[var(--color-primary)]/50 rounded-2xl py-4.5 px-12 text-sm font-bold text-[var(--color-text-primary)] outline-none transition-all placeholder:text-slate-700 backdrop-blur-md disabled:opacity-50"
                             placeholder="+92 3XX XXXXXXX"
                         />
                     </InputWrapper>
@@ -139,7 +143,8 @@ export function MemberForm({ onSubmit, initialData, onCancel, isSubmitting }) {
                     >
                         <select
                             {...register('role')}
-                            className="w-full bg-[var(--color-surface-base)]/50 border border-[var(--color-border-subtle)] focus:border-[var(--color-primary)]/50 rounded-2xl py-4.5 px-12 text-sm font-bold text-[var(--color-text-primary)] outline-none transition-all cursor-pointer backdrop-blur-md appearance-none"
+                            disabled={isViewMode}
+                            className="w-full bg-[var(--color-surface-base)]/50 border border-[var(--color-border-subtle)] focus:border-[var(--color-primary)]/50 rounded-2xl py-4.5 px-12 text-sm font-bold text-[var(--color-text-primary)] outline-none transition-all cursor-pointer backdrop-blur-md appearance-none disabled:opacity-50"
                         >
                             <option value="cashier" className="bg-slate-900 text-white font-bold">Cashier Station</option>
                             <option value="salesman" className="bg-slate-900 text-white font-bold">Sales Agent</option>
@@ -160,9 +165,10 @@ export function MemberForm({ onSubmit, initialData, onCancel, isSubmitting }) {
                                         type="radio"
                                         value={shift}
                                         {...register('preferredShift')}
+                                        disabled={isViewMode}
                                         className="sr-only peer"
                                     />
-                                    <div className="flex flex-col items-center justify-center py-3 rounded-xl transition-all peer-checked:bg-[var(--color-primary)] peer-checked:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-base)]/50 text-[var(--color-text-muted)] group">
+                                    <div className={`flex flex-col items-center justify-center py-3 rounded-xl transition-all peer-checked:bg-[var(--color-primary)] peer-checked:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-base)]/50 text-[var(--color-text-muted)] group ${isViewMode ? 'opacity-50 cursor-not-allowed' : ''}`}>
                                         {shift === 'day' && <Sun className="w-4 h-4 mb-1 group-hover:scale-110 transition-transform" />}
                                         {shift === 'night' && <Moon className="w-4 h-4 mb-1 group-hover:scale-110 transition-transform" />}
                                         {shift === 'both' && <RefreshCw className="w-4 h-4 mb-1 group-hover:scale-110 transition-transform" />}
@@ -183,18 +189,20 @@ export function MemberForm({ onSubmit, initialData, onCancel, isSubmitting }) {
                     >
                         Abort Protocol
                     </button>
-                    <button
-                        type="submit"
-                        disabled={isSubmitting}
-                        className="px-12 py-5 bg-gradient-to-r from-[var(--color-primary)] to-rose-500 text-[var(--color-text-primary)] rounded-full font-black text-[11px] uppercase tracking-[0.3em] shadow-2xl shadow-[var(--color-primary)]/20 hover:scale-[1.05] active:scale-95 transition-all flex items-center gap-4 disabled:opacity-50 disabled:scale-100"
-                    >
-                        {isSubmitting ? (
-                            <RefreshCw className="w-5 h-5 animate-spin" />
-                        ) : (
-                            <Save className="w-5 h-5" />
-                        )}
-                        Execute Entry
-                    </button>
+                    {!isViewMode && (
+                        <button
+                            type="submit"
+                            disabled={isSubmitting}
+                            className="px-12 py-5 bg-gradient-to-r from-[var(--color-primary)] to-rose-500 text-[var(--color-text-primary)] rounded-full font-black text-[11px] uppercase tracking-[0.3em] shadow-2xl shadow-[var(--color-primary)]/20 hover:scale-[1.05] active:scale-95 transition-all flex items-center gap-4 disabled:opacity-50 disabled:scale-100"
+                        >
+                            {isSubmitting ? (
+                                <RefreshCw className="w-5 h-5 animate-spin" />
+                            ) : (
+                                <Save className="w-5 h-5" />
+                            )}
+                            Execute Entry
+                        </button>
+                    )}
                 </div>
             </form>
 
