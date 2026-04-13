@@ -1,0 +1,12 @@
+{
+  "name": "nexflow-inventory-root",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "install-backend": "cd backend && npm install",
+    "start": "cd backend && node server.js"
+  }
+}
