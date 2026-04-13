@@ -6,6 +6,16 @@ import dotenv from 'dotenv';
 import connectDB from './config/db.js';
 import cookieParser from 'cookie-parser';
 
+// Import Routes
+import itemsRoutes from './routes/items.js';
+import uploadRoutes from './routes/upload.js';
+import salesRoutes from './routes/sales.js';
+import cashSessionsRoutes from './routes/cashSessions.js';
+import usersRoutes from './routes/users.js';
+import authRoutes from './routes/auth.js';
+import settingsRoutes from './routes/settings.js';
+import shopsRoutes from './routes/shops.js';
+import updatesRoutes from './routes/updates.js';
 
 dotenv.config();
 
@@ -18,29 +28,29 @@ connectDB();
 
 const app = express();
 
-// Trust proxy for Railway (needed for secure cookies behind reverse proxy)
+// Trust proxy for Railway (crucial for secure cookies behind reverse proxies)
 app.set('trust proxy', 1);
 
 // Middleware
 const allowedOrigins = [
   'https://nexflow-inventory.vercel.app',
-  'http://localhost:5173',
-  'http://localhost:5174',
-  'http://localhost:3000'
+  'http://localhost:5173'
 ];
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
+    // Allow requests with no origin (like mobile apps, Postman, or server-to-server)
     if (!origin) return callback(null, true);
+    
     if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV !== 'production') {
       callback(null, true);
     } else {
+      console.error(`[CORS Blocked]: Request from origin ${origin} rejected.`);
       callback(new Error('Not allowed by CORS'));
     }
   },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  credentials: true, // Allows frontend to send cookies/headers
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'x-owner-password', 'x-user-role'],
   exposedHeaders: ['x-owner-password', 'x-user-role']
 }));
@@ -48,29 +58,18 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
-// Request logger
+// Request logger for debugging Railway traffic
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.url} - Origin: ${req.get('origin')}`);
   next();
 });
-
 
 // Static Folders
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/invoices', express.static(path.join(__dirname, 'invoices')));
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
-import itemsRoutes from './routes/items.js';
-import uploadRoutes from './routes/upload.js';
-import salesRoutes from './routes/sales.js';
-import cashSessionsRoutes from './routes/cashSessions.js';
-import usersRoutes from './routes/users.js';
-import authRoutes from './routes/auth.js';
-import settingsRoutes from './routes/settings.js';
-import shopsRoutes from './routes/shops.js';
-import updatesRoutes from './routes/updates.js';
-
-// Routes
+// API Routes
 app.use('/api/items', itemsRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/sales', salesRoutes);
@@ -81,11 +80,26 @@ app.use('/api/settings', settingsRoutes);
 app.use('/api/shops', shopsRoutes);
 app.use('/api/updates', updatesRoutes);
 
-// Error Handling Middleware
+// Root route
+app.get('/', (req, res) => {
+  res.send('Nexflow Inventory API is running...');
+});
+
+// Custom 404 Handler (This catches any route not defined above)
+app.use((req, res) => {
+  console.log(`[404] Route Not Found: ${req.method} ${req.url}`);
+  res.status(404).json({
+    success: false,
+    message: `Route not found on Nexflow API: ${req.method} ${req.url}`
+  });
+});
+
+// Global Error Handling Middleware
 app.use((err, req, res, next) => {
   console.error('SERVER ERROR:', err);
   const statusCode = err.statusCode || 500;
-  const message = err.message || 'Server Error';
+  const message = err.message || 'Internal Server Error';
+  
   res.status(statusCode).json({
     success: false,
     message,
@@ -94,22 +108,8 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Root route
-app.get('/', (req, res) => {
-  res.send('Inventory API is running...');
-});
-
-// Custom 404 Handler
-app.use((req, res) => {
-  console.log(`[404] NOT FOUND: ${req.method} ${req.url}`);
-  res.status(404).json({
-    success: false,
-    message: `Route not found on Nexflow API: ${req.method} ${req.url}`
-  });
-});
-
-const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
 });
