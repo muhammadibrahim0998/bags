@@ -48,8 +48,8 @@ router.post("/login", validateLogin, async (req, res) => {
     // Set persistence cookie (HTTP-only)
     res.cookie('nexflow_sess', user._id.toString(), {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      secure: true, // Must be true for sameSite: 'none'
+      sameSite: 'none', // Needed for cross-site between Vercel and Railway
       path: '/',
       maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
     });

@@ -48,6 +48,12 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
+// Request logger
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url} - Origin: ${req.get('origin')}`);
+  next();
+});
+
 
 // Static Folders
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -91,6 +97,15 @@ app.use((err, req, res, next) => {
 // Root route
 app.get('/', (req, res) => {
   res.send('Inventory API is running...');
+});
+
+// Custom 404 Handler
+app.use((req, res) => {
+  console.log(`[404] NOT FOUND: ${req.method} ${req.url}`);
+  res.status(404).json({
+    success: false,
+    message: `Route not found on Nexflow API: ${req.method} ${req.url}`
+  });
 });
 
 const PORT = process.env.PORT || 5000
