@@ -6,7 +6,8 @@
     "node": ">=18.0.0"
   },
   "scripts": {
-    "install-backend": "cd backend && npm install",
-    "start": "cd backend && node server.js"
+    "postinstall": "cd backend && npm install",
+    "start": "cd backend && node server.js",
+    "build": "echo 'No build needed for backend'"
   }
 }
