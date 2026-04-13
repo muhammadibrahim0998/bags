@@ -1,5 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import api from '../services/api';
+import { login as apiLogin, logout as apiLogout, getMe } from '../services/api';
 
 const UserContext = createContext();
 
@@ -10,8 +9,8 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        const response = await api.get('/auth/me');
-        setUser(response.data);
+        const data = await getMe();
+        setUser(data.user);
       } catch (error) {
         setUser(null);
       } finally {
@@ -23,10 +22,9 @@ export const UserProvider = ({ children }) => {
 
   const login = async (username, password) => {
     try {
-      const response = await api.post('/auth/login', { username, password });
-      const userData = response.data;
-      setUser(userData);
-      return userData;
+      const data = await apiLogin({ username, password });
+      setUser(data.user);
+      return data.user;
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Login failed');
     }
@@ -34,12 +32,12 @@ export const UserProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      await api.post('/auth/logout');
+      await apiLogout();
     } catch (error) {
       console.error("Logout failed:", error);
     } finally {
       setUser(null);
-      localStorage.removeItem('nexflow_shift'); // Still cleaning up shift if needed
+      localStorage.removeItem('nexflow_shift');
     }
   };
 

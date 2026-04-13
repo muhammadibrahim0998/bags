@@ -101,6 +101,36 @@ export const createSale = async (saleData) => {
   return response.data;
 };
 
+export const updateSale = async (id, saleData, password, role) => {
+  const response = await api.put(`/sales/${id}`, saleData, {
+    headers: { 
+      'x-owner-password': password,
+      'x-user-role': role
+    }
+  });
+  return response.data;
+};
+
+export const deleteSale = async (id, password, role) => {
+  const response = await api.delete(`/sales/${id}`, {
+    headers: { 
+      'x-owner-password': password,
+      'x-user-role': role
+    }
+  });
+  return response.data;
+};
+
+export const returnSale = async (id, returnData, password, role) => {
+  const response = await api.put(`/sales/${id}/return`, returnData, {
+    headers: { 
+      'x-owner-password': password,
+      'x-user-role': role
+    }
+  });
+  return response.data;
+};
+
 // --- USER MANAGEMENT API ---
 export const getUsers = async (role) => {
   const response = await api.get('/users', {
@@ -111,6 +141,20 @@ export const getUsers = async (role) => {
 
 export const createUser = async (userData, role) => {
   const response = await api.post('/users', userData, {
+    headers: { 'x-user-role': role }
+  });
+  return response.data;
+};
+
+export const updateUser = async (id, userData, role) => {
+  const response = await api.put(`/users/${id}`, userData, {
+    headers: { 'x-user-role': role }
+  });
+  return response.data;
+};
+
+export const deleteUser = async (id, role) => {
+  const response = await api.delete(`/users/${id}`, {
     headers: { 'x-user-role': role }
   });
   return response.data;
