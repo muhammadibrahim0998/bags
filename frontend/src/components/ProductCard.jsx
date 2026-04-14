@@ -21,14 +21,14 @@ export function ProductCard({ product }) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 15 }}
+      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -4 }}
-      transition={{ duration: 0.4, ease: [0.2, 0.8, 0.2, 1] }}
+      whileHover={{ y: -6, scale: 1.02 }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
       onClick={() => navigate(`/product/${product._id}`)}
       className="group w-full max-w-[280px] mx-auto cursor-pointer"
     >
-      <div className="rich-card bg-white border border-zinc-100 rounded-xl overflow-hidden flex flex-col h-auto p-3 shadow-rich hover:shadow-float transition-all duration-300">
+      <div className="rich-card bg-white border-t-4 border-l-4 border-zinc-100 border-b-[10px] border-r-[8px] border-zinc-300 rounded-2xl overflow-hidden flex flex-col h-auto p-3 shadow-[0_0_60px_rgba(59,130,246,0.5)] group-hover:shadow-[0_0_80px_rgba(59,130,246,0.8)] group-hover:border-blue-300 transition-all duration-300">
 
         {/* Compact Image: 4:3 Aspect Ratio */}
         <div className="relative aspect-[4/3] w-full bg-zinc-50 rounded-lg overflow-hidden flex items-center justify-center mb-3">
@@ -96,9 +96,9 @@ export function ProductCard({ product }) {
               if (product.stock > 0) addToCart(product);
             }}
             disabled={product.stock === 0}
-            className={`w-full py-2.5 rounded-lg font-bold text-[10px] uppercase tracking-[0.15em] transition-all flex items-center justify-center gap-2
+            className={`w-full py-2.5 rounded-lg font-bold text-[11px] uppercase tracking-[0.1em] transition-all duration-300 flex items-center justify-center gap-2
               ${product.stock > 0
-                ? 'bg-blue-600 text-white hover:bg-blue-700 active:scale-95 shadow-lg shadow-blue-600/10'
+                ? 'bg-[#2D5A27] hover:bg-[#1B3817] text-white border-t border-white/20 border-b-4 border-[#12290D] shadow-[0_4px_10px_rgba(0,0,0,0.2)] hover:shadow-[0_8px_15px_rgba(0,0,0,0.3)] active:translate-y-[2px] active:border-b-0'
                 : 'bg-zinc-100 text-zinc-400 cursor-not-allowed border border-zinc-200'}`}
           >
             {product.stock > 0 ? (
