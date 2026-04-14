@@ -1,11 +1,15 @@
 import axios from 'axios';
 
-// Ensure this environment variable in Vercel is: https://cbu5b9pz.up.railway.app
-const API_BASE = import.meta.env.VITE_API_URL;
+// In development, use whatever is in .env (e.g. http://localhost:5000)
+// In production (Vercel), use a relative URL '' to force traffic through the Vercel vercel.json rewrites.
+// This prevents cross-origin 3rd-party cookie blocking.
+const API_BASE = import.meta.env.DEV 
+  ? (import.meta.env.VITE_API_URL || 'http://localhost:5000') 
+  : '';
 
 const api = axios.create({
   baseURL: `${API_BASE}/api`,
-  withCredentials: true, // Required for cross-site cookies (Vercel to Railway)
+  withCredentials: true, // Required for cookies
 });
 
 // Request interceptor for debugging
