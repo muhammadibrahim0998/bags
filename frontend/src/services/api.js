@@ -20,8 +20,14 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use((response) => {
   return response;
 }, (error) => {
-  const message = error.response?.data?.message || error.message;
-  console.error(`[API Error ${error.response?.status}]:`, message);
+  const url = error.config?.url || '';
+  const status = error.response?.status;
+  // Suppress expected 401 on session check — not a real error
+  const isSilent = status === 401 && url.includes('/auth/me');
+  if (!isSilent) {
+    const message = error.response?.data?.message || error.message;
+    console.error(`[API Error ${status}]:`, message);
+  }
   return Promise.reject(error);
 });
 
