@@ -71,17 +71,16 @@ export function Sidebar({ isMobileOpen, onCloseMobile, isCollapsed, onToggleSide
           handleLinkClick();
           if (onClick) onClick(e);
         }}
-        className={`flex items-center group px-3 py-3 mx-4 rounded-2xl text-[13px] font-bold transition-all duration-500 ease-out ${active
-          ? "btn-primary hover:scale-[1.02] shadow-sm transform transition-all duration-300"
-          : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-base)] border border-transparent hover:border-[var(--color-border-subtle)]"
-          } ${isCollapsed ? 'justify-center mx-auto w-12 h-12 px-0' : 'gap-4'}
-        ${!active && !isCollapsed ? 'hover:translate-x-1' : ''}`}
+        className={`flex items-center group px-3 py-3 mx-4 rounded-2xl text-[13px] font-bold transition-all duration-300 ease-out ${active
+          ? "bg-[#1B3817] text-white border-t border-white/20 border-b-4 border-[#12290D] shadow-[0_8px_15px_rgba(0,0,0,0.3)] active:translate-y-[2px] active:border-b-0"
+          : "text-white/60 hover:text-white hover:bg-[#1B3817] border-t border-transparent hover:border-white/20 border-b-4 border-transparent hover:border-[#12290D] hover:shadow-[0_8px_15px_rgba(0,0,0,0.3)] hover:scale-105 active:translate-y-[2px] active:border-b-0"
+          } ${isCollapsed ? 'justify-center mx-auto w-12 h-12 px-0' : 'gap-4'}`}
         title={isCollapsed ? label : undefined}
       >
         <div className="relative flex items-center justify-center">
-          <Icon className={`w-5 h-5 transition-all duration-500 ${active ? "text-[var(--color-surface-card)]" : "group-hover:scale-110"}`} />
+          <Icon className={`w-5 h-5 transition-all duration-300 ${active ? "text-white" : "text-white/60 group-hover:text-white group-hover:scale-110"}`} />
           {alert && (
-            <div className={`absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full border-2 border-[var(--color-surface-card)] ${alert === 'low' ? 'bg-[var(--color-warning)]' : 'bg-[var(--color-danger)]'}`}></div>
+            <div className={`absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full border-2 border-[#111827] ${alert === 'low' ? 'bg-amber-400' : 'bg-red-500'}`}></div>
           )}
         </div>
         <span className={`flex-1 whitespace-nowrap tracking-wide ${isCollapsed ? 'hidden' : ''}`}>{label}</span>
@@ -100,20 +99,20 @@ export function Sidebar({ isMobileOpen, onCloseMobile, isCollapsed, onToggleSide
       )}
 
       <aside
-        className={`fixed md:relative top-16 md:top-0 h-[calc(100vh-64px)] md:h-full flex flex-col bg-[var(--color-surface-card)] text-[var(--color-text-primary)] transition-[transform,width] duration-300 ease-[cubic-bezier(0.4,0,0,2,1)] transform-gpu will-change-transform border-r border-[var(--color-border-subtle)] z-[100] md:z-20 overflow-hidden ${isCollapsed ? 'w-16' : 'w-56'
+        className={`fixed md:relative top-16 md:top-0 h-[calc(100vh-64px)] md:h-full flex flex-col bg-gradient-to-b from-[#2D5A27] via-[#24491F] to-[#1B3817] text-white backdrop-blur-xl transition-[transform,width] duration-300 ease-[cubic-bezier(0.4,0,0,2,1)] transform-gpu will-change-transform border-r border-white/10 z-[100] md:z-20 overflow-hidden shadow-[4px_0_24px_rgba(0,0,0,0.3)] ${isCollapsed ? 'w-16' : 'w-56'
           } ${isMobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}
       >
 
         {/* User Profile */}
-        <div className={`mx-4 mb-6 mt-2 rounded-2xl flex items-center ${isCollapsed ? 'justify-center mx-auto w-12 h-12' : 'px-4 py-3 gap-4'} transition-all duration-300 border border-[var(--color-border-subtle)] bg-[var(--color-surface-base)] shadow-inner`}>
+        <div className={`mx-4 mb-6 mt-2 rounded-2xl flex items-center ${isCollapsed ? 'justify-center mx-auto w-12 h-12' : 'px-4 py-3 gap-4'} transition-all duration-300 border border-white/10 bg-white/5 backdrop-blur-sm shadow-inner`}>
           <div className="relative">
-            <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 border-2 border-[var(--color-surface-base)] rounded-full shadow-sm"></div>
-            <UserCircle2 className="w-8 h-8 text-[var(--color-text-secondary)]" />
+            <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 border-2 border-[#111827] rounded-full shadow-sm"></div>
+            <UserCircle2 className="w-8 h-8 text-green-300" />
           </div>
           {!isCollapsed && (
             <div className="flex flex-col flex-1 overflow-hidden min-w-0">
-              <span className="text-sm font-bold text-[var(--color-text-primary)] truncate">{user?.fullName || "Jhon Doe"}</span>
-              <span className="text-[11px] font-medium text-[var(--color-primary)] max-w-[120px] whitespace-normal uppercase tracking-widest">{user?.role?.replace('_', ' ') || "Staff"}</span>
+              <span className="text-sm font-bold text-white truncate">{user?.fullName || "Jhon Doe"}</span>
+              <span className="text-[11px] font-medium text-green-400 max-w-[120px] whitespace-normal uppercase tracking-widest">{user?.role?.replace('_', ' ') || "Staff"}</span>
             </div>
           )}
         </div>
@@ -145,7 +144,7 @@ export function Sidebar({ isMobileOpen, onCloseMobile, isCollapsed, onToggleSide
           {!isSuperAdmin() && categories.filter(c => c !== "All").length > 0 && (
             <div className="mb-6">
               {!isCollapsed && (
-                <p className="px-8 text-[11px] font-bold text-[var(--color-text-secondary)] mb-4 tracking-wider uppercase">Categories</p>
+                <p className="px-8 text-[11px] font-bold text-white/30 mb-4 tracking-wider uppercase">Categories</p>
               )}
               <div className="space-y-1">
                 {categories.filter(c => c !== "All").map(cat => {
@@ -155,17 +154,16 @@ export function Sidebar({ isMobileOpen, onCloseMobile, isCollapsed, onToggleSide
                       key={cat}
                       to={`/store/category/${cat}`}
                       onClick={handleLinkClick}
-                      className={`flex items-center group px-3 py-2.5 mx-4 rounded-xl text-[13px] font-bold transition-all duration-500 ease-out ${active
-                        ? "btn-primary hover:scale-[1.02] shadow-sm transform transition-all duration-300"
-                        : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-base)] border border-transparent hover:border-[var(--color-border-subtle)]"
-                        } ${isCollapsed ? 'justify-center mx-auto w-10 h-10 px-0' : 'gap-4'}
-                      ${!active && !isCollapsed ? 'hover:translate-x-1' : ''}`}
+                      className={`flex items-center group px-3 py-2.5 mx-4 rounded-xl text-[13px] font-bold transition-all duration-300 ease-out ${active
+                        ? "bg-[#1B3817] text-white border-t border-white/20 border-b-4 border-[#12290D] shadow-[0_8px_15px_rgba(0,0,0,0.3)] active:translate-y-[2px] active:border-b-0"
+                        : "text-white/60 hover:text-white hover:bg-[#1B3817] border-t border-transparent hover:border-white/20 border-b-4 border-transparent hover:border-[#12290D] hover:shadow-[0_8px_15px_rgba(0,0,0,0.3)] hover:scale-105 active:translate-y-[2px] active:border-b-0"
+                        } ${isCollapsed ? 'justify-center mx-auto w-10 h-10 px-0' : 'gap-4'}`}
                       title={isCollapsed ? cat : undefined}
                     >
                       <div className="relative flex items-center justify-center w-5 h-5">
                         {(() => {
                           const CategoryIcon = getCategoryIcon(cat);
-                          return <CategoryIcon className={`w-4 h-4 transition-all duration-300 ${active ? "text-[var(--color-surface-card)]" : "group-hover:scale-110"}`} />;
+                          return <CategoryIcon className={`w-4 h-4 transition-all duration-300 ${active ? "text-white" : "text-white/60 group-hover:text-white group-hover:scale-110"}`} />;
                         })()}
                       </div>
                       {!isCollapsed && <span className="capitalize whitespace-nowrap tracking-wide">{cat}</span>}
@@ -180,7 +178,7 @@ export function Sidebar({ isMobileOpen, onCloseMobile, isCollapsed, onToggleSide
           {!isSuperAdmin() && (
             <div className="mb-6">
               {!isCollapsed && (
-                <p className="px-8 text-[11px] font-bold text-[var(--color-text-secondary)] mb-4 tracking-wider uppercase">Notifications</p>
+                <p className="px-8 text-[11px] font-bold text-white/30 mb-4 tracking-wider uppercase">Notifications</p>
               )}
               <div className="space-y-1">
                 <NavItem to="/store/status/low" icon={AlertTriangle} label="Low Stock" alert="low" />
@@ -190,9 +188,9 @@ export function Sidebar({ isMobileOpen, onCloseMobile, isCollapsed, onToggleSide
           )}
 
           {/* Settings / Footer Area - now part of the scroll flow */}
-          <div className="pb-6 pt-4 border-t border-[var(--color-border-subtle)] mt-4">
+          <div className="pb-6 pt-4 border-t border-white/10 mt-4">
             {!isCollapsed && (
-              <p className="px-8 text-[11px] font-bold text-[var(--color-text-secondary)] mb-4 tracking-wider uppercase">Settings</p>
+              <p className="px-8 text-[11px] font-bold text-white/30 mb-4 tracking-wider uppercase">Settings</p>
             )}
 
             <div className="space-y-1">
