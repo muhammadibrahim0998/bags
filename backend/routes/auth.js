@@ -5,12 +5,33 @@ import { validateLogin } from "../validators/authValidator.js";
 const router = express.Router();
 
 /**
+ * Detect if the request arrived over HTTPS.
+ * Works locally (req.secure = false on plain HTTP)
+ * and on Railway/Vercel where x-forwarded-proto = 'https'.
+ * app.set('trust proxy', 1) is required for req.secure to work behind Railway's proxy.
+ */
+const isHttps = (req) =>
+  req.secure || req.headers['x-forwarded-proto'] === 'https';
+
+/**
+ * Build cookie options based on whether the connection is HTTPS.
+ * - HTTPS (Railway production): secure + sameSite:none  → cross-domain cookies work
+ * - HTTP (localhost dev):       not secure + sameSite:lax → local cookies work
+ */
+const getCookieOptions = (req, extra = {}) => ({
+  httpOnly: true,
+  secure: isHttps(req),
+  sameSite: isHttps(req) ? 'none' : 'lax',
+  path: '/',
+  ...extra,
+});
+
+/**
  * @desc    Get Current User (Verify session via cookie)
  * @route   GET /api/auth/me
  */
 router.get("/me", async (req, res) => {
   try {
-    // nexflow_sess is the name of our HTTP-only cookie
     const userId = req.cookies.nexflow_sess;
 
     if (!userId) {
@@ -23,14 +44,7 @@ router.get("/me", async (req, res) => {
     const user = await User.findById(userId).select("-password");
 
     if (!user || user.status !== 'active') {
-      // Clear invalid cookie if user doesn't exist or is inactive
-      const isProduction = process.env.NODE_ENV === 'production';
-      res.clearCookie('nexflow_sess', {
-        httpOnly: true,
-        secure: isProduction,
-        sameSite: isProduction ? 'none' : 'lax',
-        path: '/'
-      });
+      res.clearCookie('nexflow_sess', getCookieOptions(req));
       return res.status(401).json({ 
         success: false, 
         message: "Session invalid or account inactive" 
@@ -61,7 +75,6 @@ router.post("/login", validateLogin, async (req, res) => {
   try {
     const { username, password } = req.body;
     
-    // Find user and include password for comparison
     const user = await User.findOne({ username });
 
     if (!user || !(await user.comparePassword(password))) {
@@ -78,24 +91,15 @@ router.post("/login", validateLogin, async (req, res) => {
       });
     }
 
-    // Update last login timestamp
     user.lastLogged = new Date();
     await user.save();
 
-    // Cookie Options — environment-aware
-    // Production (Vercel → Railway, cross-domain HTTPS): secure + sameSite:none
-    // Development (localhost → localhost, HTTP): NOT secure + sameSite:lax
-    const isProduction = process.env.NODE_ENV === 'production';
-    const cookieOptions = {
-      httpOnly: true,
-      secure: isProduction,
-      sameSite: isProduction ? 'none' : 'lax',
-      path: '/',
-      maxAge: 30 * 24 * 60 * 60 * 1000 // 30 Days
-    };
+    // 30-day session cookie — flags adapt to HTTP vs HTTPS automatically
+    res.cookie('nexflow_sess', user._id.toString(), getCookieOptions(req, {
+      maxAge: 30 * 24 * 60 * 60 * 1000
+    }));
 
-    // Set persistence cookie
-    res.cookie('nexflow_sess', user._id.toString(), cookieOptions);
+    console.log(`[Login] User: ${username} | HTTPS: ${isHttps(req)} | sameSite: ${isHttps(req) ? 'none' : 'lax'}`);
 
     res.json({
       success: true,
@@ -119,14 +123,7 @@ router.post("/login", validateLogin, async (req, res) => {
  * @route   POST /api/auth/logout
  */
 router.post("/logout", (req, res) => {
-  const isProd = process.env.NODE_ENV === 'production';
-  res.clearCookie('nexflow_sess', {
-    httpOnly: true,
-    secure: isProd,
-    sameSite: isProd ? 'none' : 'lax',
-    path: '/'
-  });
-  
+  res.clearCookie('nexflow_sess', getCookieOptions(req));
   res.json({ success: true, message: "Logged out successfully" });
 });
 
