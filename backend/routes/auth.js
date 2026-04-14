@@ -24,10 +24,11 @@ router.get("/me", async (req, res) => {
 
     if (!user || user.status !== 'active') {
       // Clear invalid cookie if user doesn't exist or is inactive
+      const isProduction = process.env.NODE_ENV === 'production';
       res.clearCookie('nexflow_sess', {
         httpOnly: true,
-        secure: true,
-        sameSite: 'none',
+        secure: isProduction,
+        sameSite: isProduction ? 'none' : 'lax',
         path: '/'
       });
       return res.status(401).json({ 
@@ -81,11 +82,14 @@ router.post("/login", validateLogin, async (req, res) => {
     user.lastLogged = new Date();
     await user.save();
 
-    // Cookie Options for Cross-Domain (Vercel -> Railway)
+    // Cookie Options — environment-aware
+    // Production (Vercel → Railway, cross-domain HTTPS): secure + sameSite:none
+    // Development (localhost → localhost, HTTP): NOT secure + sameSite:lax
+    const isProduction = process.env.NODE_ENV === 'production';
     const cookieOptions = {
-      httpOnly: true,    // Prevents JS from accessing the cookie
-      secure: true,      // Required for sameSite: 'none' (Requires HTTPS)
-      sameSite: 'none',  // Mandatory for cross-origin domains
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax',
       path: '/',
       maxAge: 30 * 24 * 60 * 60 * 1000 // 30 Days
     };
@@ -115,10 +119,11 @@ router.post("/login", validateLogin, async (req, res) => {
  * @route   POST /api/auth/logout
  */
 router.post("/logout", (req, res) => {
+  const isProd = process.env.NODE_ENV === 'production';
   res.clearCookie('nexflow_sess', {
     httpOnly: true,
-    secure: true,
-    sameSite: 'none',
+    secure: isProd,
+    sameSite: isProd ? 'none' : 'lax',
     path: '/'
   });
   
