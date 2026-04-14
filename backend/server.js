@@ -32,28 +32,15 @@ const app = express();
 app.set('trust proxy', 1);
 
 // Middleware
-const allowedOrigins = [
-  process.env.FRONTEND_URL || 'https://nexflow-inventory.vercel.app',
-  'http://localhost:5173'
-];
-
-app.use(cors({
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps, Postman, or server-to-server)
-    if (!origin) return callback(null, true);
-    
-    if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV !== 'production') {
-      callback(null, true);
-    } else {
-      console.error(`[CORS Blocked]: Request from origin ${origin} rejected.`);
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true, // Allows frontend to send cookies/headers
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+const corsOptions = {
+  origin: ['https://nexflow-inventory.vercel.app', 'http://localhost:5173'],
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization', 'x-owner-password', 'x-user-role'],
   exposedHeaders: ['x-owner-password', 'x-user-role']
-}));
+};
+
+app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use(cookieParser());
