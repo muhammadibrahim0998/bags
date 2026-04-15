@@ -115,7 +115,7 @@ export function TeamManagement() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-12">
         <div className="space-y-3">
           <div className="flex items-center gap-4">
-            <div className="w-2.5 h-12 bg-blue-500 rounded-full shadow-[0_0_20px_rgba(37,99,235,0.4)]"></div>
+            <div className="w-2.5 h-12 bg-green-500 rounded-full shadow-[0_0_20px_rgba(37,99,235,0.4)]"></div>
             <h2 className="text-4xl font-black text-[var(--color-text-primary)] tracking-tighter uppercase leading-none">Team Personnel</h2>
           </div>
           <p className="text-[var(--color-text-muted)] font-bold tracking-[0.4em] uppercase text-[10px] pl-6">Access Control & Authorization Layer</p>
@@ -158,7 +158,7 @@ export function TeamManagement() {
 
       {loading ? (
         <div className="py-20 flex flex-col items-center justify-center bg-[var(--color-surface-base)] rounded-xl border border-[var(--color-border-subtle)]">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 shadow-[0_0_15px_rgba(37,99,235,0.3)] mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 shadow-[0_0_15px_rgba(37,99,235,0.3)] mb-4"></div>
           <p className="text-[10px] font-black text-[var(--color-text-muted)] uppercase tracking-widest">Identifying Members...</p>
         </div>
       ) : (
@@ -173,17 +173,17 @@ export function TeamManagement() {
               key={u._id}
               variants={cardVariants}
               whileHover={{ y: -3, boxShadow: "0 15px 30px -10px rgba(0, 0, 0, 0.1)" }}
-              className="group relative bg-[var(--color-surface-base)] p-5 sm:p-8 rounded-xl border border-[var(--color-border-subtle)] hover:border-blue-500/30 transition-all shadow-xl overflow-hidden"
+              className="group relative bg-[var(--color-surface-base)] p-5 sm:p-8 rounded-xl border border-[var(--color-border-subtle)] hover:border-green-500/30 transition-all shadow-xl overflow-hidden"
             >
               <div className="flex items-start justify-between relative z-10">
                 <div className="flex items-center gap-5">
-                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner border border-[var(--color-border-subtle)] transition-transform group-hover:scale-110 ${u.role === 'admin' ? 'bg-blue-500/20 text-[var(--color-primary)]' : 'bg-[var(--color-surface-base)] text-[var(--color-text-muted)]'}`}>
+                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner border border-[var(--color-border-subtle)] transition-transform group-hover:scale-110 ${u.role === 'admin' ? 'bg-green-500/20 text-[var(--color-primary)]' : 'bg-[var(--color-surface-base)] text-[var(--color-text-muted)]'}`}>
                     {u.role === 'admin' ? <Shield className="w-7 h-7" /> : <UserIcon className="w-7 h-7" />}
                   </div>
                   <div className="min-w-0 flex-1">
                     <h4 className="text-lg font-black text-[var(--color-text-primary)] truncate tracking-tighter uppercase leading-tight">{u.fullName}</h4>
                     <p className="text-[10px] font-black text-[var(--color-text-muted)] uppercase tracking-[0.2em] mt-1 flex items-center gap-1.5 whitespace-nowrap overflow-hidden">
-                      <span className="w-1.5 h-1.5 bg-blue-500/40 rounded-full shrink-0"></span>
+                      <span className="w-1.5 h-1.5 bg-green-500/40 rounded-full shrink-0"></span>
                       <span className="truncate">@{u.username}</span>
                       <span className="shrink-0">• {u.preferredShift === 'day' ? '☀️ Day' : u.preferredShift === 'night' ? '🌙 Night' : '🔄 Both'}</span>
                     </p>
@@ -195,15 +195,15 @@ export function TeamManagement() {
                   </div>
                 </div>
                 <div className="flex flex-col items-end gap-3 shrink-0 ml-4">
-                  <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-[0.15em] border whitespace-nowrap ${u.role === 'admin' || u.role === 'shop_admin' || u.role === 'super_admin' ? 'bg-blue-600/10 text-blue-600 border-blue-600/20' : 'bg-[var(--color-surface-base)] text-[var(--color-text-secondary)] border-[var(--color-border-subtle)]'}`}>
+                  <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-[0.15em] border whitespace-nowrap ${u.role === 'admin' || u.role === 'shop_admin' || u.role === 'super_admin' ? 'bg-green-600/10 text-green-600 border-green-600/20' : 'bg-[var(--color-surface-base)] text-[var(--color-text-secondary)] border-[var(--color-border-subtle)]'}`}>
                     {u.role?.replace('_', ' ')}
                   </span>
                   <div className="flex gap-2">
                     <motion.button
-                      whileHover={{ scale: 1.1, backgroundColor: "var(--color-blue-50)" }}
+                      whileHover={{ scale: 1.1, backgroundColor: "var(--color-green-50)" }}
                       whileTap={{ scale: 0.9 }}
                       onClick={() => handleViewClick(u)}
-                      className="p-2.5 bg-white text-blue-600 rounded-xl transition-all border border-blue-100 shadow-sm"
+                      className="p-2.5 bg-white text-green-600 rounded-xl transition-all border border-green-100 shadow-sm"
                       title="View Profile"
                     >
                       <Eye className="w-4 h-4" />

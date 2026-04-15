@@ -9,7 +9,7 @@ export function ShiftHistory() {
     if (loading) {
         return (
             <div className="flex items-center justify-center py-20">
-                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500"></div>
+                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-green-"></div>
             </div>
         );
     }
@@ -70,7 +70,7 @@ export function ShiftHistory() {
                                     </div>
 
                                     <div className="flex items-center gap-4">
-                                        <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shrink-0">
+                                        <div className="w-10 h-10 rounded-xl bg-green-600/10 border border-green-/20 flex items-center justify-center shrink-0">
                                             <User className="w-5 h-5 text-[var(--color-primary)]" />
                                         </div>
                                         <div className="min-w-0">
@@ -84,7 +84,7 @@ export function ShiftHistory() {
                                 <div className="grid grid-cols-2 gap-3 mb-6">
                                     <div className="p-3 bg-[var(--color-surface-base)] border border-[var(--color-border-subtle)] rounded-xl space-y-1">
                                         <p className="text-[7px] font-black text-[var(--color-text-muted)] uppercase tracking-widest flex items-center gap-1.5">
-                                            {session.shiftType === 'night' ? <Moon className="w-2.5 h-2.5 text-blue-400" /> : <Sun className="w-2.5 h-2.5 text-blue-500" />}
+                                            {session.shiftType === 'night' ? <Moon className="w-2.5 h-2.5 text-green-" /> : <Sun className="w-2.5 h-2.5 text-green-" />}
                                             Shift Type
                                         </p>
                                         <p className="text-[10px] font-black text-[var(--color-text-primary)] uppercase tracking-wider">{session.shiftType || 'Day'} Shift</p>

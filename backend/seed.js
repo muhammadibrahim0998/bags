@@ -40,6 +40,15 @@ const seedDB = async () => {
       console.log('✅ Super Admin already exists.');
     }
 
+    const shopData = [
+      {
+        name: 'Main Branch',
+        address: 'Kabul, Afghanistan',
+        contactNumber: '0700000000',
+        ownerName: 'Super Admin'
+      }
+    ];
+
     const createdShops = [];
     for (const data of shopData) {
       const shop = new Shop(data);

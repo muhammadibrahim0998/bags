@@ -16,7 +16,7 @@ export function FilterBar() {
       case 'Low Stock': return 'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.3)]';
       case 'Out of Stock': return 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.3)]';
       case 'In Stock': return 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.3)]';
-      default: return 'bg-blue-600 shadow-[0_0_8px_rgba(37,99,235,0.3)]';
+      default: return 'bg-green-600 shadow-[0_0_8px_rgba(37,99,235,0.3)]';
     }
   };
 
@@ -30,7 +30,7 @@ export function FilterBar() {
           <div className="flex flex-wrap sm:flex-nowrap gap-2">
 
             {/* Category Select */}
-            <div className="relative flex items-center bg-white px-3 py-2 rounded-xl border border-zinc-200 hover:border-zinc-300 focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/5 transition-all">
+            <div className="relative flex items-center bg-white px-3 py-2 rounded-xl border border-zinc-200 hover:border-zinc-300 focus-within:border-green-600 focus-within:ring-4 focus-within:ring-green-/5 transition-all">
               <Filter className="w-3.5 h-3.5 text-zinc-400 mr-2" />
               <select
                 className="appearance-none bg-transparent pr-6 text-[10px] font-black text-zinc-900 uppercase tracking-widest cursor-pointer outline-none"
@@ -45,7 +45,7 @@ export function FilterBar() {
             </div>
 
             {/* Status Select */}
-            <div className="relative flex items-center bg-white px-3 py-2 rounded-xl border border-zinc-200 hover:border-zinc-300 focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/5 transition-all">
+            <div className="relative flex items-center bg-white px-3 py-2 rounded-xl border border-zinc-200 hover:border-zinc-300 focus-within:border-green-600 focus-within:ring-4 focus-within:ring-green-/5 transition-all">
               <div className={`w-1.5 h-1.5 rounded-full mr-2.5 ${getStatusColor(statusFilter)} transition-all duration-500`}></div>
               <select
                 className="appearance-none bg-transparent pr-6 text-[10px] font-black text-zinc-900 uppercase tracking-widest cursor-pointer outline-none"
@@ -67,9 +67,9 @@ export function FilterBar() {
           <div className="flex flex-wrap items-center gap-2 pt-2 animate-in fade-in slide-in-from-top-1 duration-300">
 
             {categoryFilter !== "All" && (
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-blue-50 text-blue-600 text-[9px] font-bold rounded-md border border-blue-100 uppercase tracking-tighter">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-green-600 text-green-600 text-[9px] font-bold rounded-md border border-green-600 uppercase tracking-tighter">
                 {categoryFilter}
-                <X className="w-3 h-3 cursor-pointer hover:text-blue-800" onClick={() => setCategoryFilter("All")} />
+                <X className="w-3 h-3 cursor-pointer hover:text-green-" onClick={() => setCategoryFilter("All")} />
               </span>
             )}
 

@@ -120,7 +120,7 @@ export function SuperAdminDashboard() {
     if (loading) {
         return (
             <div className="flex items-center justify-center py-20">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 shadow-[0_0_15px_rgba(37,99,235,0.3)]"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 shadow-[0_0_15px_rgba(22,163,74,0.3)]"></div>
             </div>
         );
     }
@@ -139,7 +139,7 @@ export function SuperAdminDashboard() {
             {/* Header Section */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
                 <div className="flex items-center gap-5">
-                    <div className="p-4 bg-blue-500/10 rounded-[1.5rem] border border-blue-500/20">
+                    <div className="p-4 bg-green-500/10 rounded-[1.5rem] border border-green-500/20">
                         <Building2 className="w-8 h-8 text-[var(--color-primary)]" />
                     </div>
                     <div>
@@ -157,7 +157,7 @@ export function SuperAdminDashboard() {
                     <button
                         onClick={() => setActiveTab('overview')}
                         className={`px-6 py-2 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all ${activeTab === 'overview'
-                            ? 'bg-blue-600 text-white shadow-lg'
+                            ? 'bg-green-600 text-white shadow-lg'
                             : 'text-zinc-500 hover:text-zinc-900'
                             }`}
                     >
@@ -166,7 +166,7 @@ export function SuperAdminDashboard() {
                     <button
                         onClick={() => setActiveTab('management')}
                         className={`px-6 py-2 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all ${activeTab === 'management'
-                            ? 'bg-blue-600 text-white shadow-lg'
+                            ? 'bg-green-600 text-white shadow-lg'
                             : 'text-zinc-500 hover:text-zinc-900'
                             }`}
                     >
@@ -180,7 +180,7 @@ export function SuperAdminDashboard() {
                 <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
                         <div className="bg-white border border-zinc-100 rounded-xl p-8 shadow-rich flex items-center gap-6 group">
-                            <div className="p-5 bg-blue-500/10 rounded-2xl border border-blue-500/20 group-hover:scale-110 transition-transform">
+                            <div className="p-5 bg-green-500/10 rounded-2xl border border-green-500/20 group-hover:scale-110 transition-transform">
                                 <Building2 className="w-8 h-8 text-[var(--color-primary)]" />
                             </div>
                             <div>
@@ -212,10 +212,10 @@ export function SuperAdminDashboard() {
                         <h3 className="text-2xl font-black text-zinc-900 uppercase tracking-[0.2em] mb-10">Registered Store Network</h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {filteredShops.map(shop => (
-                                <div key={shop._id} className="p-8 rounded-xl border border-zinc-100 bg-zinc-50/50 hover:bg-white hover:border-blue-500/30 transition-all shadow-sm hover:shadow-rich group/card">
+                                <div key={shop._id} className="p-8 rounded-xl border border-zinc-100 bg-zinc-50/50 hover:bg-white hover:border-green-500/30 transition-all shadow-sm hover:shadow-rich group/card">
                                     <div className="flex items-center justify-between mb-6 relative">
                                         <div className="p-4 bg-white rounded-2xl border border-zinc-100 group-hover/card:scale-110 transition-transform shadow-inner">
-                                            <Store className="w-7 h-7 text-zinc-400 group-hover/card:text-blue-500 transition-colors" />
+                                            <Store className="w-7 h-7 text-zinc-400 group-hover/card:text-green-500 transition-colors" />
                                         </div>
                                         <div className="flex flex-col items-end gap-2">
                                             <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] border transition-all group-hover/card:opacity-0 group-hover/card:scale-0 ${shop.status === 'active' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-rose-500/10 text-rose-500 border-rose-500/20'}`}>
@@ -223,13 +223,13 @@ export function SuperAdminDashboard() {
                                             </span>
                                             {/* Card Action Overlay */}
                                             <div className="absolute top-0 right-0 flex items-center gap-1.5 opacity-0 group-hover/card:opacity-100 transition-all scale-75 group-hover/card:scale-100 origin-right">
-                                                <button onClick={() => setViewingShop(shop)} className="p-2.5 bg-white text-zinc-400 hover:text-blue-600 rounded-xl border border-zinc-100 shadow-sm transition-all" title="View Details"><Eye className="w-4 h-4" /></button>
+                                                <button onClick={() => setViewingShop(shop)} className="p-2.5 bg-white text-zinc-400 hover:text-green-600 rounded-xl border border-zinc-100 shadow-sm transition-all" title="View Details"><Eye className="w-4 h-4" /></button>
                                                 <button onClick={() => startEdit(shop)} className="p-2.5 bg-white text-zinc-400 hover:text-amber-600 rounded-xl border border-zinc-100 shadow-sm transition-all" title="Edit Shop"><Edit2 className="w-4 h-4" /></button>
                                                 <button onClick={() => handleDeleteShop(shop)} className="p-2.5 bg-white text-zinc-400 hover:text-rose-600 rounded-xl border border-zinc-100 shadow-sm transition-all" title="Delete Shop"><Trash2 className="w-4 h-4" /></button>
                                             </div>
                                         </div>
                                     </div>
-                                    <h4 className="text-xl font-black text-zinc-900 mb-2 truncate tracking-tight uppercase group-hover/card:text-blue-600 transition-colors">{shop.name}</h4>
+                                    <h4 className="text-xl font-black text-zinc-900 mb-2 truncate tracking-tight uppercase group-hover/card:text-green-600 transition-colors">{shop.name}</h4>
                                     <p className="text-[11px] font-black text-zinc-400 truncate tracking-[0.1em] uppercase">{shop.address || "Global Access"}</p>
                                 </div>
                             ))}
@@ -242,7 +242,7 @@ export function SuperAdminDashboard() {
                     {/* Create Shop Form */}
                     <div className="bg-white p-8 rounded-[2.5rem] border border-zinc-100 shadow-rich h-fit">
                         <h2 className="text-xl font-black mb-6 text-zinc-900 flex items-center gap-3 uppercase tracking-tight">
-                            <Plus className="w-6 h-6 text-blue-600" />
+                            <Plus className="w-6 h-6 text-green-600" />
                             Register New Shop
                         </h2>
                         <form onSubmit={handleSubmit(onAddShop)} className="space-y-4">
@@ -251,7 +251,7 @@ export function SuperAdminDashboard() {
                                     <label className="block text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1.5 pl-1">Shop Name</label>
                                     <input
                                         {...register('name')}
-                                        className={`w-full px-5 py-3 rounded-xl border ${errors.name ? 'border-rose-500/50 bg-rose-50/50' : 'border-zinc-100 bg-zinc-50'} text-zinc-900 text-sm font-bold placeholder:text-zinc-300 outline-none focus:bg-white focus:border-blue-500/40 transition-all`}
+                                        className={`w-full px-5 py-3 rounded-xl border ${errors.name ? 'border-rose-500/50 bg-rose-50/50' : 'border-zinc-100 bg-zinc-50'} text-zinc-900 text-sm font-bold placeholder:text-zinc-300 outline-none focus:bg-white focus:border-green-500/40 transition-all`}
                                         placeholder="Ex: Premium Supermarket"
                                     />
                                     {errors.name && <p className="text-[9px] font-bold text-rose-500 mt-1 pl-1 uppercase tracking-tighter">{errors.name.message}</p>}
@@ -260,7 +260,7 @@ export function SuperAdminDashboard() {
                                     <label className="block text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1.5 pl-1">Address</label>
                                     <input
                                         {...register('address')}
-                                        className={`w-full px-5 py-3 rounded-xl border ${errors.address ? 'border-rose-500/50 bg-rose-50/50' : 'border-zinc-100 bg-zinc-50'} text-zinc-900 text-sm font-bold placeholder:text-zinc-300 outline-none focus:bg-white focus:border-blue-500/40 transition-all`}
+                                        className={`w-full px-5 py-3 rounded-xl border ${errors.address ? 'border-rose-500/50 bg-rose-50/50' : 'border-zinc-100 bg-zinc-50'} text-zinc-900 text-sm font-bold placeholder:text-zinc-300 outline-none focus:bg-white focus:border-green-500/40 transition-all`}
                                         placeholder="123 Business Avenue"
                                     />
                                     {errors.address && <p className="text-[9px] font-bold text-rose-500 mt-1 pl-1 uppercase tracking-tighter">{errors.address.message}</p>}
@@ -270,19 +270,19 @@ export function SuperAdminDashboard() {
                                     <input
                                         {...register('contactNumber')}
                                         type="tel"
-                                        className={`w-full px-5 py-3 rounded-xl border ${errors.contactNumber ? 'border-rose-500/50 bg-rose-50/50' : 'border-zinc-100 bg-zinc-50'} text-zinc-900 text-sm font-bold placeholder:text-zinc-300 outline-none focus:bg-white focus:border-blue-500/40 transition-all`}
+                                        className={`w-full px-5 py-3 rounded-xl border ${errors.contactNumber ? 'border-rose-500/50 bg-rose-50/50' : 'border-zinc-100 bg-zinc-50'} text-zinc-900 text-sm font-bold placeholder:text-zinc-300 outline-none focus:bg-white focus:border-green-500/40 transition-all`}
                                         placeholder="+92 300 1234567"
                                     />
                                     {errors.contactNumber && <p className="text-[9px] font-bold text-rose-500 mt-1 pl-1 uppercase tracking-tighter">{errors.contactNumber.message}</p>}
                                 </div>
                             </div>
                             <div className="pt-6 border-t border-zinc-50">
-                                <h3 className="text-[10px] font-black text-blue-600 uppercase tracking-[0.2em] mb-4">Admin Credentials</h3>
+                                <h3 className="text-[10px] font-black text-green-600 uppercase tracking-[0.2em] mb-4">Admin Credentials</h3>
                                 <div className="space-y-4">
                                     <div>
                                         <input
                                             {...register('adminFullName')}
-                                            className={`w-full px-5 py-3 rounded-xl border ${errors.adminFullName ? 'border-rose-500/50 bg-rose-50/50' : 'border-zinc-100 bg-zinc-50'} text-zinc-900 text-sm font-bold outline-none focus:bg-white focus:border-blue-500/40 transition-all`}
+                                            className={`w-full px-5 py-3 rounded-xl border ${errors.adminFullName ? 'border-rose-500/50 bg-rose-50/50' : 'border-zinc-100 bg-zinc-50'} text-zinc-900 text-sm font-bold outline-none focus:bg-white focus:border-green-500/40 transition-all`}
                                             placeholder="Full Name"
                                         />
                                         {errors.adminFullName && <p className="text-[9px] font-bold text-rose-500 mt-1 pl-1 uppercase tracking-tighter">{errors.adminFullName.message}</p>}
@@ -290,31 +290,22 @@ export function SuperAdminDashboard() {
                                     <input
                                         {...register('adminUsername')}
                                         autoComplete="off"
-                                        className={`w-full px-5 py-3 rounded-xl border ${errors.adminUsername ? 'border-rose-500/50 bg-rose-50/50' : 'border-zinc-100 bg-zinc-50'} text-zinc-900 text-sm font-bold outline-none focus:bg-white focus:border-blue-500/40 transition-all`}
+                                        className={`w-full px-5 py-3 rounded-xl border ${errors.adminUsername ? 'border-rose-500/50 bg-rose-50/50' : 'border-zinc-100 bg-zinc-50'} text-zinc-900 text-sm font-bold outline-none focus:bg-white focus:border-green-500/40 transition-all`}
                                         placeholder="username"
                                     />
-                                    <div className="relative">
-                                        <input
-                                            {...register('adminPassword')}
-                                            type={showAdminPassword ? "text" : "password"}
-                                            autoComplete="new-password"
-                                            className={`w-full px-5 py-3 rounded-xl border ${errors.adminPassword ? 'border-rose-500/50 bg-rose-50/50' : 'border-zinc-100 bg-zinc-50'} text-zinc-900 text-sm font-bold outline-none focus:bg-white focus:border-blue-500/40 transition-all pr-12`}
-                                            placeholder="password"
-                                        />
-                                        <button
-                                            type="button"
-                                            onClick={() => setShowAdminPassword(!showAdminPassword)}
-                                            className="absolute inset-y-0 right-0 pr-4 flex items-center text-zinc-400 hover:text-blue-600 transition-colors"
-                                        >
-                                            {showAdminPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                                        </button>
-                                    </div>
+                                    <input
+                                        {...register('adminPassword')}
+                                        type="password"
+                                        autoComplete="new-password"
+                                        className={`w-full px-5 py-3 rounded-xl border ${errors.adminPassword ? 'border-rose-500/50 bg-rose-50/50' : 'border-zinc-100 bg-zinc-50'} text-zinc-900 text-sm font-bold outline-none focus:bg-white focus:border-blue-500/40 transition-all`}
+                                        placeholder="password"
+                                    />
                                 </div>
                             </div>
                             <button
                                 type="submit"
                                 disabled={isSubmitting}
-                                className="w-full py-4 bg-blue-600 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-blue-700 shadow-lg shadow-blue-500/20 active:scale-95 transition-all mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="w-full py-4 bg-green-600 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-green-700 shadow-lg shadow-green-500/20 active:scale-95 transition-all mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {isSubmitting ? 'Registering...' : 'Create Shop'}
                             </button>
@@ -327,10 +318,10 @@ export function SuperAdminDashboard() {
                         {filteredShops.map(shop => {
                             const isEditing = editingShop === shop._id;
                             return (
-                                <div key={shop._id} id={`shop-manage-${shop._id}`} className="bg-white p-5 rounded-2xl border border-zinc-100 flex items-center justify-between shadow-sm hover:shadow-rich hover:border-blue-500/20 transition-all group/shop relative overflow-hidden">
+                                <div key={shop._id} id={`shop-manage-${shop._id}`} className="bg-white p-5 rounded-2xl border border-zinc-100 flex items-center justify-between shadow-sm hover:shadow-rich hover:border-green-500/20 transition-all group/shop relative overflow-hidden">
                                     <div className="flex items-center gap-5 flex-1 min-w-0">
-                                        <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-100 transition-colors group-hover/shop:bg-blue-50/50 flex-shrink-0">
-                                            <Store className="w-6 h-6 text-zinc-400 group-hover/shop:text-blue-500 transition-colors" />
+                                        <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-100 transition-colors group-hover/shop:bg-green-50/50 flex-shrink-0">
+                                            <Store className="w-6 h-6 text-zinc-400 group-hover/shop:text-green-500 transition-colors" />
                                         </div>
                                         {isEditing ? (
                                             <div className="flex-1 grid grid-cols-1 sm:grid-cols-4 gap-3">
@@ -363,7 +354,7 @@ export function SuperAdminDashboard() {
                                                     {shop.status}
                                                 </span>
                                                 <div className="flex items-center gap-2 opacity-0 group-hover/shop:opacity-100 absolute right-5 transition-all translate-x-4 group-hover/shop:translate-x-0">
-                                                    <button onClick={() => setViewingShop(shop)} className="p-2.5 bg-zinc-50 text-zinc-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all border border-zinc-100" title="View Details"><Eye className="w-4 h-4" /></button>
+                                                    <button onClick={() => setViewingShop(shop)} className="p-2.5 bg-zinc-50 text-zinc-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-all border border-zinc-100" title="View Details"><Eye className="w-4 h-4" /></button>
                                                     <button onClick={() => startEdit(shop)} className="p-2.5 bg-zinc-50 text-zinc-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all border border-zinc-100" title="Edit Shop"><Edit2 className="w-4 h-4" /></button>
                                                     <button onClick={() => handleDeleteShop(shop)} className="p-2.5 bg-zinc-50 text-zinc-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all border border-zinc-100" title="Delete Shop"><Trash2 className="w-4 h-4" /></button>
                                                 </div>
@@ -398,8 +389,8 @@ export function SuperAdminDashboard() {
                                     </button>
 
                                     <div className="flex items-center gap-6 mb-10">
-                                        <div className="p-6 bg-blue-500/10 rounded-3xl border border-blue-500/20">
-                                            <Store className="w-10 h-10 text-blue-600" />
+                                        <div className="p-6 bg-green-500/10 rounded-3xl border border-green-500/20">
+                                            <Store className="w-10 h-10 text-green-600" />
                                         </div>
                                         <div>
                                             <div className="flex items-center gap-3 mb-1">
@@ -414,7 +405,7 @@ export function SuperAdminDashboard() {
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-8 border-t border-zinc-50">
                                         <div>
-                                            <h4 className="text-[10px] font-black text-blue-600 uppercase tracking-[0.2em] mb-4 pl-1">Store Identity</h4>
+                                            <h4 className="text-[10px] font-black text-green-600 uppercase tracking-[0.2em] mb-4 pl-1">Store Identity</h4>
                                             <div className="space-y-4">
                                                 <div className="bg-zinc-50/50 p-4 rounded-2xl border border-zinc-100/50">
                                                     <p className="text-[9px] font-black text-zinc-400 uppercase tracking-widest mb-1">Internal Reference</p>
