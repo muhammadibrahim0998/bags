@@ -47,7 +47,7 @@ export function ProductCard({ product, onEdit, onDelete, onView }) {
       onClick={() => navigate(`/product/${product._id}`)}
       className="group w-full max-w-[280px] mx-auto cursor-pointer"
     >
-      <div className="rich-card bg-white border-t-4 border-l-4 border-zinc-200 border-b-[10px] border-r-[8px] border-black rounded-2xl overflow-hidden flex flex-col h-auto p-3 shadow-[0_15px_35px_rgba(0,0,0,0.5)] group-hover:shadow-[0_25px_50px_rgba(0,0,0,0.9)] group-hover:border-zinc-800 transition-all duration-300">
+      <div className="rich-card bg-white border-t-4 border-l-4 border-black border-b-[10px] border-r-[8px] rounded-2xl overflow-hidden flex flex-col h-auto p-3 shadow-[0_15px_35px_rgba(0,0,0,0.5)] group-hover:shadow-[0_25px_50px_rgba(0,0,0,0.9)] group-hover:border-zinc-800 transition-all duration-300">
 
         {/* Compact Image: 4:3 Aspect Ratio */}
         <div className="relative aspect-[4/3] w-full bg-zinc-50 rounded-lg overflow-hidden flex items-center justify-center mb-3">
@@ -182,7 +182,7 @@ export function ProductCard({ product, onEdit, onDelete, onView }) {
             disabled={product.stock === 0}
             className={`w-full py-2.5 rounded-lg font-bold text-[11px] uppercase tracking-[0.1em] transition-all duration-300 flex items-center justify-center gap-2
               ${product.stock > 0
-                ? 'bg-[#2D5A27] hover:bg-[#1B3817] text-white border-t border-white/20 border-b-4 border-[#12290D] shadow-[0_4px_10px_rgba(0,0,0,0.2)] hover:shadow-[0_8px_15px_rgba(0,0,0,0.3)] active:translate-y-[2px] active:border-b-0'
+                ? 'bg-[#2D5A27] hover:bg-[#1B3817] text-white border-t border-b-4 border-[#12290D] shadow-[0_4px_10px_rgba(0,0,0,0.2)] hover:shadow-[0_8px_15px_rgba(0,0,0,0.3)] active:translate-y-[2px] active:border-b-0'
                 : 'bg-zinc-100 text-zinc-400 cursor-not-allowed border border-zinc-200'}`}
           >
             {product.stock > 0 ? (

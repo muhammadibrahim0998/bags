@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import dns from 'node:dns';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
@@ -18,6 +19,10 @@ import shopsRoutes from './routes/shops.js';
 import updatesRoutes from './routes/updates.js';
 
 dotenv.config();
+
+// Fix for MongoDB Atlas DNS resolution issues
+dns.setServers(['8.8.8.8', '8.8.4.4']);
+dns.setDefaultResultOrder('ipv4first');
 
 // Fix __dirname for ES modules
 const __filename = fileURLToPath(import.meta.url);
