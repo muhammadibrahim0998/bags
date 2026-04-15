@@ -3,14 +3,13 @@ import bcrypt from "bcryptjs";
 
 const UserSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
+  password: { type: String },
   fullName: { type: String, required: true },
-  role: { type: String, enum: ['super_admin', 'shop_admin', 'cashier', 'salesman'], default: 'cashier' },
+  role: { type: String, enum: ['admin', 'cashier', 'salesman', 'shop_admin', 'super_admin'], default: 'cashier' },
   shopId: { 
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'Shop',
     required: function() {
-      // Super admins do not belong to a single shop
       return this.role !== 'super_admin';
     }
   },
@@ -21,9 +20,14 @@ const UserSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 // Hash password before saving
-UserSchema.pre('save', async function() {
-  if (!this.isModified('password')) return;
-  this.password = await bcrypt.hash(this.password, 10);
+UserSchema.pre('save', async function(next) {
+  if (!this.isModified('password') || !this.password) return next();
+  try {
+    this.password = await bcrypt.hash(this.password, 10);
+    next();
+  } catch (error) {
+    next(error);
+  }
 });
 
 // Method to compare password

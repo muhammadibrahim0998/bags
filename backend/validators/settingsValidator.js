@@ -25,7 +25,6 @@ export const settingsSchema = z.object({
     .max(100)
     .default(0),
   ownerPassword: z.string()
-    .min(6, { message: "Owner password must be at least 6 characters" })
     .optional()
     .or(z.literal('')),
   logoUrl: z.string().optional().or(z.literal('')),

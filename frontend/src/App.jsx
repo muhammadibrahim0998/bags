@@ -286,9 +286,30 @@ export default function App() {
                   )
                 } />
 
-                <Route path="/store" element={<Storefront onAdd={() => openModal("addProduct")} />} />
-                <Route path="/store/category/:category" element={<Storefront onAdd={(cat) => openModal("addProduct", { category: cat })} />} />
-                <Route path="/store/status/:status" element={<Storefront onAdd={() => openModal("addProduct")} />} />
+                <Route path="/store" element={
+                  <Storefront
+                    onAdd={() => openModal("addProduct")}
+                    onEdit={(p) => openModal("editProduct", p)}
+                    onDelete={handleDeleteProduct}
+                    onView={(p) => openModal("viewProduct", p)}
+                  />
+                } />
+                <Route path="/store/category/:category" element={
+                  <Storefront
+                    onAdd={(cat) => openModal("addProduct", { category: cat })}
+                    onEdit={(p) => openModal("editProduct", p)}
+                    onDelete={handleDeleteProduct}
+                    onView={(p) => openModal("viewProduct", p)}
+                  />
+                } />
+                <Route path="/store/status/:status" element={
+                  <Storefront
+                    onAdd={() => openModal("addProduct")}
+                    onEdit={(p) => openModal("editProduct", p)}
+                    onDelete={handleDeleteProduct}
+                    onView={(p) => openModal("viewProduct", p)}
+                  />
+                } />
                 <Route path="/product/:id" element={<ProductDetail />} />
                 <Route path="/settings" element={<SettingsView />} />
                 <Route path="/help" element={<HelpView />} />

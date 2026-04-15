@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { X, ShieldCheck, Lock, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { X, ShieldCheck, Lock, AlertCircle, CheckCircle2, Eye, EyeOff } from 'lucide-react';
 
 export function AuthGuardModal({ isOpen, onClose, onConfirm, title = "Authorization Required", message = "Please enter the owner password to proceed with this sensitive action." }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   if (!isOpen) return null;
 
@@ -76,14 +77,21 @@ export function AuthGuardModal({ isOpen, onClose, onConfirm, title = "Authorizat
                   <Lock className="w-4 h-4" />
                 </div>
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   autoFocus
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter owner password"
-                  className="w-full bg-[var(--color-surface-base)] border-2 border-transparent focus:border-[var(--color-primary)]/40 focus:bg-[var(--color-surface-card)] rounded-2xl py-4 pl-12 pr-4 text-sm font-bold text-[var(--color-text-primary)] outline-none transition-all shadow-sm"
+                  className="w-full bg-[var(--color-surface-base)] border-2 border-transparent focus:border-[var(--color-primary)]/40 focus:bg-[var(--color-surface-card)] rounded-2xl py-4 pl-12 pr-12 text-sm font-bold text-[var(--color-text-primary)] outline-none transition-all shadow-sm"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] transition-colors"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
               </div>
 
               <button

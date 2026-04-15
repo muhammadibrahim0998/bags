@@ -13,8 +13,11 @@ import {
     RefreshCw,
     AlertCircle,
     Save,
-    X
+    X,
+    Eye,
+    EyeOff
 } from 'lucide-react';
+import { useState } from 'react';
 
 export function MemberForm({ onSubmit, initialData, onCancel, isSubmitting, isViewMode }) {
     const {
@@ -34,6 +37,8 @@ export function MemberForm({ onSubmit, initialData, onCancel, isSubmitting, isVi
             phoneNumber: ''
         }
     });
+
+    const [showPassword, setShowPassword] = useState(false);
 
     const InputWrapper = ({ label, icon: Icon, error, touched, children }) => (
         <div className="space-y-2 group animate-in slide-in-from-left-4 duration-500">
@@ -113,12 +118,21 @@ export function MemberForm({ onSubmit, initialData, onCancel, isSubmitting, isVi
                         touched={touchedFields.password}
                     >
                         <input
-                            type="password"
+                            type={showPassword ? "text" : "password"}
                             {...register('password')}
                             disabled={isViewMode}
                             className="w-full bg-[var(--color-surface-base)]/50 border border-[var(--color-border-subtle)] focus:border-[var(--color-primary)]/50 rounded-2xl py-4.5 px-12 text-sm font-bold text-[var(--color-text-primary)] outline-none transition-all placeholder:text-slate-700 backdrop-blur-md disabled:opacity-50"
                             placeholder="••••••••"
                         />
+                        {!isViewMode && (
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute inset-y-0 right-0 pr-4 flex items-center text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors"
+                            >
+                                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                            </button>
+                        )}
                     </InputWrapper>
 
                     <InputWrapper

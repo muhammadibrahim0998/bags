@@ -1,13 +1,32 @@
-import React from 'react';
-import { ShoppingBag, ShoppingCart, Calendar, Package, Tag, Star } from 'lucide-react';
+import {
+  ShoppingBag, ShoppingCart, Calendar, Package,
+  Tag, Star, MoreVertical, Eye, Edit2, Trash2, X
+} from 'lucide-react';
 import { useProducts } from '../contexts/ProductContext';
-import { motion } from 'framer-motion';
+import { useUser } from '../contexts/UserContext';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { useState, useRef, useEffect } from 'react';
 
-export function ProductCard({ product }) {
+export function ProductCard({ product, onEdit, onDelete, onView }) {
   const { getStockStatus, addToCart } = useProducts();
+  const { isShopAdmin, isSuperAdmin } = useUser();
   const navigate = useNavigate();
-  const status = getStockStatus(product.stock, product.minStock);
+  const [showAdminMenu, setShowAdminMenu] = useState(false);
+  const menuRef = useRef(null);
+
+  const isAdmin = isShopAdmin() || isSuperAdmin();
+
+  // Handle click outside to close menu
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setShowAdminMenu(false);
+      }
+    };
+    if (showAdminMenu) document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showAdminMenu]);
 
   const today = new Date();
   const expiryDate = product.expiryDate ? new Date(product.expiryDate) : null;
@@ -42,13 +61,78 @@ export function ProductCard({ product }) {
             <ShoppingBag className="w-8 h-8 text-zinc-300" />
           )}
 
-          {/* Price & Low Stock Overlays */}
-          <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-md border border-zinc-100 shadow-sm">
-            <span className="text-xs font-bold text-zinc-900">Rs.{product.price}</span>
+          {/* Admin Actions Trigger - Only for Admins */}
+          {isAdmin && (
+            <div className="absolute top-2 right-2 z-20" ref={menuRef}>
+              <div className="flex items-center gap-1.5">
+                <AnimatePresence>
+                  {showAdminMenu && (
+                    <motion.div
+                      initial={{ opacity: 0, x: 10, scale: 0.95 }}
+                      animate={{ opacity: 1, x: 0, scale: 1 }}
+                      exit={{ opacity: 0, x: 10, scale: 0.95 }}
+                      className="flex items-center gap-1 bg-white/95 backdrop-blur-md border border-zinc-200 p-1 rounded-xl shadow-xl"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <button
+                        onClick={(e) => { e.stopPropagation(); navigate(`/product/${product._id}`); setShowAdminMenu(false); }}
+                        className="p-1.5 text-zinc-500 hover:bg-zinc-100 rounded-lg transition-colors"
+                        title="View Details"
+                      >
+                        <Eye className="w-3.5 h-3.5" />
+                      </button>
+                      <div className="w-px h-3 bg-zinc-200 mx-0.5" />
+                      <button
+                        onClick={(e) => { e.stopPropagation(); onEdit(product); setShowAdminMenu(false); }}
+                        className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                        title="Edit Product"
+                      >
+                        <Edit2 className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); onDelete(product); setShowAdminMenu(false); }}
+                        className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors"
+                        title="Delete Product"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowAdminMenu(!showAdminMenu);
+                  }}
+                  className={`p-1.5 rounded-lg border transition-all duration-300 ${showAdminMenu
+                    ? 'bg-zinc-900 border-zinc-900 text-white shadow-lg'
+                    : 'bg-white/90 border-zinc-200 text-zinc-600 hover:bg-white hover:border-zinc-300 shadow-sm'
+                    }`}
+                >
+                  <MoreVertical className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Badges & Overlays */}
+          <div className="absolute top-2 left-2 z-10 flex flex-col gap-1">
+            {product.stock > 0 && product.stock <= product.minStock && (
+              <div className="bg-amber-50/90 text-amber-700 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border border-amber-200/50 shadow-sm backdrop-blur-sm">
+                Low Stock
+              </div>
+            )}
+            {product.stock === 0 && (
+              <div className="bg-rose-50/90 text-rose-700 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border border-rose-200/50 shadow-sm backdrop-blur-sm">
+                Sold Out
+              </div>
+            )}
           </div>
-          {product.stock > 0 && product.stock <= product.minStock && (
-            <div className="absolute top-2 left-2 bg-amber-50/90 text-amber-700 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border border-amber-200/50">
-              Low Stock
+
+          {!showAdminMenu && (
+            <div className={`absolute ${isAdmin ? 'bottom-2 right-2' : 'top-2 right-2'} bg-white/90 backdrop-blur-sm px-2 py-1 rounded-md border border-zinc-100 shadow-sm z-10 transition-all`}>
+              <span className="text-xs font-bold text-zinc-900">Rs.{product.price}</span>
             </div>
           )}
         </div>

@@ -6,7 +6,7 @@ import { ProductCard } from '../components/ProductCard';
 import { Plus } from 'lucide-react';
 import { useUser } from '../contexts/UserContext';
 
-export function Storefront({ onAdd }) {
+export function Storefront({ onAdd, onEdit, onDelete, onView }) {
   const { category, status } = useParams();
   const navigate = useNavigate();
   const { user, isShopAdmin } = useUser();
@@ -104,6 +104,9 @@ export function Storefront({ onAdd }) {
             <ProductCard
               key={product._id}
               product={product}
+              onEdit={onEdit}
+              onDelete={onDelete}
+              onView={onView}
             />
           ))}
         </div>

@@ -5,7 +5,7 @@ import { shopSchema } from '../schemas/shopSchema';
 import api from '../services/api';
 import {
     Store, Plus, Building2, Edit2, Trash2, X, Check,
-    LayoutDashboard, Users, Activity, Eye
+    LayoutDashboard, Users, Activity, Eye, EyeOff
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useProducts } from '../contexts/ProductContext';
@@ -20,6 +20,7 @@ export function SuperAdminDashboard() {
     const [viewingShop, setViewingShop] = useState(null);
     const [deleteDialog, setDeleteDialog] = useState({ isOpen: false, id: null, name: '' });
     const [isDeleting, setIsDeleting] = useState(false);
+    const [showAdminPassword, setShowAdminPassword] = useState(false);
     const { searchTerm } = useProducts();
 
     const {
@@ -292,13 +293,22 @@ export function SuperAdminDashboard() {
                                         className={`w-full px-5 py-3 rounded-xl border ${errors.adminUsername ? 'border-rose-500/50 bg-rose-50/50' : 'border-zinc-100 bg-zinc-50'} text-zinc-900 text-sm font-bold outline-none focus:bg-white focus:border-blue-500/40 transition-all`}
                                         placeholder="username"
                                     />
-                                    <input
-                                        {...register('adminPassword')}
-                                        type="password"
-                                        autoComplete="new-password"
-                                        className={`w-full px-5 py-3 rounded-xl border ${errors.adminPassword ? 'border-rose-500/50 bg-rose-50/50' : 'border-zinc-100 bg-zinc-50'} text-zinc-900 text-sm font-bold outline-none focus:bg-white focus:border-blue-500/40 transition-all`}
-                                        placeholder="password"
-                                    />
+                                    <div className="relative">
+                                        <input
+                                            {...register('adminPassword')}
+                                            type={showAdminPassword ? "text" : "password"}
+                                            autoComplete="new-password"
+                                            className={`w-full px-5 py-3 rounded-xl border ${errors.adminPassword ? 'border-rose-500/50 bg-rose-50/50' : 'border-zinc-100 bg-zinc-50'} text-zinc-900 text-sm font-bold outline-none focus:bg-white focus:border-blue-500/40 transition-all pr-12`}
+                                            placeholder="password"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowAdminPassword(!showAdminPassword)}
+                                            className="absolute inset-y-0 right-0 pr-4 flex items-center text-zinc-400 hover:text-blue-600 transition-colors"
+                                        >
+                                            {showAdminPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                             <button

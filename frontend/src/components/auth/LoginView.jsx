@@ -3,11 +3,12 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema } from '../../schemas/authSchema';
 import { useUser } from '../../contexts/UserContext';
-import { Lock, User, ShieldCheck, AlertCircle, ShoppingBag } from 'lucide-react';
+import { Lock, User, ShieldCheck, AlertCircle, ShoppingBag, Eye, EyeOff } from 'lucide-react';
 
 export function LoginView() {
   const { login } = useUser();
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
@@ -85,10 +86,17 @@ export function LoginView() {
                   <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-text-secondary)] group-focus-within:text-[var(--color-primary)] transition-colors" />
                   <input
                     {...register('password')}
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     placeholder="Password"
-                    className={`w-full bg-[var(--color-surface-base)]/50 border ${errors.password ? 'border-[var(--color-danger)]/40' : 'border-[var(--color-border-subtle)]'} focus:border-[var(--color-primary)]/40 rounded-xl py-3 pl-11 pr-4 text-xs font-bold text-[var(--color-text-primary)] outline-none transition-all placeholder:text-[var(--color-text-muted)]`}
+                    className={`w-full bg-[var(--color-surface-base)]/50 border ${errors.password ? 'border-[var(--color-danger)]/40' : 'border-[var(--color-border-subtle)]'} focus:border-[var(--color-primary)]/40 rounded-xl py-3 pl-11 pr-12 text-xs font-bold text-[var(--color-text-primary)] outline-none transition-all placeholder:text-[var(--color-text-muted)]`}
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-0 pr-4 flex items-center text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] transition-colors"
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
                 </div>
               </div>
             </div>

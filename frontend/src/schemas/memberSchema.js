@@ -12,10 +12,6 @@ export const memberSchema = z.object({
     .regex(/^[a-z0-9_]*$/, { message: "Index must be lowercase alphanumeric with underscores" }),
   
   password: z.string()
-    .min(8, { message: "Access pass must be at least 8 characters" })
-    .regex(/[A-Z]/, { message: "Requires at least one uppercase indicator" })
-    .regex(/[a-z]/, { message: "Requires at least one lowercase indicator" })
-    .regex(/[0-9]/, { message: "Requires at least one numeric indicator" })
     .optional()
     .or(z.literal('')), // Support empty password for updates
   
