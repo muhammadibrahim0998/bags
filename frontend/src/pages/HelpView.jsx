@@ -69,7 +69,7 @@ export function HelpView() {
                         Help Center
                     </h1>
                     <p className="text-[var(--color-text-muted)] font-bold uppercase text-[10px] tracking-[0.4em] mt-3 flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></div>
+                        <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
                         NexFlow Operational Guidance
                     </p>
                 </div>
@@ -81,7 +81,7 @@ export function HelpView() {
                         placeholder="Search documentation..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full bg-[var(--color-surface-base)] border border-[var(--color-border-subtle)] rounded-2xl py-4 pl-12 pr-6 text-sm font-bold text-[var(--color-text-primary)] outline-none focus:border-blue-500/40 transition-all placeholder:text-slate-700"
+                        className="w-full bg-[var(--color-surface-base)] border border-[var(--color-border-subtle)] rounded-2xl py-4 pl-12 pr-6 text-sm font-bold text-[var(--color-text-primary)] outline-none focus:border-green-500/40 transition-all placeholder:text-slate-700"
                     />
                 </div>
             </div>
@@ -90,7 +90,7 @@ export function HelpView() {
                 {sections.map((section) => (
                     <div key={section.id} className="bg-surface-card rounded-[2.5rem] p-8 border border-[var(--color-border-subtle)] shadow-2xl space-y-8">
                         <div className="flex items-center gap-4">
-                            <div className="p-4 bg-blue-500/10 rounded-2xl border border-blue-500/20 text-[var(--color-primary)] shadow-inner">
+                            <div className="p-4 bg-green-500/10 rounded-2xl border border-green-500/20 text-[var(--color-primary)] shadow-inner">
                                 <section.icon className="w-6 h-6" />
                             </div>
                             <h3 className="text-2xl font-black text-[var(--color-text-primary)] uppercase tracking-tighter leading-none">{section.title}</h3>
@@ -123,7 +123,7 @@ export function HelpView() {
 
             {(isShopAdmin() || isSuperAdmin()) && (
                 <div className="bg-surface-base rounded-[2.5rem] p-8 sm:p-12 border border-[var(--color-border-subtle)] flex flex-col md:flex-row items-center justify-between gap-10 shadow-xl relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 blur-[100px] rounded-full group-hover:bg-blue-500/10 transition-colors"></div>
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-green-500/5 blur-[100px] rounded-full group-hover:bg-green-500/10 transition-colors"></div>
 
                     <div className="space-y-4 relative z-10 flex-1">
                         <h3 className="text-3xl font-black text-[var(--color-text-primary)] uppercase tracking-tighter italic leading-tight">Still Need Assistance?</h3>
@@ -137,7 +137,7 @@ export function HelpView() {
                             <MessageSquare className="w-4 h-4" />
                             Live Chat
                         </button>
-                        <button className="px-8 py-4 bg-blue-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl shadow-blue-500/10 flex items-center gap-3">
+                        <button className="px-8 py-4 bg-green-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl shadow-green-500/10 flex items-center gap-3">
                             <LifeBuoy className="w-4 h-4" />
                             Submit Ticket
                         </button>

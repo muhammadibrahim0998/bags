@@ -21,7 +21,7 @@ export function ProductDetail() {
     if (loading) {
         return (
             <div className="flex items-center justify-center py-20 min-h-screen">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500"></div>
             </div>
         );
     }
@@ -30,7 +30,7 @@ export function ProductDetail() {
         return (
             <div className="flex flex-col items-center justify-center py-20 min-h-[60vh]">
                 <h2 className="text-2xl font-black uppercase text-[var(--color-text-primary)]">Product Not Found</h2>
-                <button onClick={() => navigate(-1)} className="mt-4 px-6 py-2 bg-[var(--color-surface-base)] border border-[var(--color-border-subtle)] rounded-xl uppercase font-black text-[10px] tracking-widest text-[var(--color-text-primary)] hover:text-blue-500">
+                <button onClick={() => navigate(-1)} className="mt-4 px-6 py-2 bg-[var(--color-surface-base)] border border-[var(--color-border-subtle)] rounded-xl uppercase font-black text-[10px] tracking-widest text-[var(--color-text-primary)] hover:text-green-500">
                     Go Back
                 </button>
             </div>
@@ -157,7 +157,7 @@ export function ProductDetail() {
                             disabled={product.stock === 0}
                             className={`w-full py-5 rounded-[1.5rem] font-black text-sm uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3
                 ${product.stock > 0
-                                    ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-[0_10px_40px_-10px_rgba(37,99,235,0.5)] hover:scale-[1.02] active:scale-[0.98]'
+                                    ? 'bg-gradient-to-r from-green-600 to-green-500 text-white shadow-[0_10px_40px_-10px_rgba(37,99,235,0.5)] hover:scale-[1.02] active:scale-[0.98]'
                                     : 'bg-[var(--color-surface-card)] border border-[var(--color-border-subtle)] text-[var(--color-text-muted)] cursor-not-allowed'}`}
                         >
                             {product.stock > 0 ? (

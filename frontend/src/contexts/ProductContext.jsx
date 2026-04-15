@@ -25,7 +25,7 @@ function getStockStatus(stock, minStock) {
   if (stock < minStock * 1.5)
     return {
       label: "Medium",
-      color: "bg-blue-100 text-blue-700 border-blue-200",
+      color: "bg-green-100 text-green-700 border-green-200",
     };
   return {
     label: "In Stock",

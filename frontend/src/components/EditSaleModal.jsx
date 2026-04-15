@@ -69,10 +69,10 @@ export function EditSaleModal({ isOpen, onClose, sale, onSave }) {
 
         {/* Scrollable Area */}
         <div className="p-8 sm:p-10 overflow-y-auto custom-scrollbar flex-1 space-y-10">
-          <div className="bg-blue-500/10 border border-blue-500/20 rounded-[1.5rem] p-6 flex gap-4 text-[var(--color-primary)] text-[10px] font-black uppercase tracking-widest leading-relaxed shadow-lg shadow-orange-950/20">
+          <div className="bg-green-600/10 border border-green-/20 rounded-[1.5rem] p-6 flex gap-4 text-[var(--color-primary)] text-[10px] font-black uppercase tracking-widest leading-relaxed shadow-lg shadow-orange-950/20">
             <ShieldAlert className="w-6 h-6 flex-shrink-0" />
             <p>
-              <strong className="text-blue-500 block mb-1">Inventory Synchronization Warning:</strong>
+              <strong className="text-green-600 block mb-1">Inventory Synchronization Warning:</strong>
               Operational overrides on quantity directly impact live stock levels. Use under authorization only.
             </p>
           </div>
@@ -83,11 +83,11 @@ export function EditSaleModal({ isOpen, onClose, sale, onSave }) {
               const diff = item.quantity - originalItem.quantity;
 
               return (
-                <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between p-6 bg-[var(--color-surface-base)] border border-[var(--color-border-subtle)] rounded-xl gap-6 group hover:bg-[var(--color-surface-base)] hover:border-blue-500/30 transition-all shadow-xl">
+                <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between p-6 bg-[var(--color-surface-base)] border border-[var(--color-border-subtle)] rounded-xl gap-6 group hover:bg-[var(--color-surface-base)] hover:border-green-/30 transition-all shadow-xl">
                   <div className="flex-1 space-y-2">
                     <p className="text-lg font-black text-[var(--color-text-primary)] uppercase tracking-tighter leading-none">{item.name}</p>
                     <p className="text-[10px] font-black text-[var(--color-text-muted)] uppercase tracking-[0.2em] flex items-center gap-2">
-                      <span className="w-1.5 h-1.5 bg-blue-500/30 rounded-full"></span>
+                      <span className="w-1.5 h-1.5 bg-green-600/30 rounded-full"></span>
                       Unit: Rs. {item.price.toLocaleString('en-PK')}
                     </p>
                   </div>

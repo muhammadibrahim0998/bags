@@ -169,7 +169,7 @@ export function ExportModal({ isOpen, onClose, products = [], sales = [], catego
             <X className="w-4 h-4 text-[var(--color-text-secondary)] group-hover:text-[var(--color-text-primary)] transition-colors" />
           </button>
           <div className="flex items-center gap-4">
-            <div className="p-3 bg-blue-500 rounded-xl shadow-lg shadow-[var(--color-primary)]/20">
+            <div className="p-3 bg-green-600 rounded-xl shadow-lg shadow-[var(--color-primary)]/20">
               <Download className="w-5 h-5 text-[var(--color-text-primary)]" />
             </div>
             <div>

@@ -28,7 +28,7 @@ export function ShopAdminDashboard({
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20 bg-[var(--color-background)] min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
       </div>
     );
   }
@@ -65,7 +65,7 @@ export function ShopAdminDashboard({
             <button
               onClick={() => setActiveTab('inventory')}
               className={`flex items-center gap-2.5 px-6 py-2.5 rounded-[1.25rem] font-black text-[10px] uppercase tracking-[0.15em] transition-all ${activeTab === 'inventory'
-                ? 'bg-blue-600 text-[var(--color-text-primary)] shadow-sm'
+                ? 'bg-green-600 text-[var(--color-text-primary)] shadow-sm'
                 : 'text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100'
                 }`}
             >
@@ -75,7 +75,7 @@ export function ShopAdminDashboard({
             <button
               onClick={() => setActiveTab('team')}
               className={`flex items-center gap-2.5 px-6 py-2.5 rounded-[1.25rem] font-black text-[10px] uppercase tracking-[0.15em] transition-all ${activeTab === 'team'
-                ? 'bg-blue-600 text-[var(--color-text-primary)] shadow-sm'
+                ? 'bg-green-600 text-[var(--color-text-primary)] shadow-sm'
                 : 'text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100'
                 }`}
             >
@@ -85,7 +85,7 @@ export function ShopAdminDashboard({
             <button
               onClick={() => setActiveTab('shifts')}
               className={`flex items-center gap-2.5 px-6 py-2.5 rounded-[1.25rem] font-black text-[10px] uppercase tracking-[0.15em] transition-all ${activeTab === 'shifts'
-                ? 'bg-blue-600 text-[var(--color-text-primary)] shadow-sm'
+                ? 'bg-green-600 text-[var(--color-text-primary)] shadow-sm'
                 : 'text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100'
                 }`}
             >
@@ -136,7 +136,7 @@ export function ShopAdminDashboard({
             {/* Inventory Table Section */}
             <section id="inventory-table" className="w-full space-y-6">
               <div className="flex items-center gap-3 px-2">
-                <div className="w-2 h-7 bg-blue-600/30 rounded-full"></div>
+                <div className="w-2 h-7 bg-green-600/30 rounded-full"></div>
                 <h3 className="text-2xl font-black text-[var(--color-text-primary)] uppercase tracking-[0.2em]">Global Inventory</h3>
               </div>
               <div className="rich-card overflow-hidden">
@@ -154,7 +154,7 @@ export function ShopAdminDashboard({
               <div className="flex items-center justify-between px-2">
                 <div className="space-y-2">
                   <h3 className="text-2xl font-black text-[var(--color-text-primary)] uppercase tracking-[0.2em]">Recent Shop Activity</h3>
-                  <p className="text-[10px] text-blue-600 font-black tracking-[0.4em] uppercase">SYNCED WITH CLOUD</p>
+                  <p className="text-[10px] text-green-600 font-black tracking-[0.4em] uppercase">SYNCED WITH CLOUD</p>
                 </div>
               </div>
               <div className="rich-card overflow-hidden">
