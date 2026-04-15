@@ -3,60 +3,85 @@
 @plugin "tailwindcss-animate";
 
 @theme {
-  /* --- Professional Cobalt & Zinc Palette (Light Theme) --- */
-  --color-primary: #2563eb;           /* Brand Cobalt */
-  --color-primary-hover: #1d4ed8;
-  --color-success: #10b981;           /* Emerald */
-  --color-warning: #f59e0b;           /* Amber */
-  --color-danger: #ef4444;            /* Rose */
+  /* --- Professional Green Palette (Light Theme) --- */
+  --color-primary: #16a34a;
+  /* Brand Green */
+  --color-primary-hover: #15803d;
+  --color-success: #10b981;
+  /* Emerald */
+  --color-warning: #f59e0b;
+  /* Amber */
+  --color-danger: #ef4444;
+  /* Rose */
   --color-info: #3b82f6;
-  
+  /* Kept info blue for semantics, but primary is green */
+
   /* Neutral Surfaces (Refined Zinc - Light Theme) */
-  --color-background: #fafafa;        /* Cleanest background */
-  --color-surface-base: #f4f4f5;      /* Zinc-100 */
-  --color-surface-card: #ffffff;      /* Pure White */
+  --color-background: #fafafa;
+  /* Cleanest background */
+  --color-surface-base: #f4f4f5;
+  /* Zinc-100 */
+  --color-surface-card: #ffffff;
+  /* Pure White */
   --color-surface-overlay: #fdfdfd;
-  
+
   /* Text & Typography (Zinc-900 Scale) */
-  --color-text-primary: #09090b;      /* Zinc-950 (Crisp) */
-  --color-text-secondary: #52525b;    /* Zinc-600 */
-  --color-text-muted: #a1a1aa;        /* Zinc-400 */
-  --color-border-subtle: #e4e4e7;     /* Zinc-200 */
-  --color-border-focus: #2563eb;
+  --color-text-primary: #09090b;
+  /* Zinc-950 (Crisp) */
+  --color-text-secondary: #52525b;
+  /* Zinc-600 */
+  --color-text-muted: #a1a1aa;
+  /* Zinc-400 */
+  --color-border-subtle: #e4e4e7;
+  /* Zinc-200 */
+  --color-border-focus: #16a34a;
 
   /* --- The "Rich" Shadow System --- */
   /* Multi-layered for a soft, high-end feel */
   --shadow-rich: 0 1px 2px 0 rgba(0, 0, 0, 0.05),
-                 0 4px 12px -2px rgba(0, 0, 0, 0.03),
-                 0 12px 24px -4px rgba(0, 0, 0, 0.02);
-  
-  --shadow-float: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 
-                  0 10px 10px -5px rgba(0, 0, 0, 0.02);
+    0 4px 12px -2px rgba(0, 0, 0, 0.03),
+    0 12px 24px -4px rgba(0, 0, 0, 0.02);
+
+  --shadow-float: 0 20px 25px -5px rgba(0, 0, 0, 0.05),
+    0 10px 10px -5px rgba(0, 0, 0, 0.02);
 
   /* --- Layout & Radii --- */
-  --radius-premium: 0.75rem;          /* Standard SaaS rounding */
+  --radius-premium: 0.75rem;
+  /* Standard SaaS rounding */
   --radius-2xl: 1.25rem;
 
   /* --- Motion --- */
   --animate-soft-fade: soft-fade 0.4s ease-out forwards;
 
   @keyframes soft-fade {
-    from { opacity: 0; transform: translateY(4px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 }
 
-html, body, #root {
+html,
+body,
+#root {
   height: 100%;
   width: 100%;
   background-color: var(--color-background);
   color: var(--color-text-primary);
-  font-family: 'Geist', 'Inter', system-ui, sans-serif; /* Geist is the current gold standard for dev tools */
+  font-family: 'Geist', 'Inter', system-ui, sans-serif;
+  /* Geist is the current gold standard for dev tools */
   -webkit-font-smoothing: antialiased;
-  
+
   /* Global Scrollbar Hiding */
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE/Edge */
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE/Edge */
 }
 
 /* Hide scrollbars for Chrome, Safari and Opera */
@@ -68,7 +93,8 @@ html, body, #root {
 .rich-card {
   background: var(--color-surface-card);
   border: 1px solid var(--color-border-subtle);
-  border-top: 2px solid var(--color-primary); /* Brand accent */
+  border-top: 2px solid var(--color-primary);
+  /* Brand accent */
   border-radius: var(--radius-premium);
   box-shadow: var(--shadow-rich);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -78,7 +104,8 @@ html, body, #root {
 .rich-card:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-float);
-  border-color: #d4d4d8; /* Zinc-300 */
+  border-color: #d4d4d8;
+  /* Zinc-300 */
 }
 
 /* --- Clean Modern Scrollbar (Hidden) --- */
@@ -86,6 +113,7 @@ html, body, #root {
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
+
 .premium-scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -102,10 +130,12 @@ html, body, #root {
 
 /* --- Added Glass Light Utility --- */
 .glass-light {
-  background: rgba(255, 255, 255, 0.85); /* Light transparent base */
+  background: rgba(255, 255, 255, 0.85);
+  /* Light transparent base */
   backdrop-filter: blur(12px);
   border: 1px solid var(--color-border-subtle);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); /* Very soft shadow */
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  /* Very soft shadow */
 }
 
 /* --- Enhanced Primary Button --- */
@@ -113,11 +143,98 @@ html, body, #root {
   background-color: var(--color-primary);
   color: #ffffff;
   border: none;
-  box-shadow: 0 4px 14px 0 rgba(37, 99, 235, 0.39);
+  box-shadow: 0 4px 14px 0 rgba(22, 163, 74, 0.39);
   transition: all 0.2s ease-in-out;
 }
 
 .btn-primary:active {
   transform: scale(0.95);
-  box-shadow: none; /* Shadow disappears on click */
+  box-shadow: none;
+  /* Shadow disappears on click */
+}
+
+/* --- Global 3D & Glow Effect for Green Colors --- */
+
+.bg-green-500,
+.bg-green-600,
+.bg-green-700,
+.from-\[var\(--color-primary\)\] {
+  box-shadow: 0 0 20px rgba(22, 163, 74, 0.6) !important;
+}
+
+button.bg-green-500,
+button.bg-green-600,
+button.bg-green-700,
+button.from-\[var\(--color-primary\)\] {
+  box-shadow: 0 0 25px rgba(22, 163, 74, 0.6), inset 0 2px 0 rgba(255, 255, 255, 0.3), 0 5px 0 #14532d !important;
+  border-bottom: 5px solid #14532d !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.3) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+  transform: translateY(0);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+
+  /* --- Unified Compact Size Globally --- */
+  padding: 8px 24px !important;
+  min-height: 38px !important;
+  font-size: 11px !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.5px !important;
+  text-transform: uppercase !important;
+  border-radius: 12px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+}
+
+button.bg-green-500:active,
+button.bg-green-600:active,
+button.bg-green-700:active,
+button.from-\[var\(--color-primary\)\]:active {
+  transform: translateY(5px) !important;
+  border-bottom-width: 0px !important;
+  box-shadow: 0 0 10px rgba(22, 163, 74, 0.4), inset 0 2px 0 rgba(255, 255, 255, 0.2) !important;
+}
+
+.text-green-500,
+.text-green-600 {
+  text-shadow: 0 0 15px rgba(22, 163, 74, 0.5) !important;
+}
+
+.border-green-500,
+.border-green-600 {
+  box-shadow: 0 0 15px rgba(22, 163, 74, 0.3) !important;
+}
+
+/* --- Attractive 3D Sidebar & Navbar Effects --- */
+
+aside {
+  border-right: 2px solid rgba(22, 163, 74, 0.5) !important;
+  box-shadow: 10px 0 30px rgba(0, 0, 0, 0.4), inset -1px 0 0 rgba(22, 163, 74, 0.2) !important;
+  position: relative;
+}
+
+aside::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, transparent, #16a34a, transparent);
+  box-shadow: 0 0 15px #16a34a;
+  z-index: 10;
+}
+
+.h-16.bg-surface-card\/80 {
+  border-bottom: 3px solid #16a34a !important;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2), 0 10px 40px rgba(22, 163, 74, 0.1) !important;
+  background: rgba(255, 255, 255, 0.9) !important;
+  backdrop-filter: blur(20px) !important;
+}
+
+/* Sidebar Item Glow */
+aside a[class*="bg-[#1B3817]"] {
+  box-shadow: 0 0 20px rgba(22, 163, 74, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  border-left: 4px solid #16a34a !important;
 }

@@ -28,7 +28,7 @@ export function ProductCard({ product }) {
       onClick={() => navigate(`/product/${product._id}`)}
       className="group w-full max-w-[280px] mx-auto cursor-pointer"
     >
-      <div className="rich-card bg-white border-t-4 border-l-4 border-zinc-100 border-b-[10px] border-r-[8px] border-zinc-300 rounded-2xl overflow-hidden flex flex-col h-auto p-3 shadow-[0_0_60px_rgba(59,130,246,0.5)] group-hover:shadow-[0_0_80px_rgba(59,130,246,0.8)] group-hover:border-blue-300 transition-all duration-300">
+      <div className="rich-card bg-white border-t-4 border-l-4 border-zinc-200 border-b-[10px] border-r-[8px] border-black rounded-2xl overflow-hidden flex flex-col h-auto p-3 shadow-[0_15px_35px_rgba(0,0,0,0.5)] group-hover:shadow-[0_25px_50px_rgba(0,0,0,0.9)] group-hover:border-zinc-800 transition-all duration-300">
 
         {/* Compact Image: 4:3 Aspect Ratio */}
         <div className="relative aspect-[4/3] w-full bg-zinc-50 rounded-lg overflow-hidden flex items-center justify-center mb-3">
@@ -85,7 +85,7 @@ export function ProductCard({ product }) {
 
           {/* Condition Badge */}
           <div className="flex items-center gap-2 bg-zinc-50 px-2 py-1 rounded-lg border border-zinc-100">
-            <Tag className="w-2.5 h-2.5 text-blue-600" />
+            <Tag className="w-2.5 h-2.5 text-green-" />
             <span className="text-[9px] font-bold text-zinc-700 uppercase tracking-tight truncate">{status.label}</span>
           </div>
 

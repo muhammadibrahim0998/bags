@@ -57,13 +57,13 @@ export function CartModal({ isOpen, onClose, onCheckout }) {
 
           {/* Quick Add Search */}
           <div className="relative group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 group-focus-within:text-blue-600 transition-colors" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 group-focus-within:text-green-600 transition-colors" />
             <input
               type="text"
               placeholder="Search SKU or Name..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-zinc-50 border border-zinc-200 focus:border-blue-500/50 focus:bg-white rounded-xl py-3 pl-11 pr-4 text-sm font-bold text-zinc-900 placeholder:text-zinc-400 outline-none transition-all"
+              className="w-full bg-zinc-50 border border-zinc-200 focus:border-green-/50 focus:bg-white rounded-xl py-3 pl-11 pr-4 text-sm font-bold text-zinc-900 placeholder:text-zinc-400 outline-none transition-all"
             />
 
             <AnimatePresence>
@@ -81,10 +81,10 @@ export function CartModal({ isOpen, onClose, onCheckout }) {
                       className="w-full flex items-center justify-between p-4 hover:bg-zinc-50 transition-colors border-b border-zinc-50 last:border-none group/item"
                     >
                       <div className="text-left">
-                        <p className="text-xs font-black text-zinc-800 group-hover/item:text-blue-600 uppercase">{p.name}</p>
+                        <p className="text-xs font-black text-zinc-800 group-hover/item:text-green-600 uppercase">{p.name}</p>
                         <p className="text-[9px] text-zinc-400 font-bold">SKU: {p._id.slice(-6).toUpperCase()}</p>
                       </div>
-                      <p className="text-[10px] font-black text-blue-600 bg-blue-50 px-2 py-1 rounded">Rs.{p.price.toLocaleString()}</p>
+                      <p className="text-[10px] font-black text-green-600 bg-green-600 px-2 py-1 rounded">Rs.{p.price.toLocaleString()}</p>
                     </button>
                   ))}
                 </motion.div>
@@ -137,7 +137,7 @@ export function CartModal({ isOpen, onClose, onCheckout }) {
                         <Plus className="w-3 h-3" />
                       </button>
                     </div>
-                    <p className="text-sm font-black text-blue-600 font-mono tracking-tighter">Rs.{(item.price * item.quantity).toLocaleString()}</p>
+                    <p className="text-sm font-black text-green-600 font-mono tracking-tighter">Rs.{(item.price * item.quantity).toLocaleString()}</p>
                   </div>
                 </div>
               </div>
@@ -156,7 +156,7 @@ export function CartModal({ isOpen, onClose, onCheckout }) {
                 placeholder="Ex: Walk-in Customer / Ali Khan"
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
-                className="w-full bg-white border border-zinc-200 focus:border-blue-500/50 rounded-xl py-3 px-4 text-xs font-bold text-zinc-900 placeholder:text-zinc-300 outline-none transition-all shadow-inner"
+                className="w-full bg-white border border-zinc-200 focus:border-green-/50 rounded-xl py-3 px-4 text-xs font-bold text-zinc-900 placeholder:text-zinc-300 outline-none transition-all shadow-inner"
               />
             </div>
 

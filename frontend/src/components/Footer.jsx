@@ -14,7 +14,7 @@ export function Footer() {
 
           {/* Brand/Logo Section - Miniatured */}
           <div className="flex items-center gap-3 group cursor-default">
-            <div className="p-1.5 bg-blue-500 rounded-lg group-hover:scale-110 transition-transform duration-500 shadow-[0_0_15px_rgba(37,99,235,0.3)]">
+            <div className="p-1.5 bg-green-600 rounded-lg group-hover:scale-110 transition-transform duration-500 shadow-[0_0_15px_rgba(37,99,235,0.3)]">
               <Package className="w-3.5 h-3.5 text-[var(--color-text-primary)]" />
             </div>
             <div>
@@ -34,7 +34,7 @@ export function Footer() {
           {/* Credits Section - Thin Badge */}
           <div className="flex items-center gap-3 px-4 py-2 bg-[var(--color-surface-base)] rounded-full border border-[var(--color-border-subtle)] shadow-inner">
             <span className="text-[8px] font-black text-[var(--color-text-muted)] uppercase tracking-widest">Built for High Traffic</span>
-            <div className="w-1.5 h-1.5 rounded-full bg-blue-500/20 shadow-[0_0_8px_rgba(37,99,235,0.2)]"></div>
+            <div className="w-1.5 h-1.5 rounded-full bg-green-600/20 shadow-[0_0_8px_rgba(37,99,235,0.2)]"></div>
             <Heart className="w-3 h-3 text-rose-500 fill-rose-500 animate-pulse" />
           </div>
 

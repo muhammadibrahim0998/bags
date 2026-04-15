@@ -43,7 +43,7 @@ export function Storefront({ onAdd }) {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500"></div>
       </div>
     );
   }
@@ -54,7 +54,7 @@ export function Storefront({ onAdd }) {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
         <div className="space-y-1">
           <div className="flex items-center gap-3">
-            <div className="w-2 h-7 bg-blue-500 rounded-full shadow-[0_0_10px_rgba(37,99,235,0.5)]"></div>
+            <div className="w-2 h-7 bg-green-500 rounded-full shadow-[0_0_10px_rgba(22,163,74,0.5)]"></div>
             <h2 className="text-2xl font-black text-[var(--color-text-primary)] tracking-tighter capitalize leading-none">
               {category ? `${category}` : status ? `${status}` : "Master Catalog"}
             </h2>
@@ -64,10 +64,10 @@ export function Storefront({ onAdd }) {
         {isShopAdmin() && (
           <button
             onClick={() => onAdd(category || null)}
-            className="flex items-center gap-2 px-8 py-3.5 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-hover)] text-[var(--color-text-primary)] rounded-xl text-sm font-bold shadow-xl shadow-[var(--color-primary)]/20 transition-all active:scale-95 w-full md:w-auto justify-center uppercase tracking-tight"
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-hover)] text-[var(--color-text-primary)] rounded-xl text-xs font-bold shadow-xl shadow-[var(--color-primary)]/20 transition-all active:scale-95 w-full md:w-auto justify-center uppercase tracking-tight"
           >
             <Plus className="w-5 h-5" />
-            {category ? `New ${category} Product` : 'New Product'}
+            ADD NEW
           </button>
         )}
       </div>
@@ -85,7 +85,7 @@ export function Storefront({ onAdd }) {
             {searchTerm && (
               <button
                 onClick={() => setSearchTerm("")}
-                className="text-xs font-black uppercase tracking-widest text-blue-600 hover:text-blue-700 transition-colors"
+                className="text-xs font-black uppercase tracking-widest text-green-600 hover:text-green-700 transition-colors"
               >
                 Clear Search Term
               </button>

@@ -58,7 +58,7 @@ export function IntelligenceFeed({ products }) {
             {/* Right Action */}
             <button
                 onClick={() => navigate('/team')}
-                className="shrink-0 flex items-center gap-4 px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-[1.5rem] shadow-xl shadow-blue-600/20 hover:shadow-blue-600/30 transition-all active:scale-95 group"
+                className="shrink-0 flex items-center gap-4 px-6 py-4 bg-green-600 hover:bg-green-600 text-white rounded-[1.5rem] shadow-xl shadow-green-600/20 hover:shadow-green-600/30 transition-all active:scale-95 group"
             >
                 <div className="p-1 bgColor-[rgba(255,255,255,0.1)] rounded-lg">
                     <MessageSquare className="w-4 h-4" />
