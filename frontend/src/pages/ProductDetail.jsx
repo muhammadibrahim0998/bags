@@ -122,7 +122,7 @@ export function ProductDetail() {
                         {product.description || "No specific details provided for this product. Check metadata for handling requirements."}
                     </p>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="flex flex-col p-6 bg-[var(--color-surface-card)] border border-[var(--color-border-subtle)] rounded-3xl">
                             <span className="text-[10px] font-black text-[var(--color-text-muted)] uppercase tracking-widest flex items-center gap-2 mb-1">
                                 <Package className="w-4 h-4" /> Available Stock

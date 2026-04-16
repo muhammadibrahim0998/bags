@@ -9,7 +9,7 @@ export function Footer() {
       {/* Subtle bottom glow */}
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-orange-500/20 to-transparent"></div>
 
-      <div className="max-w-7xl mx-auto px-8 py-5">
+      <div className="max-w-7xl mx-auto px-8 py-4">
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
 
           {/* Brand/Logo Section - Miniatured */}

@@ -38,23 +38,23 @@ export function Navbar({
 
   return (
     <nav className="sticky top-0 z-50 w-full bg-[#2D5A27]/90 backdrop-blur-md border-b border-green-800/50 shadow-md transition-all duration-300">
-      <div className="flex items-center justify-between h-20 gap-4 px-6 max-w-[1600px] mx-auto">
+      <div className="flex items-center justify-between h-20 gap-2 sm:gap-4 px-4 sm:px-6 max-w-[1600px] mx-auto">
 
         {/* Left: Branding */}
         <div className="flex items-center gap-4">
           <button
-              onClick={() => {
-                if (window.innerWidth >= 768) {
-                  if (onToggleSidebar) onToggleSidebar();
-                } else {
-                  if (onMenuClick) onMenuClick();
-                }
-              }}
-              className="p-2.5 -ml-2 text-white/90 hover:text-white hover:bg-white/15 rounded-full transition-all shadow-md border border-white/10"
-              aria-label="Toggle Menu"
-            >
-              <Menu className="w-6 h-6" />
-            </button>
+            onClick={() => {
+              if (window.innerWidth >= 768) {
+                if (onToggleSidebar) onToggleSidebar();
+              } else {
+                if (onMenuClick) onMenuClick();
+              }
+            }}
+            className="p-2.5 -ml-2 text-white/90 hover:text-white hover:bg-white/15 rounded-full transition-all shadow-md border border-white/10"
+            aria-label="Toggle Menu"
+          >
+            <Menu className="w-6 h-6" />
+          </button>
 
           <div className="flex items-center gap-3 group cursor-pointer hover:scale-105 transition-transform duration-300" onClick={() => navigate('/store')}>
             <div className="relative bg-[#1B3817] rounded-full w-12 h-12 flex items-center justify-center shrink-0 shadow-[0_8px_15px_rgba(0,0,0,0.4)] overflow-hidden border-2 border-white/40 ring-2 ring-black/20">
@@ -90,7 +90,7 @@ export function Navbar({
               placeholder={isSuperAdmin() ? "Search shops..." : "Search inventory..."}
               className="w-full bg-white/90 backdrop-blur-sm rounded-full py-3 flex items-center pl-6 pr-14 text-sm font-black text-gray-800 placeholder:text-gray-400 focus:ring-4 focus:ring-orange-500/20 outline-none transition-all shadow-[inset_0_2px_6px_rgba(0,0,0,0.15),_0_10px_20px_rgba(0,0,0,0.25)] border-b-4 border-gray-300"
             />
-            <button 
+            <button
               className="absolute right-2 top-1/2 -translate-y-1/2 bg-[#1B3817] hover:bg-[#12290D] text-white p-2 rounded-full transition-all shadow-[0_5px_10px_rgba(0,0,0,0.4)] hover:scale-110 active:scale-95 active:shadow-none flex items-center justify-center border-t border-white/30"
               onClick={() => {
                 if (searchTerm) navigate('/store');
@@ -105,7 +105,7 @@ export function Navbar({
         <div className="flex items-center gap-3">
           {!isSuperAdmin() && (
             <>
-              <button onClick={onShiftClick} className="hidden sm:flex items-center gap-2.5 px-4 py-2.5 rounded-full border-t border-white/20 border-b-4 border-[#12290D] bg-[#1B3817] hover:bg-[#0C1D08] transition-all group shadow-[0_8px_15px_rgba(0,0,0,0.3)] hover:scale-105 active:translate-y-[2px] active:border-b-0 active:shadow-inner">
+              <button onClick={onShiftClick} className="hidden sm:flex items-center gap-2.5 px-4 py-2.5 rounded-full border-t border-white/20 border-b-4 bg-[#1B3817] hover:bg-[#0C1D08] transition-all group shadow-[0_8px_15px_rgba(0,0,0,0.3)] hover:scale-105 active:translate-y-[2px] active:border-b-0 active:shadow-inner">
                 <div className={`w-2.5 h-2.5 rounded-full ${currentSession ? 'bg-emerald-400 animate-pulse' : 'bg-rose-500 animate-pulse shadow-[0_0_8px_rgba(244,63,94,0.6)]'}`} />
                 <span className="text-xs font-black text-white uppercase tracking-widest">
                   {currentSession?.shiftType || 'No Active Shift'}
@@ -114,7 +114,7 @@ export function Navbar({
 
               <div className="h-8 w-px bg-white/30 mx-1 hidden sm:block"></div>
 
-              <button onClick={onCartClick} className="relative p-3 bg-[#1B3817] hover:bg-[#0C1D08] text-white rounded-full transition-all border-t border-white/20 border-b-4 border-[#12290D] shadow-[0_8px_15px_rgba(0,0,0,0.3)] hover:scale-110 active:translate-y-[2px] active:border-b-0 active:shadow-inner">
+              <button onClick={onCartClick} className="relative p-3 bg-[#1B3817] hover:bg-[#0C1D08] text-white rounded-full transition-all border-t border-white/20 border-b-4 shadow-[0_8px_15px_rgba(0,0,0,0.3)] hover:scale-110 active:translate-y-[2px] active:border-b-0 active:shadow-inner">
                 <ShoppingCart className="w-5 h-5 shadow-sm" />
                 {cartCount > 0 && (
                   <span className="absolute -top-2 -right-2 bg-yellow-400 text-black text-[10px] font-black h-5.5 w-5.5 rounded-full flex items-center justify-center border-2 border-[#1B3817] shadow-[0_2px_4px_rgba(0,0,0,0.3)]">
@@ -125,12 +125,12 @@ export function Navbar({
             </>
           )}
 
-          <div className="flex items-center gap-3 pl-4 border-l border-white/30 ml-1 h-12">
+          <div className="flex items-center gap-2 sm:gap-3 pl-2 sm:pl-4 border-l border-white/30 ml-1 h-12">
             <div className="hidden md:flex flex-col items-end justify-center">
               <span className="text-sm font-black text-white leading-none drop-shadow-lg">{user?.fullName}</span>
               <span className="text-[10px] font-black text-white/80 uppercase tracking-widest mt-1.5">{user?.role?.replace('_', ' ')}</span>
             </div>
-            <button onClick={logout} className="p-3 bg-[#1B3817] hover:bg-rose-700 text-white rounded-full transition-all border-t border-white/20 border-b-4 border-[#12290D] hover:border-rose-900 shadow-[0_8px_15px_rgba(0,0,0,0.3)] hover:scale-110 active:translate-y-[2px] active:border-b-0 active:shadow-inner">
+            <button onClick={logout} className="p-3 bg-[#1B3817] hover:bg-rose-700 text-white rounded-full transition-all border-t border-white/20 border-b-4 hover:border-rose-900 shadow-[0_8px_15px_rgba(0,0,0,0.3)] hover:scale-110 active:translate-y-[2px] active:border-b-0 active:shadow-inner">
               <LogOut className="w-5 h-5" />
             </button>
           </div>

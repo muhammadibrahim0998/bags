@@ -37,7 +37,7 @@ export function ShopAdminDashboard({
   const totalValue = products.reduce((sum, product) => sum + (product.price * product.stock), 0);
 
   return (
-    <div className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-in fade-in duration-700 bg-[var(--color-background)] min-h-screen text-[var(--color-text-primary)]">
+    <div className="flex-1 w-full max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 py-8 animate-in fade-in duration-700 bg-[var(--color-background)] min-h-screen text-[var(--color-text-primary)]">
 
       {/* Premium Update Banner */}
       <UpdateBanner />
@@ -61,7 +61,7 @@ export function ShopAdminDashboard({
       {/* Tab Switcher & Actions - Upgraded with Glassmorphism feel */}
       {isShopAdmin() && (
         <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-10 w-full animate-in slide-in-from-left-4">
-          <div className="flex items-center gap-2 bg-[var(--color-surface-card)] p-2 rounded-xl border border-[var(--color-border-subtle)] shadow-sm">
+          <div className="flex items-center gap-2 bg-[var(--color-surface-card)] p-2 rounded-xl border border-[var(--color-border-subtle)] shadow-sm overflow-x-auto w-full md:w-auto no-scrollbar">
             <button
               onClick={() => setActiveTab('inventory')}
               className={`flex items-center gap-2.5 px-6 py-2.5 rounded-[1.25rem] font-black text-[10px] uppercase tracking-[0.15em] transition-all ${activeTab === 'inventory'
@@ -96,7 +96,7 @@ export function ShopAdminDashboard({
 
           <button
             onClick={onAddProduct}
-            className="btn-primary flex items-center gap-3 px-8 py-4 rounded-[1.5rem] font-black text-xs uppercase tracking-[0.2em] transition-all whitespace-nowrap self-start sm:self-auto group"
+            className="btn-primary flex justify-center items-center gap-3 px-8 py-4 rounded-[1.5rem] font-black text-xs uppercase tracking-[0.2em] transition-all whitespace-nowrap w-full sm:w-auto self-start sm:self-auto group"
           >
             <Plus className="w-5 h-5 transition-transform group-hover:rotate-90" />
             Add Product

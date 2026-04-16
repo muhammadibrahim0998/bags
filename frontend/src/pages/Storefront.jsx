@@ -72,7 +72,7 @@ export function Storefront({ onAdd, onEdit, onDelete, onView }) {
         )}
       </div>
 
-      <div className="bg-surface-card p-1 rounded-2xl border border-[var(--color-border-subtle)] shadow-2xl mb-4">
+      <div className="bg-surface-card rounded-2xl border border-[var(--color-border-subtle)] shadow-2xl mb-4">
         <FilterBar />
       </div>
 

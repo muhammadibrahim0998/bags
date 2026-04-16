@@ -21,7 +21,7 @@ export function FilterBar() {
   };
 
   return (
-    <div className="w-full sticky top-0 z-30 rounded-2xl glass-light border-b border-zinc-200/50 p-3 mb-6 transition-all duration-300">
+    <div className="w-full sticky top-0 z-30 rounded-2xl glass-light border-b border-zinc-200/50 p-3 transition-all duration-300">
       <div className="max-w-[1600px] mx-auto space-y-3">
         <div className="flex flex-col lg:flex-row gap-2">
 
@@ -67,7 +67,7 @@ export function FilterBar() {
           <div className="flex flex-wrap items-center gap-2 pt-2 animate-in fade-in slide-in-from-top-1 duration-300">
 
             {categoryFilter !== "All" && (
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-green-600 text-green-600 text-[9px] font-bold rounded-md border border-green-600 uppercase tracking-tighter">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-primary text-white text-[9px] font-bold rounded-lg border border-green-600 uppercase tracking-tighter">
                 {categoryFilter}
                 <X className="w-3 h-3 cursor-pointer hover:text-green-" onClick={() => setCategoryFilter("All")} />
               </span>

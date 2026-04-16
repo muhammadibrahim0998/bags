@@ -205,7 +205,7 @@ export function ProductModal({ isOpen, onClose, onSave, product, mode, categorie
           </div>
 
           {/* Stock Group */}
-          <div className="grid grid-cols-2 gap-4 p-5 bg-[var(--color-surface-base)]/40 rounded-[2.5rem] border border-[var(--color-border-subtle)]">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-5 bg-[var(--color-surface-base)]/40 rounded-[2.5rem] border border-[var(--color-border-subtle)]">
             <div className="space-y-2">
               <label className="text-[10px] font-black text-[var(--color-text-muted)] uppercase tracking-widest">Current Stock</label>
               <input type="number" step="any" {...register("stock")} disabled={mode === "view"} className="w-full bg-[var(--color-surface-card)] border border-[var(--color-border-subtle)] rounded-2xl py-3 px-4 text-sm font-bold text-[var(--color-text-primary)] outline-none focus:border-[var(--color-primary)]/40 transition-all" />
@@ -217,7 +217,7 @@ export function ProductModal({ isOpen, onClose, onSave, product, mode, categorie
           </div>
 
           {/* Dates Group */}
-          <div className="grid grid-cols-2 gap-4 p-5 bg-[var(--color-primary)]/5 rounded-[2.5rem] border border-[var(--color-primary)]/10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-5 bg-[var(--color-primary)]/5 rounded-[2.5rem] border border-[var(--color-primary)]/10">
             <div className="space-y-2">
               <label className="text-[10px] font-black text-[var(--color-text-secondary)] uppercase tracking-widest pl-1">Mfg. Date</label>
               <div className="relative">

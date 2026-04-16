@@ -68,10 +68,10 @@ export function HelpView() {
                     <h1 className="text-4xl font-black text-[var(--color-text-primary)] tracking-tighter uppercase leading-none italic">
                         Help Center
                     </h1>
-                    <p className="text-[var(--color-text-muted)] font-bold uppercase text-[10px] tracking-[0.4em] mt-3 flex items-center gap-2">
+                    <div className="text-[var(--color-text-muted)] font-bold uppercase text-[10px] tracking-[0.4em] mt-3 flex items-center gap-2">
                         <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
                         NexFlow Operational Guidance
-                    </p>
+                    </div>
                 </div>
 
                 <div className="relative group min-w-[300px]">

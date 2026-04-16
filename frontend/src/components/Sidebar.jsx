@@ -72,8 +72,8 @@ export function Sidebar({ isMobileOpen, onCloseMobile, isCollapsed, onToggleSide
           if (onClick) onClick(e);
         }}
         className={`flex items-center group px-3 py-3 mx-4 rounded-2xl text-[13px] font-bold transition-all duration-300 ease-out ${active
-          ? "bg-[#1B3817] text-white border-t border-white/20 border-b-4 border-[#12290D] shadow-[0_8px_15px_rgba(0,0,0,0.3)] active:translate-y-[2px] active:border-b-0"
-          : "text-white/60 hover:text-white hover:bg-[#1B3817] border-t border-transparent hover:border-white/20 border-b-4 border-transparent hover:border-[#12290D] hover:shadow-[0_8px_15px_rgba(0,0,0,0.3)] hover:scale-105 active:translate-y-[2px] active:border-b-0"
+          ? "bg-[#1B3817] text-white border-t border-t-white/20 border-b-4 border-b-[#12290D] shadow-[0_8px_15px_rgba(0,0,0,0.3)] active:translate-y-[2px] active:border-b-0"
+          : "text-white/60 hover:text-white hover:bg-[#1B3817] border-t border-t-transparent hover:border-t-white/20 border-b-4 border-b-transparent hover:border-b-[#12290D] hover:shadow-[0_8px_15px_rgba(0,0,0,0.3)] hover:scale-105 active:translate-y-[2px] active:border-b-0"
           } ${isCollapsed ? 'justify-center mx-auto w-12 h-12 px-0' : 'gap-4'}`}
         title={isCollapsed ? label : undefined}
       >
@@ -99,7 +99,7 @@ export function Sidebar({ isMobileOpen, onCloseMobile, isCollapsed, onToggleSide
       )}
 
       <aside
-        className={`fixed md:relative top-16 md:top-0 h-[calc(100vh-64px)] md:h-full flex flex-col bg-gradient-to-b from-[#2D5A27] via-[#24491F] to-[#1B3817] text-white backdrop-blur-xl transition-[transform,width] duration-300 ease-[cubic-bezier(0.4,0,0,2,1)] transform-gpu will-change-transform border-r border-white/10 z-[100] md:z-20 overflow-hidden shadow-[4px_0_24px_rgba(0,0,0,0.3)] ${isCollapsed ? 'w-16' : 'w-56'
+        className={`absolute md:relative top-0 h-full flex flex-col bg-gradient-to-b from-[#2D5A27] via-[#24491F] to-[#1B3817] text-white backdrop-blur-xl transition-[transform,width] duration-300 ease-[cubic-bezier(0.4,0,0,2,1)] transform-gpu will-change-transform border-r border-white/10 z-[100] md:z-20 overflow-hidden shadow-[4px_0_24px_rgba(0,0,0,0.3)] ${isCollapsed ? 'w-16' : 'w-56'
           } ${isMobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}
       >
 
@@ -155,8 +155,8 @@ export function Sidebar({ isMobileOpen, onCloseMobile, isCollapsed, onToggleSide
                       to={`/store/category/${cat}`}
                       onClick={handleLinkClick}
                       className={`flex items-center group px-3 py-2.5 mx-4 rounded-xl text-[13px] font-bold transition-all duration-300 ease-out ${active
-                        ? "bg-[#1B3817] text-white border-t border-white/20 border-b-4 border-[#12290D] shadow-[0_8px_15px_rgba(0,0,0,0.3)] active:translate-y-[2px] active:border-b-0"
-                        : "text-white/60 hover:text-white hover:bg-[#1B3817] border-t border-transparent hover:border-white/20 border-b-4 border-transparent hover:border-[#12290D] hover:shadow-[0_8px_15px_rgba(0,0,0,0.3)] hover:scale-105 active:translate-y-[2px] active:border-b-0"
+                        ? "bg-[#1B3817] text-white border-t border-t-white/20 border-b-4 border-b-[#12290D] shadow-[0_8px_15px_rgba(0,0,0,0.3)] active:translate-y-[2px] active:border-b-0"
+                        : "text-white/60 hover:text-white hover:bg-[#1B3817] border-t border-t-transparent hover:border-t-white/20 border-b-4 border-b-transparent hover:border-b-[#12290D] hover:shadow-[0_8px_15px_rgba(0,0,0,0.3)] hover:scale-105 active:translate-y-[2px] active:border-b-0"
                         } ${isCollapsed ? 'justify-center mx-auto w-10 h-10 px-0' : 'gap-4'}`}
                       title={isCollapsed ? cat : undefined}
                     >

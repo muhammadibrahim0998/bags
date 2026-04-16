@@ -44,11 +44,11 @@ const RowActions = ({ onEdit, onDelete, onView, isShopAdmin }) => {
             exit={{ opacity: 0, scale: 0.95, x: 10 }}
             className="absolute right-full mr-2 top-1/2 -translate-y-1/2 z-50 flex items-center gap-1 bg-white border border-zinc-200 p-1.5 rounded-xl shadow-xl shadow-zinc-200/50"
           >
-            <button onClick={() => { onView(); setIsOpen(false); }} className="p-2 text-zinc-500 hover:bg-zinc-50 rounded-lg" title="View"><Eye className="w-4 h-4" /></button>
+            <button onClick={() => { onView(); setIsOpen(false); }} className="p-2 text-blue-500 hover:bg-blue-100 rounded-lg" title="View"><Eye className="w-4 h-4" /></button>
             {isShopAdmin && (
               <>
                 <div className="w-px h-4 bg-zinc-200 mx-1" />
-                <button onClick={() => { onEdit(); setIsOpen(false); }} className="p-2 text-green-600 hover:bg-green-600 rounded-lg" title="Edit"><Edit2 className="w-4 h-4" /></button>
+                <button onClick={() => { onEdit(); setIsOpen(false); }} className="p-2 text-green-600 hover:text-white hover:bg-green-300 rounded-lg" title="Edit"><Edit2 className="w-4 h-4" /></button>
                 <button onClick={() => { onDelete(); setIsOpen(false); }} className="p-2 text-rose-500 hover:bg-rose-50 rounded-lg" title="Delete"><Trash2 className="w-4 h-4" /></button>
               </>
             )}
@@ -80,24 +80,13 @@ export function InventoryTable({ onEdit, onDelete, onView, onExport }) {
   return (
     <div className="space-y-6">
       {/* Table Title & Quick Sort */}
-      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 px-1">
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 px-4 mt-2">
         <div>
           <h3 className="text-2xl font-black text-zinc-900 tracking-tighter uppercase italic">Registry</h3>
           <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-[0.2em] mt-1">Asset Management Protocol</p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <div className="flex bg-zinc-100 p-1 rounded-xl border border-zinc-200 overflow-x-auto scrollbar-hide">
-            {['name', 'stock', 'price', 'expiryDate'].map(id => (
-              <button
-                key={id}
-                onClick={() => handleSort(id)}
-                className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${sortConfig.key === id ? 'bg-white text-green-600 shadow-sm' : 'text-zinc-500 hover:text-zinc-900'}`}
-              >
-                {id.replace('expiryDate', 'Expiry')} {getSortIcon(id)}
-              </button>
-            ))}
-          </div>
           <button onClick={onExport} className="flex items-center gap-2 px-4 py-2 bg-zinc-900 text-white rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-black transition-all shadow-md active:scale-95">
             <FileSpreadsheet className="w-3.5 h-3.5" /> Export
           </button>
@@ -105,7 +94,7 @@ export function InventoryTable({ onEdit, onDelete, onView, onExport }) {
       </div>
 
       {/* Desktop Table View */}
-      <div className="hidden lg:block rich-card overflow-hidden">
+      <div className="hidden lg:block rich-card !rounded-b-none !border-b-0 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead className="bg-zinc-50/50 border-b border-zinc-100">
@@ -152,7 +141,7 @@ export function InventoryTable({ onEdit, onDelete, onView, onExport }) {
                     </td>
                     <td className="pr-6 py-4">
                       <div className="flex items-center justify-center gap-2">
-                        <button onClick={() => addToCart(product)} className="p-2 text-zinc-400 hover:text-green-600 hover:bg-green-600 rounded-lg transition-all"><ShoppingCart className="w-4 h-4" /></button>
+                        <button onClick={() => addToCart(product)} className="p-2 text-zinc-400 hover:text-white hover:bg-green-400 rounded-lg transition-all"><ShoppingCart className="w-4 h-4" /></button>
                         <RowActions onView={() => onView(product)} onEdit={() => onEdit(product)} onDelete={() => onDelete(product)} isShopAdmin={isShopAdmin()} />
                       </div>
                     </td>
