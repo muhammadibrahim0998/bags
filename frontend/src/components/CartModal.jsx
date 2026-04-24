@@ -54,18 +54,6 @@ export function CartModal({ isOpen, onClose, onCheckout }) {
               <X className="w-5 h-5" />
             </button>
           </div>
-
-          {/* Quick Add Search */}
-          <div className="relative group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 group-focus-within:text-green-600 transition-colors" />
-            <input
-              type="text"
-              placeholder="Search SKU or Name..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-zinc-50 border border-zinc-200 focus:border-green-/50 focus:bg-white rounded-xl py-3 pl-11 pr-4 text-sm font-bold text-zinc-900 placeholder:text-zinc-400 outline-none transition-all"
-            />
-
             <AnimatePresence>
               {filteredProducts.length > 0 && (
                 <motion.div
