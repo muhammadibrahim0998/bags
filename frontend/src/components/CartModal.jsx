@@ -1,26 +1,13 @@
 import React from 'react';
-import { X, ShoppingBag, Trash2, ArrowRight, Plus, Minus, Search } from 'lucide-react';
+import { X, ShoppingBag, Trash2, ArrowRight, Plus, Minus } from 'lucide-react';
 import { useProducts } from '../contexts/ProductContext';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export function CartModal({ isOpen, onClose, onCheckout }) {
   const { cart, products, addToCart, removeFromCart: onRemove, clearCart: onClear, updateQuantity: onUpdateQuantity } = useProducts();
-  const [searchQuery, setSearchQuery] = React.useState('');
   const [customerName, setCustomerName] = React.useState('');
 
   if (!isOpen) return null;
-
-  const filteredProducts = searchQuery.trim()
-    ? products.filter(p =>
-      p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p._id.toLowerCase().includes(searchQuery.toLowerCase())
-    ).slice(0, 5)
-    : [];
-
-  const handleAddFromSearch = (product) => {
-    addToCart(product);
-    setSearchQuery('');
-  };
 
   const total = (cart || []).reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
@@ -45,7 +32,7 @@ export function CartModal({ isOpen, onClose, onCheckout }) {
       >
         {/* Header */}
         <div className="p-6 border-b border-zinc-100">
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between">
             <div>
               <h2 className="text-xl font-black text-zinc-900 tracking-tighter uppercase italic">Sales Cart</h2>
               <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">{cart.length} Units Staged</p>
@@ -53,31 +40,6 @@ export function CartModal({ isOpen, onClose, onCheckout }) {
             <button onClick={onClose} className="p-2 hover:bg-zinc-100 rounded-full transition-colors text-zinc-400 hover:text-zinc-900">
               <X className="w-5 h-5" />
             </button>
-          </div>
-            <AnimatePresence>
-              {filteredProducts.length > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10 }}
-                  className="absolute top-full left-0 right-0 mt-2 bg-white border border-zinc-200 rounded-xl shadow-xl z-50 overflow-hidden"
-                >
-                  {filteredProducts.map(p => (
-                    <button
-                      key={p._id}
-                      onClick={() => handleAddFromSearch(p)}
-                      className="w-full flex items-center justify-between p-4 hover:bg-zinc-50 transition-colors border-b border-zinc-50 last:border-none group/item"
-                    >
-                      <div className="text-left">
-                        <p className="text-xs font-black text-zinc-800 group-hover/item:text-green-600 uppercase">{p.name}</p>
-                        <p className="text-[9px] text-zinc-400 font-bold">SKU: {p._id.slice(-6).toUpperCase()}</p>
-                      </div>
-                      <p className="text-[10px] font-black text-green-600 bg-green-600 px-2 py-1 rounded">Rs.{p.price.toLocaleString()}</p>
-                    </button>
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
           </div>
         </div>
 
@@ -144,7 +106,7 @@ export function CartModal({ isOpen, onClose, onCheckout }) {
                 placeholder="Ex: Walk-in Customer / Ali Khan"
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
-                className="w-full bg-white border border-zinc-200 focus:border-green-/50 rounded-xl py-3 px-4 text-xs font-bold text-zinc-900 placeholder:text-zinc-300 outline-none transition-all shadow-inner"
+                className="w-full bg-white border border-zinc-200 focus:border-green-500/50 rounded-xl py-3 px-4 text-xs font-bold text-zinc-900 placeholder:text-zinc-300 outline-none transition-all shadow-inner"
               />
             </div>
 
