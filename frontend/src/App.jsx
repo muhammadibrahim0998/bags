@@ -225,7 +225,7 @@ export default function App() {
 
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-background text-text-primary w-full tracking-tight">
-      <Toaster position="top-center" richColors duration={2500} />
+      <Toaster position="top-center" richColors duration={1500} />
 
       <Navbar
         isCollapsed={isCollapsed}
