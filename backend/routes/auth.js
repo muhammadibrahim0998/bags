@@ -32,7 +32,7 @@ const getCookieOptions = (req, extra = {}) => ({
  */
 router.get("/me", async (req, res) => {
   try {
-    const userId = req.cookies.nexflow_sess;
+    const userId = req.cookies.bags_sess;
 
     if (!userId) {
       return res.status(401).json({ 
@@ -44,7 +44,7 @@ router.get("/me", async (req, res) => {
     const user = await User.findById(userId).select("-password");
 
     if (!user || user.status !== 'active') {
-      res.clearCookie('nexflow_sess', getCookieOptions(req));
+      res.clearCookie('bags_sess', getCookieOptions(req));
       return res.status(401).json({ 
         success: false, 
         message: "Session invalid or account inactive" 
@@ -95,7 +95,7 @@ router.post("/login", validateLogin, async (req, res) => {
     await user.save();
 
     // 30-day session cookie — flags adapt to HTTP vs HTTPS automatically
-    res.cookie('nexflow_sess', user._id.toString(), getCookieOptions(req, {
+    res.cookie('bags_sess', user._id.toString(), getCookieOptions(req, {
       maxAge: 30 * 24 * 60 * 60 * 1000
     }));
 
@@ -123,7 +123,7 @@ router.post("/login", validateLogin, async (req, res) => {
  * @route   POST /api/auth/logout
  */
 router.post("/logout", (req, res) => {
-  res.clearCookie('nexflow_sess', getCookieOptions(req));
+  res.clearCookie('bags_sess', getCookieOptions(req));
   res.json({ success: true, message: "Logged out successfully" });
 });
 

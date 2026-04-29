@@ -33,7 +33,7 @@ export function Navbar({
   const { searchTerm, setSearchTerm } = useProducts();
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const fmt = (n) => `${settings.currency || 'Rs.'} ${(n || 0).toLocaleString('en-PK')}`;
-  const shopName = settings?.shopName || 'NexFlow';
+  const shopName = settings?.shopName || 'Bags Shop';
   const logoUrl = settings?.logoUrl || null;
 
   return (

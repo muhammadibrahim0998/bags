@@ -105,7 +105,7 @@ export function AuthGuardModal({ isOpen, onClose, onConfirm, title = "Authorizat
           )}
 
           <div className="mt-8 text-center">
-            <p className="text-[9px] font-black text-[var(--color-text-primary)] uppercase tracking-widest">NexFlow Security Protocol v2.0</p>
+            <p className="text-[9px] font-black text-[var(--color-text-primary)] uppercase tracking-widest">Bags Security Protocol v2.0</p>
           </div>
         </div>
       </div>

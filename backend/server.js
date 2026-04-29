@@ -74,7 +74,7 @@ app.use('/api/updates', updatesRoutes);
 
 // Root route
 app.get('/', (req, res) => {
-  res.send('Nexflow Inventory API is running...');
+  res.send('Bags Shop API is running...');
 });
 
 // Custom 404 Handler (This catches any route not defined above)
@@ -82,7 +82,7 @@ app.use((req, res) => {
   console.log(`[404] Route Not Found: ${req.method} ${req.url}`);
   res.status(404).json({
     success: false,
-    message: `Route not found on Nexflow API: ${req.method} ${req.url}`
+    message: `Route not found on Bags API: ${req.method} ${req.url}`
   });
 });
 

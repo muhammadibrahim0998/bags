@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const SettingsSchema = new mongoose.Schema({
-  shopName: { type: String, default: 'NexFlow POS' },
+  shopName: { type: String, default: 'Bags Shop' },
   address: { type: String, default: '' },
   phone: { type: String, default: '' },
   email: { type: String, default: '' },

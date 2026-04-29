@@ -9,7 +9,7 @@ const API_URL = '/settings';
 export function SettingsProvider({ children }) {
   const { user } = useUser();
   const [settings, setSettings] = useState({
-    shopName: 'NexFlow POS',
+    shopName: 'Bags Shop',
     currency: '$',
     address: '',
     phone: '',

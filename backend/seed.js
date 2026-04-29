@@ -6,22 +6,20 @@ dotenv.config();
 
 const seedDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/inventory_dashboard');
+    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/bags_db');
 
     // Only create the initial door-opener (Super Admin)
-    let superAdmin = await User.findOne({ role: 'super_admin' });
-    if (!superAdmin) {
-      superAdmin = new User({
-        username: 'superadmin',
-        password: 'password123', // Make sure to hash this if your model doesn't!
-        fullName: 'System Super Admin',
-        role: 'super_admin'
-      });
-      await superAdmin.save();
-      console.log('✅ Super Admin created. You can now login and create shops via the Dashboard.');
-    } else {
-      console.log('✅ Super Admin already exists.');
-    }
+    // Delete existing Super Admin to ensure update
+    await User.deleteMany({ role: 'super_admin' });
+
+    const superAdmin = new User({
+      username: 'ibrahim1530388@gmail.com',
+      password: 'super12345',
+      fullName: 'Ibrahim (Super Admin)',
+      role: 'super_admin'
+    });
+    await superAdmin.save();
+    console.log('✅ Super Admin created with email: ibrahim1530388@gmail.com');
 
     process.exit(0);
   } catch (error) {

@@ -25,7 +25,7 @@ export function ExportModal({ isOpen, onClose, products = [], sales = [], catego
       const sheet = workbook.addWorksheet(name);
       sheet.mergeCells("A1:F1");
       const titleCell = sheet.getCell("A1");
-      titleCell.value = "NexFlow Inventory Report";
+      titleCell.value = "Bags Inventory Report";
       titleCell.font = { size: 16, bold: true };
       titleCell.alignment = { horizontal: "center", vertical: "middle" };
       sheet.mergeCells("A2:F2");
@@ -62,7 +62,7 @@ export function ExportModal({ isOpen, onClose, products = [], sales = [], catego
     createInventorySheet(`Out of Stock (${outOfStock.length})`, outOfStock);
 
     const buffer = await workbook.xlsx.writeBuffer();
-    saveAs(new Blob([buffer]), `NexFlow_Inventory_${new Date().toISOString().split('T')[0]}.xlsx`);
+    saveAs(new Blob([buffer]), `Bags_Inventory_${new Date().toISOString().split('T')[0]}.xlsx`);
     onClose();
   };
 
@@ -85,7 +85,7 @@ export function ExportModal({ isOpen, onClose, products = [], sales = [], catego
     const txSheet = workbook.addWorksheet("All Transactions");
     txSheet.mergeCells("A1:F1");
     const t1 = txSheet.getCell("A1");
-    t1.value = "NexFlow Sales Report";
+    t1.value = "Bags Sales Report";
     t1.font = { size: 16, bold: true };
     t1.alignment = { horizontal: "center", vertical: "middle" };
     txSheet.mergeCells("A2:F2");
@@ -127,7 +127,7 @@ export function ExportModal({ isOpen, onClose, products = [], sales = [], catego
     sumSheet.columns = [{ width: 28 }, { width: 18 }];
 
     const buffer = await workbook.xlsx.writeBuffer();
-    saveAs(new Blob([buffer]), `NexFlow_Sales_${new Date().toISOString().split('T')[0]}.xlsx`);
+    saveAs(new Blob([buffer]), `Bags_Sales_${new Date().toISOString().split('T')[0]}.xlsx`);
     onClose();
   };
 
@@ -137,7 +137,7 @@ export function ExportModal({ isOpen, onClose, products = [], sales = [], catego
     const totalValue = (products || []).reduce((sum, p) => sum + (p.stock * p.price), 0);
     const phone = import.meta.env.VITE_WHATSAPP_NUMBER || "+923013241531";
     const dateStr = new Date().toLocaleDateString('en-PK', { day: '2-digit', month: 'short', year: 'numeric' });
-    let message = `*NexFlow Inventory Summary*\nDate: ${dateStr}\n\n*Overview*\n• Total Products: ${(products || []).length}\n• Inventory Value: Rs. ${totalValue.toLocaleString('en-PK')}\n\n`;
+    let message = `*Bags Inventory Summary*\nDate: ${dateStr}\n\n*Overview*\n• Total Products: ${(products || []).length}\n• Inventory Value: Rs. ${totalValue.toLocaleString('en-PK')}\n\n`;
     if (outOfStockItems.length > 0) {
       message += `*Out of Stock (${outOfStockItems.length})*\n`;
       outOfStockItems.forEach(p => { message += `• ${p.name}\n`; });
@@ -148,7 +148,7 @@ export function ExportModal({ isOpen, onClose, products = [], sales = [], catego
       lowStockItems.forEach(p => { message += `• ${p.name} (${p.stock} left)\n`; });
       message += `\n`;
     }
-    message += `Action: Restock items immediately\n\nNexFlow System`;
+    message += `Action: Restock items immediately\n\nBags System`;
     const url = `https://wa.me/${phone.replace("+", "")}?text=${encodeURIComponent(message)}`;
     window.open(url, "_blank");
   };

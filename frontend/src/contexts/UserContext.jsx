@@ -38,7 +38,7 @@ export const UserProvider = ({ children }) => {
       console.error("Logout failed:", error);
     } finally {
       setUser(null);
-      localStorage.removeItem('nexflow_shift');
+      localStorage.removeItem('bags_shift');
     }
   };
 

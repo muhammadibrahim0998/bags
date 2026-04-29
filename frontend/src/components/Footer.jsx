@@ -18,7 +18,7 @@ export function Footer() {
               <Package className="w-3.5 h-3.5 text-[var(--color-text-primary)]" />
             </div>
             <div>
-              <h2 className="text-xs font-black text-[var(--color-text-primary)] tracking-widest leading-none uppercase">NEXFLOW</h2>
+              <h2 className="text-xs font-black text-[var(--color-text-primary)] tracking-widest leading-none uppercase">BAGS SHOP</h2>
               <div className="flex items-center gap-1.5 mt-1">
                 <Zap className="w-2.5 h-2.5 text-[var(--color-primary)] fill-orange-500" />
                 <p className="text-[8px] text-[var(--color-text-muted)] font-black uppercase tracking-[0.3em] leading-none">Enterprise OS</p>

@@ -70,7 +70,7 @@ export function HelpView() {
                     </h1>
                     <div className="text-[var(--color-text-muted)] font-bold uppercase text-[10px] tracking-[0.4em] mt-3 flex items-center gap-2">
                         <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
-                        NexFlow Operational Guidance
+                        Bags Shop Operational Guidance
                     </div>
                 </div>
 
