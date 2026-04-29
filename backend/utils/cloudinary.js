@@ -7,13 +7,15 @@ const uploadOnCloudinary = async (localFilePath) => {
     try {
         if (!localFilePath) return null;
 
-        console.log(`[Cloudinary] Using Cloud Name: ${process.env.CLOUDINARY_CLOUD_NAME ? 'FOUND' : 'MISSING'}`);
-        // Ensure configuration is set (useful if env vars were loaded late)
-        cloudinary.config({
+        console.log(`[Cloudinary] Uploading file: ${localFilePath}`);
+        const config = {
             cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
             api_key: process.env.CLOUDINARY_API_KEY,
             api_secret: process.env.CLOUDINARY_API_SECRET,
-        });
+        };
+        console.log(`[Cloudinary] Config:`, { ...config, api_secret: '***' });
+        
+        cloudinary.config(config);
 
         // Upload the file on Cloudinary
         const response = await cloudinary.uploader.upload(localFilePath, {
@@ -23,14 +25,14 @@ const uploadOnCloudinary = async (localFilePath) => {
         if (fs.existsSync(localFilePath)) {
             fs.unlinkSync(localFilePath);
         }
-        console.log("File is uploaded on Cloudinary ", response.url);
+        console.log("✅ File is uploaded on Cloudinary ", response.secure_url);
         return response;
     } catch (error) {
+        console.error("❌ Error uploading file to Cloudinary:", error.message || error);
         // Remove the locally stored temporary file even if upload failed
         if (fs.existsSync(localFilePath)) {
             fs.unlinkSync(localFilePath);
         }
-        console.error("Error uploading file to Cloudinary:", error);
         return null;
     }
 };

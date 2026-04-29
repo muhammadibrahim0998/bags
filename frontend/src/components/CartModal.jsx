@@ -87,7 +87,7 @@ export function CartModal({ isOpen, onClose, onCheckout }) {
                         <Plus className="w-3 h-3" />
                       </button>
                     </div>
-                    <p className="text-sm font-black text-green-600 font-mono tracking-tighter">Rs.{(item.price * item.quantity).toLocaleString()}</p>
+                    <p className="text-sm font-black text-blue-600 font-mono tracking-tighter">Rs.{(item.price * item.quantity).toLocaleString()}</p>
                   </div>
                 </div>
               </div>
@@ -106,7 +106,7 @@ export function CartModal({ isOpen, onClose, onCheckout }) {
                 placeholder="Ex: Walk-in Customer / Ali Khan"
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
-                className="w-full bg-white border border-zinc-200 focus:border-green-500/50 rounded-xl py-3 px-4 text-xs font-bold text-zinc-900 placeholder:text-zinc-300 outline-none transition-all shadow-inner"
+                className="w-full bg-white border border-zinc-200 focus:border-blue-500/50 rounded-xl py-3 px-4 text-xs font-bold text-zinc-900 placeholder:text-zinc-300 outline-none transition-all shadow-inner"
               />
             </div>
 

@@ -182,7 +182,7 @@ export function ProductCard({ product, onEdit, onDelete, onView }) {
             disabled={product.stock === 0}
             className={`w-full py-2.5 rounded-lg font-bold text-[11px] uppercase tracking-[0.1em] transition-all duration-300 flex items-center justify-center gap-2
               ${product.stock > 0
-                ? 'bg-[#2D5A27] hover:bg-[#1B3817] text-white border-t border-b-4 border-[#12290D] shadow-[0_4px_10px_rgba(0,0,0,0.2)] hover:shadow-[0_8px_15px_rgba(0,0,0,0.3)] active:translate-y-[2px] active:border-b-0'
+                ? 'bg-blue-600 hover:bg-orange-500 text-white border-t border-white/20 border-b-4 border-black/40 shadow-[0_8px_15px_rgba(37,99,235,0.3)] hover:shadow-[0_8px_20px_rgba(249,115,22,0.4)] active:translate-y-[2px] active:border-b-0'
                 : 'bg-zinc-100 text-zinc-400 cursor-not-allowed border border-zinc-200'}`}
           >
             {product.stock > 0 ? (

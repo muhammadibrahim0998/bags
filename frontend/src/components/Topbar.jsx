@@ -40,9 +40,9 @@ export function Topbar({ onAddProduct, onNewSale, onExport }) {
           <Download className="w-5 h-5" />
         </button>
         <div className="h-6 w-px bg-[var(--color-surface-base)] mx-1"></div>
-        <button className="p-2.5 text-[var(--color-text-muted)] hover:text-[var(--color-primary)] hover:bg-green-500/5 rounded-2xl transition-all relative border border-transparent hover:border-green-500/10">
+        <button className="p-2.5 text-[var(--color-text-muted)] hover:text-[var(--color-primary)] hover:bg-blue-500/5 rounded-2xl transition-all relative border border-transparent hover:border-blue-500/10">
           <Bell className="w-5 h-5" />
-          <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-green-500 rounded-full border-2 border-[#0b0e14] shadow-[0_0_8px_rgba(37,99,235,0.5)]"></span>
+          <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-blue-500 rounded-full border-2 border-[#0b0e14] shadow-[0_0_8px_rgba(37,99,235,0.5)]"></span>
         </button>
         <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-[var(--color-primary)] to-rose-600 border border-[var(--color-border-subtle)] shadow-lg cursor-pointer ml-2 overflow-hidden ring-1 ring-white/5 flex items-center justify-center p-1 transition-transform hover:rotate-3">
           <div className="w-full h-full bg-[#0b0e14]/20 rounded-xl"></div>

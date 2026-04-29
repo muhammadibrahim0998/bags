@@ -72,7 +72,7 @@ export function ShiftModal({ isOpen, onClose }) {
 
       <div className="relative w-[95%] sm:w-[420px] bg-[var(--color-surface-card)] rounded-xl shadow-sm border border-[var(--color-border-subtle)] overflow-hidden animate-in fade-in zoom-in-95 duration-300 flex flex-col z-10 mx-auto">
         {/* Header Decor */}
-        <div className={`h-1.5 ${currentSession ? 'bg-rose-500/50 shadow-[0_0_15px_rgba(244,63,94,0.3)]' : 'bg-green-500/50 shadow-[0_0_15px_rgba(37,99,235,0.3)]'}`}></div>
+        <div className={`h-1.5 ${currentSession ? 'bg-rose-500/50 shadow-[0_0_15px_rgba(244,63,94,0.3)]' : 'bg-blue-500/50 shadow-[0_0_15px_rgba(37,99,235,0.3)]'}`}></div>
 
         <div className="p-5 sm:p-6 bg-[var(--color-surface-card)]">
           <div className="flex justify-between items-start mb-4">
@@ -138,7 +138,7 @@ export function ShiftModal({ isOpen, onClose }) {
                           <select
                             value={selectedMemberId}
                             onChange={(e) => setSelectedMemberId(e.target.value)}
-                            className="w-full bg-[var(--color-surface-base)] border border-[var(--color-border-subtle)] focus:border-green-500/40 rounded-xl py-2.5 pl-10 pr-4 text-[9px] font-bold text-[var(--color-text-primary)] uppercase tracking-widest outline-none transition-all appearance-none cursor-pointer"
+                            className="w-full bg-[var(--color-surface-base)] border border-[var(--color-border-subtle)] focus:border-blue-500/40 rounded-xl py-2.5 pl-10 pr-4 text-[9px] font-bold text-[var(--color-text-primary)] uppercase tracking-widest outline-none transition-all appearance-none cursor-pointer"
                           >
                             <option value={user.id}>Self ({user.fullName})</option>
                             {members.filter(m => m._id !== user.id).map(member => (
@@ -158,22 +158,22 @@ export function ShiftModal({ isOpen, onClose }) {
                           type="button"
                           onClick={() => setShiftType('day')}
                           className={`flex items-center justify-center gap-2 py-2 rounded-lg font-bold text-[9px] uppercase tracking-wider transition-all ${shiftType === 'day'
-                            ? 'bg-green-500 text-[var(--color-text-primary)] shadow-lg'
+                            ? 'bg-blue-500 text-[var(--color-text-primary)] shadow-lg'
                             : 'text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]'
                             }`}
                         >
-                          <div className={`w-1 h-1 rounded-full ${shiftType === 'day' ? 'bg-white animate-pulse' : 'bg-green-500/30'}`}></div>
+                          <div className={`w-1 h-1 rounded-full ${shiftType === 'day' ? 'bg-white animate-pulse' : 'bg-blue-500/30'}`}></div>
                           Day Shift
                         </button>
                         <button
                           type="button"
                           onClick={() => setShiftType('night')}
                           className={`flex items-center justify-center gap-2 py-2 rounded-lg font-bold text-[9px] uppercase tracking-wider transition-all ${shiftType === 'night'
-                            ? 'bg-green-500 text-[var(--color-text-primary)] shadow-lg shadow-green-500/10'
+                            ? 'bg-blue-500 text-[var(--color-text-primary)] shadow-lg shadow-orange-500/10'
                             : 'text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]'
                             }`}
                         >
-                          <div className={`w-1 h-1 rounded-full ${shiftType === 'night' ? 'bg-white animate-pulse' : 'bg-green-500/30'}`}></div>
+                          <div className={`w-1 h-1 rounded-full ${shiftType === 'night' ? 'bg-white animate-pulse' : 'bg-blue-500/30'}`}></div>
                           Night Shift
                         </button>
                       </div>
@@ -182,12 +182,12 @@ export function ShiftModal({ isOpen, onClose }) {
                 )}
 
                 {currentSession && (
-                  <div className="p-3 bg-green-500/5 border border-green-500/10 rounded-xl flex justify-between items-center group/sales">
+                  <div className="p-3 bg-blue-500/5 border border-blue-500/10 rounded-xl flex justify-between items-center group/sales">
                     <div className="space-y-0.5">
                       <p className="text-[7px] font-bold text-[var(--color-text-muted)] uppercase tracking-widest opacity-70">Total Shift Revenue</p>
                       <p className="text-lg font-black text-[var(--color-text-primary)] tracking-tighter leading-none">Rs. {currentSession.totalSales.toLocaleString('en-PK')}</p>
                     </div>
-                    <div className="w-8 h-8 rounded-lg bg-green-500/10 border border-green-500/20 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
                       <Wallet className="w-4 h-4 text-[var(--color-primary)]" />
                     </div>
                   </div>
@@ -200,7 +200,7 @@ export function ShiftModal({ isOpen, onClose }) {
                       value={notes}
                       onChange={(e) => setNotes(e.target.value)}
                       placeholder="Shift log..."
-                      className="w-full bg-[var(--color-surface-base)] border border-[var(--color-border-subtle)] focus:border-green-500/40 rounded-xl py-2 px-3 text-[9px] font-bold text-[var(--color-text-primary)] uppercase tracking-widest outline-none transition-all shadow-inner min-h-[50px] placeholder:text-slate-800"
+                      className="w-full bg-[var(--color-surface-base)] border border-[var(--color-border-subtle)] focus:border-blue-500/40 rounded-xl py-2 px-3 text-[9px] font-bold text-[var(--color-text-primary)] uppercase tracking-widest outline-none transition-all shadow-inner min-h-[50px] placeholder:text-slate-800"
                     />
                   </div>
                 )}

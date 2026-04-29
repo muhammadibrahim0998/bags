@@ -88,7 +88,9 @@ export function ProductModal({ isOpen, onClose, onSave, product, mode, categorie
       const newImageUrls = await uploadImages(files);
       setValue("images", [...images, ...newImageUrls].slice(0, 5));
     } catch (error) {
-      alert("Image upload failed.");
+      const errorMsg = error.response?.data?.message || error.message;
+      alert(`Image upload failed: ${errorMsg}`);
+      console.error("Upload Error:", error);
     } finally {
       setUploading(false);
       if (fileInputRef.current) {
@@ -246,83 +248,54 @@ export function ProductModal({ isOpen, onClose, onSave, product, mode, categorie
             </div>
           </div>
 
-          {/* Image Section */}
-          <div className="space-y-4">
-            <label className="text-[10px] font-black text-[var(--color-text-muted)] uppercase tracking-widest pl-1">Gallery ({images.length}/5)</label>
-            <div className="relative aspect-video bg-[var(--color-surface-base)] rounded-[2.5rem] overflow-hidden border-2 border-dashed border-[var(--color-border-subtle)] flex items-center justify-center group/preview">
-              {images.length > 0 ? (
-                <img src={images[selectedImageIndex]} alt="Preview" className="w-full h-full object-contain bg-[var(--color-surface-base)]" />
-              ) : (
-                <div className="text-center text-[var(--color-text-muted)]">
-                  <Upload className="w-10 h-10 mx-auto mb-3 opacity-20" />
-                  <p className="text-[10px] font-black uppercase tracking-widest">No images yet</p>
-                </div>
+          {/* Image Section - Compact */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between pl-1">
+              <label className="text-[10px] font-black text-[var(--color-text-muted)] uppercase tracking-widest">Gallery ({images.length}/5)</label>
+              {mode !== "view" && images.length < 5 && (
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-blue-500/20 hover:scale-105 active:scale-95 transition-all"
+                >
+                  {uploading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Upload className="w-3 h-3" />}
+                  Choose Image
+                </button>
               )}
             </div>
 
-            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
               {images.map((img, idx) => (
-                <div key={idx} className={`relative shrink-0 w-20 h-20 rounded-2xl overflow-hidden border-2 transition-all cursor-pointer ${selectedImageIndex === idx ? 'border-[var(--color-primary)] shadow-[0_0_15px_rgba(37,99,235,0.1)]' : 'border-[var(--color-border-subtle)] opacity-40 hover:opacity-100'}`} onClick={() => setSelectedImageIndex(idx)}>
+                <div key={idx} className={`relative shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${selectedImageIndex === idx ? 'border-[var(--color-primary)] shadow-lg' : 'border-[var(--color-border-subtle)] opacity-40 hover:opacity-100'}`} onClick={() => setSelectedImageIndex(idx)}>
                   <img src={img} className="w-full h-full object-cover" />
 
                   {mode !== "view" && idx !== 0 && (
-                    <button type="button" title="Set as Primary Cover" onClick={(e) => {
+                    <button type="button" onClick={(e) => {
                       e.stopPropagation();
                       const newImages = [...images];
                       const [moved] = newImages.splice(idx, 1);
                       newImages.unshift(moved);
                       setValue("images", newImages);
                       setSelectedImageIndex(0);
-                    }} className="absolute bottom-1 left-1 bg-black/60 backdrop-blur-md text-white rounded-lg p-1 shadow-2xl hover:text-amber-400 hover:scale-110 transition-all">
-                      <Star className="w-3.5 h-3.5" />
+                    }} className="absolute bottom-1 left-1 bg-black/60 text-white rounded-md p-0.5">
+                      <Star className="w-3 h-3" />
                     </button>
                   )}
 
                   {mode !== "view" && (
-                    <button type="button" title="Delete Image" onClick={(e) => {
+                    <button type="button" onClick={(e) => {
                       e.stopPropagation();
                       const newImages = images.filter((_, i) => i !== idx);
                       setValue("images", newImages);
                       if (selectedImageIndex >= newImages.length) setSelectedImageIndex(Math.max(0, newImages.length - 1));
-                    }} className="absolute top-1 right-1 bg-[var(--color-danger)] text-white rounded-lg p-1 shadow-xl hover:scale-110 transition-all">
-                      <X className="w-3.5 h-3.5" />
+                    }} className="absolute top-1 right-1 bg-red-500 text-white rounded-md p-0.5">
+                      <X className="w-3 h-3" />
                     </button>
                   )}
                 </div>
               ))}
-              {mode !== "view" && images.length < 5 && (
-                <button type="button" onClick={() => fileInputRef.current?.click()} className="w-20 h-20 border-2 border-dashed border-[var(--color-border-subtle)] rounded-2xl flex items-center justify-center bg-[var(--color-surface-base)] text-[var(--color-text-muted)] hover:text-[var(--color-primary)] hover:border-[var(--color-primary)]/50 hover:bg-[var(--color-surface-base)] transition-all shrink-0">
-                  {uploading ? <Loader2 className="w-6 h-6 animate-spin" /> : <Upload className="w-6 h-6" />}
-                </button>
-              )}
             </div>
 
-            {mode !== "view" && images.length < 5 && (
-              <div className="flex gap-2 relative">
-                <LinkIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-text-muted)]" />
-                <input
-                  type="text"
-                  value={imageUrlInput}
-                  onChange={(e) => setImageUrlInput(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      handleAddImageUrl();
-                    }
-                  }}
-                  placeholder="Paste an external image URL..."
-                  className="flex-1 bg-[var(--color-surface-card)] border border-[var(--color-border-subtle)] rounded-xl py-3 pl-11 pr-4 text-xs font-bold text-[var(--color-text-primary)] outline-none focus:border-[var(--color-primary)]/40 transition-all shadow-inner"
-                />
-                <button
-                  type="button"
-                  onClick={handleAddImageUrl}
-                  disabled={!imageUrlInput.trim()}
-                  className="px-6 bg-[var(--color-surface-base)] border border-[var(--color-border-subtle)] text-[var(--color-text-primary)] font-black text-[10px] uppercase tracking-widest rounded-xl hover:text-[var(--color-primary)] hover:border-[var(--color-primary)]/40 hover:bg-[var(--color-primary)]/5 disabled:opacity-50 transition-all"
-                >
-                  Add URL
-                </button>
-              </div>
-            )}
 
             <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" multiple className="hidden" />
           </div>

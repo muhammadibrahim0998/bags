@@ -16,12 +16,12 @@ export function SalesHistory({
         <div className="space-y-1.5">
           <h3 className="text-xl font-black text-[var(--color-text-primary)] tracking-tighter flex items-center gap-3 uppercase">
             Transaction Logs
-            <span className="text-[9px] font-black bg-green-600/10 text-[var(--color-primary)] px-2.5 py-0.5 rounded-full border border-green-/20 uppercase tracking-widest">
+            <span className="text-[9px] font-black bg-blue-600/10 text-[var(--color-primary)] px-2.5 py-0.5 rounded-full border border-green-/20 uppercase tracking-widest">
               {sales.length} Ops
             </span>
           </h3>
           <div className="text-[9px] text-[var(--color-text-muted)] font-black uppercase tracking-[0.3em] flex items-center gap-2">
-            <div className="w-1 h-1 bg-green-600 rounded-full animate-pulse"></div>
+            <div className="w-1 h-1 bg-blue-600 rounded-full animate-pulse"></div>
             Real-time Fiscal Intelligence
           </div>
         </div>
@@ -54,7 +54,7 @@ export function SalesHistory({
               style={{ animationDelay: `${index * 50}ms` }}
             >
               {/* Subtle background glow */}
-              <div className="absolute -top-16 -right-16 w-32 h-32 bg-green-600/5 rounded-full blur-[60px] group-hover:bg-green-600/10 transition-all"></div>
+              <div className="absolute -top-16 -right-16 w-32 h-32 bg-blue-600/5 rounded-full blur-[60px] group-hover:bg-blue-600/10 transition-all"></div>
 
               {/* Card Header: Metadata */}
               <div className="flex items-start justify-between gap-4 mb-8 relative z-10">
@@ -107,7 +107,7 @@ export function SalesHistory({
                   {sale.status !== 'returned' && (
                     <button onClick={() => onReturnSale(sale._id)} className="p-2.5 bg-[var(--color-surface-base)] hover:bg-rose-500/10 text-[var(--color-text-muted)] hover:text-rose-500 rounded-xl transition-all border border-[var(--color-border-subtle)]" title="Return Archive"><RotateCcw className="w-4 h-4" /></button>
                   )}
-                  <button onClick={() => openEditSaleModal(sale)} className="p-2.5 bg-[var(--color-surface-base)] hover:bg-green-600 hover:text-[var(--color-text-primary)] rounded-xl transition-all border border-[var(--color-border-subtle)]" title="Modify Record"><Edit className="w-4 h-4" /></button>
+                  <button onClick={() => openEditSaleModal(sale)} className="p-2.5 bg-[var(--color-surface-base)] hover:bg-blue-600 hover:text-[var(--color-text-primary)] rounded-xl transition-all border border-[var(--color-border-subtle)]" title="Modify Record"><Edit className="w-4 h-4" /></button>
                 </div>
                 <div className="flex items-center gap-1.5">
                   {sale.invoiceUrl && (

@@ -213,7 +213,7 @@ export function SettingsView() {
         <div className="w-[95%] sm:w-[380px] bg-surface-card rounded-xl shadow-2xl border border-[var(--color-border-subtle)] relative overflow-hidden p-6 sm:p-8 mx-auto">
           <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-[var(--color-primary)] to-rose-500"></div>
           <div className="text-center mb-8">
-            <div className="inline-flex p-3.5 bg-green-500/10 text-[var(--color-primary)] rounded-full mb-4 border border-green-500/20 shadow-inner">
+            <div className="inline-flex p-3.5 bg-blue-500/10 text-[var(--color-primary)] rounded-full mb-4 border border-blue-500/20 shadow-inner">
               <Shield className="w-8 h-8" />
             </div>
             <h2 className="text-2xl font-black text-[var(--color-text-primary)] uppercase tracking-tighter italic leading-none">Owner Access</h2>
@@ -265,7 +265,7 @@ export function SettingsView() {
             System Settings
           </h1>
           <div className="text-[var(--color-text-secondary)] font-bold uppercase text-[9px] sm:text-[10px] tracking-[0.3em] sm:tracking-[0.4em] mt-3 flex items-center gap-2">
-            <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
+            <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></div>
             Master Configuration Panel
           </div>
         </div>
@@ -309,7 +309,7 @@ export function SettingsView() {
                   {/* Upload & URL inputs */}
                   <div className="flex-1 space-y-3">
                     <label
-                      className={`w-full flex items-center justify-center gap-2 py-3 border-2 border-dashed border-[var(--color-border-subtle)] rounded-2xl text-[10px] font-black uppercase tracking-widest text-[var(--color-text-muted)] hover:border-green-500 hover:text-green-600 hover:bg-green-50/50 transition-all cursor-pointer ${logoUploading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      className={`w-full flex items-center justify-center gap-2 py-3 border-2 border-dashed border-[var(--color-border-subtle)] rounded-2xl text-[10px] font-black uppercase tracking-widest text-[var(--color-text-muted)] hover:border-blue-500 hover:text-blue-600 hover:bg-green-50/50 transition-all cursor-pointer ${logoUploading ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                       <UploadCloud className="w-4 h-4" />
                       {logoUploading ? 'Uploading...' : 'Click to Upload Logo'}
@@ -323,7 +323,7 @@ export function SettingsView() {
                     </label>
                     <input
                       {...register('logoUrl')}
-                      className="block w-full px-4 py-3 bg-[var(--color-surface-base)] border border-[var(--color-border-subtle)] rounded-2xl text-[var(--color-text-primary)] focus:border-green-500/40 focus:ring-1 focus:ring-green-500/40 transition-all font-bold placeholder:text-slate-400 outline-none text-xs"
+                      className="block w-full px-4 py-3 bg-[var(--color-surface-base)] border border-[var(--color-border-subtle)] rounded-2xl text-[var(--color-text-primary)] focus:border-blue-500/40 focus:ring-1 focus:ring-green-500/40 transition-all font-bold placeholder:text-slate-400 outline-none text-xs"
                       placeholder="Or paste an image URL directly..."
                     />
                   </div>
@@ -338,7 +338,7 @@ export function SettingsView() {
                   </div>
                   <input
                     {...register('shopName')}
-                    className={`block w-full pl-12 pr-5 py-4 bg-[var(--color-surface-base)] border ${errors.shopName ? 'border-rose-500/50 bg-rose-50/50' : 'border-[var(--color-border-subtle)]'} rounded-2xl text-[var(--color-text-primary)] focus:border-green-500/40 focus:ring-1 focus:ring-green-500/40 transition-all font-bold placeholder:text-slate-700 outline-none`}
+                    className={`block w-full pl-12 pr-5 py-4 bg-[var(--color-surface-base)] border ${errors.shopName ? 'border-rose-500/50 bg-rose-50/50' : 'border-[var(--color-border-subtle)]'} rounded-2xl text-[var(--color-text-primary)] focus:border-blue-500/40 focus:ring-1 focus:ring-green-500/40 transition-all font-bold placeholder:text-slate-700 outline-none`}
                     placeholder="Enter Shop Name"
                   />
                   {errors.shopName && <p className="text-[9px] font-bold text-rose-500 mt-1 pl-1 uppercase tracking-tighter">{errors.shopName.message}</p>}
@@ -354,7 +354,7 @@ export function SettingsView() {
                   <input
                     {...register('email')}
                     type="email"
-                    className={`block w-full pl-12 pr-5 py-4 bg-[var(--color-surface-base)] border ${errors.email ? 'border-rose-500/50 bg-rose-50/50' : 'border-[var(--color-border-subtle)]'} rounded-2xl text-[var(--color-text-primary)] focus:border-green-500/40 focus:ring-1 focus:ring-green-500/40 transition-all font-bold placeholder:text-slate-700 outline-none`}
+                    className={`block w-full pl-12 pr-5 py-4 bg-[var(--color-surface-base)] border ${errors.email ? 'border-rose-500/50 bg-rose-50/50' : 'border-[var(--color-border-subtle)]'} rounded-2xl text-[var(--color-text-primary)] focus:border-blue-500/40 focus:ring-1 focus:ring-green-500/40 transition-all font-bold placeholder:text-slate-700 outline-none`}
                     placeholder="shop@premium.com"
                   />
                   {errors.email && <p className="text-[9px] font-bold text-rose-500 mt-1 pl-1 uppercase tracking-tighter">{errors.email.message}</p>}
@@ -369,7 +369,7 @@ export function SettingsView() {
                   </div>
                   <input
                     {...register('phone')}
-                    className={`block w-full pl-12 pr-5 py-4 bg-[var(--color-surface-base)] border ${errors.phone ? 'border-rose-500/50 bg-rose-50/50' : 'border-[var(--color-border-subtle)]'} rounded-2xl text-[var(--color-text-primary)] focus:border-green-500/40 focus:ring-1 focus:ring-green-500/40 transition-all font-bold placeholder:text-slate-700 outline-none`}
+                    className={`block w-full pl-12 pr-5 py-4 bg-[var(--color-surface-base)] border ${errors.phone ? 'border-rose-500/50 bg-rose-50/50' : 'border-[var(--color-border-subtle)]'} rounded-2xl text-[var(--color-text-primary)] focus:border-blue-500/40 focus:ring-1 focus:ring-green-500/40 transition-all font-bold placeholder:text-slate-700 outline-none`}
                     placeholder="+1 234 567 890"
                   />
                   {errors.phone && <p className="text-[9px] font-bold text-rose-500 mt-1 pl-1 uppercase tracking-tighter">{errors.phone.message}</p>}
@@ -385,7 +385,7 @@ export function SettingsView() {
                   <input
                     {...register('currency')}
                     maxLength={5}
-                    className={`block w-full pl-16 pr-5 py-4 bg-[var(--color-surface-base)] border ${errors.currency ? 'border-rose-500/50 bg-rose-50/50' : 'border-[var(--color-border-subtle)]'} rounded-2xl text-[var(--color-text-primary)] focus:border-green-500/40 focus:ring-1 focus:ring-green-500/40 transition-all font-bold placeholder:text-slate-700 outline-none`}
+                    className={`block w-full pl-16 pr-5 py-4 bg-[var(--color-surface-base)] border ${errors.currency ? 'border-rose-500/50 bg-rose-50/50' : 'border-[var(--color-border-subtle)]'} rounded-2xl text-[var(--color-text-primary)] focus:border-blue-500/40 focus:ring-1 focus:ring-green-500/40 transition-all font-bold placeholder:text-slate-700 outline-none`}
                     placeholder="Rs."
                   />
                   {errors.currency && <p className="text-[9px] font-bold text-rose-500 mt-1 pl-1 uppercase tracking-tighter">{errors.currency.message}</p>}
@@ -401,7 +401,7 @@ export function SettingsView() {
                   <textarea
                     rows={3}
                     {...register('address')}
-                    className={`block w-full pl-12 pr-5 py-4 bg-[var(--color-surface-base)] border ${errors.address ? 'border-rose-500/50 bg-rose-50/50' : 'border-[var(--color-border-subtle)]'} rounded-2xl text-[var(--color-text-primary)] focus:border-green-500/40 focus:ring-1 focus:ring-green-500/40 transition-all font-bold placeholder:text-slate-700 outline-none resize-none`}
+                    className={`block w-full pl-12 pr-5 py-4 bg-[var(--color-surface-base)] border ${errors.address ? 'border-rose-500/50 bg-rose-50/50' : 'border-[var(--color-border-subtle)]'} rounded-2xl text-[var(--color-text-primary)] focus:border-blue-500/40 focus:ring-1 focus:ring-green-500/40 transition-all font-bold placeholder:text-slate-700 outline-none resize-none`}
                     placeholder="Enter complete store location for billing documentation..."
                   />
                   {errors.address && <p className="text-[9px] font-bold text-rose-500 mt-1 pl-1 uppercase tracking-tighter">{errors.address.message}</p>}
@@ -441,18 +441,18 @@ export function SettingsView() {
             id="profile"
             title="Owner Profile"
             icon={UserCircle}
-            colorClass="bg-green-50 text-green-600"
+            colorClass="bg-green-50 text-blue-600"
             bgClass="bg-white"
             isOpen={collapsed.profile}
             onToggle={toggleSection}
           >
             <div className="flex items-center gap-4 border-b border-[var(--color-border-subtle)] pb-6 mb-6">
               <div className="p-4 bg-[var(--color-surface-base)] rounded-2xl border border-[var(--color-border-subtle)]">
-                <UserCircle className="w-8 h-8 text-green-500" />
+                <UserCircle className="w-8 h-8 text-blue-500" />
               </div>
               <div>
                 <h4 className="text-lg font-black text-[var(--color-text-primary)] uppercase leading-none">{user?.fullName || 'System Admin'}</h4>
-                <span className="text-[10px] font-bold text-green-600 uppercase tracking-widest">{user?.role?.replace('_', ' ') || 'Admin'}</span>
+                <span className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">{user?.role?.replace('_', ' ') || 'Admin'}</span>
               </div>
             </div>
 
@@ -478,7 +478,7 @@ export function SettingsView() {
                   </div>
                   <input
                     {...register('ownerFullName')}
-                    className="block w-full pl-12 pr-5 py-4 bg-[var(--color-surface-base)] border border-[var(--color-border-subtle)] rounded-2xl text-[var(--color-text-primary)] focus:border-green-500/40 focus:ring-1 focus:ring-green-500/40 transition-all font-bold placeholder:text-slate-400 outline-none"
+                    className="block w-full pl-12 pr-5 py-4 bg-[var(--color-surface-base)] border border-[var(--color-border-subtle)] rounded-2xl text-[var(--color-text-primary)] focus:border-blue-500/40 focus:ring-1 focus:ring-green-500/40 transition-all font-bold placeholder:text-slate-400 outline-none"
                     placeholder="Owner Display Name"
                   />
                 </div>
@@ -492,7 +492,7 @@ export function SettingsView() {
                   <input
                     {...register('ownerEmail')}
                     type="email"
-                    className="block w-full pl-12 pr-5 py-4 bg-[var(--color-surface-base)] border border-[var(--color-border-subtle)] rounded-2xl text-[var(--color-text-primary)] focus:border-green-500/40 focus:ring-1 focus:ring-green-500/40 transition-all font-bold placeholder:text-slate-400 outline-none"
+                    className="block w-full pl-12 pr-5 py-4 bg-[var(--color-surface-base)] border border-[var(--color-border-subtle)] rounded-2xl text-[var(--color-text-primary)] focus:border-blue-500/40 focus:ring-1 focus:ring-green-500/40 transition-all font-bold placeholder:text-slate-400 outline-none"
                     placeholder="owner@shop.com"
                   />
                 </div>
@@ -505,7 +505,7 @@ export function SettingsView() {
                   </div>
                   <input
                     {...register('ownerPhone')}
-                    className="block w-full pl-12 pr-5 py-4 bg-[var(--color-surface-base)] border border-[var(--color-border-subtle)] rounded-2xl text-[var(--color-text-primary)] focus:border-green-500/40 focus:ring-1 focus:ring-green-500/40 transition-all font-bold placeholder:text-slate-400 outline-none"
+                    className="block w-full pl-12 pr-5 py-4 bg-[var(--color-surface-base)] border border-[var(--color-border-subtle)] rounded-2xl text-[var(--color-text-primary)] focus:border-blue-500/40 focus:ring-1 focus:ring-green-500/40 transition-all font-bold placeholder:text-slate-400 outline-none"
                     placeholder="+1 234 567 890"
                   />
                 </div>

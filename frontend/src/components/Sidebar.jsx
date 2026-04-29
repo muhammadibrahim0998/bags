@@ -72,8 +72,8 @@ export function Sidebar({ isMobileOpen, onCloseMobile, isCollapsed, onToggleSide
           if (onClick) onClick(e);
         }}
         className={`flex items-center group px-3 py-3 mx-4 rounded-2xl text-[13px] font-bold transition-all duration-300 ease-out ${active
-          ? "bg-[#1B3817] text-white border-t border-t-white/20 border-b-4 border-b-[#12290D] shadow-[0_8px_15px_rgba(0,0,0,0.3)] active:translate-y-[2px] active:border-b-0"
-          : "text-white/60 hover:text-white hover:bg-[#1B3817] border-t border-t-transparent hover:border-t-white/20 border-b-4 border-b-transparent hover:border-b-[#12290D] hover:shadow-[0_8px_15px_rgba(0,0,0,0.3)] hover:scale-105 active:translate-y-[2px] active:border-b-0"
+          ? "bg-[#18181b] text-white border-t border-t-white/10 border-b-4 border-b-[#000] shadow-[0_0_20px_rgba(255,255,255,0.15)] scale-105"
+          : "text-white/60 hover:text-white hover:bg-[#18181b] border-t border-t-transparent hover:border-t-white/10 border-b-4 border-b-transparent hover:border-b-[#000] hover:shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:scale-105"
           } ${isCollapsed ? 'justify-center mx-auto w-12 h-12 px-0' : 'gap-4'}`}
         title={isCollapsed ? label : undefined}
       >
@@ -99,20 +99,20 @@ export function Sidebar({ isMobileOpen, onCloseMobile, isCollapsed, onToggleSide
       )}
 
       <aside
-        className={`absolute md:relative top-0 h-full flex flex-col bg-gradient-to-b from-[#2D5A27] via-[#24491F] to-[#1B3817] text-white backdrop-blur-xl transition-[transform,width] duration-300 ease-[cubic-bezier(0.4,0,0,2,1)] transform-gpu will-change-transform border-r border-white/10 z-[100] md:z-20 overflow-hidden shadow-[4px_0_24px_rgba(0,0,0,0.3)] ${isCollapsed ? 'w-16' : 'w-56'
+        className={`absolute md:relative top-0 h-full flex flex-col bg-[#09090b] text-white backdrop-blur-xl transition-[transform,width] duration-300 ease-[cubic-bezier(0.4,0,0,2,1)] transform-gpu will-change-transform border-r border-white/10 z-[100] md:z-20 overflow-hidden shadow-[4px_0_24px_rgba(255,255,255,0.1)] ${isCollapsed ? 'w-16' : 'w-56'
           } ${isMobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}
       >
 
         {/* User Profile */}
         <div className={`mx-4 mb-6 mt-2 rounded-2xl flex items-center ${isCollapsed ? 'justify-center mx-auto w-12 h-12' : 'px-4 py-3 gap-4'} transition-all duration-300 border border-white/10 bg-white/5 backdrop-blur-sm shadow-inner`}>
           <div className="relative">
-            <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 border-2 border-[#111827] rounded-full shadow-sm"></div>
-            <UserCircle2 className="w-8 h-8 text-green-300" />
+            <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-blue-500 border-2 border-[#09090b] rounded-full shadow-sm"></div>
+            <UserCircle2 className="w-8 h-8 text-white/80" />
           </div>
           {!isCollapsed && (
             <div className="flex flex-col flex-1 overflow-hidden min-w-0">
               <span className="text-sm font-bold text-white truncate">{user?.fullName || "Jhon Doe"}</span>
-              <span className="text-[11px] font-medium text-green-400 max-w-[120px] whitespace-normal uppercase tracking-widest">{user?.role?.replace('_', ' ') || "Staff"}</span>
+              <span className="text-[11px] font-medium text-blue-400 max-w-[120px] whitespace-normal uppercase tracking-widest">{user?.role?.replace('_', ' ') || "Staff"}</span>
             </div>
           )}
         </div>
@@ -155,8 +155,8 @@ export function Sidebar({ isMobileOpen, onCloseMobile, isCollapsed, onToggleSide
                       to={`/store/category/${cat}`}
                       onClick={handleLinkClick}
                       className={`flex items-center group px-3 py-2.5 mx-4 rounded-xl text-[13px] font-bold transition-all duration-300 ease-out ${active
-                        ? "bg-[#1B3817] text-white border-t border-t-white/20 border-b-4 border-b-[#12290D] shadow-[0_8px_15px_rgba(0,0,0,0.3)] active:translate-y-[2px] active:border-b-0"
-                        : "text-white/60 hover:text-white hover:bg-[#1B3817] border-t border-t-transparent hover:border-t-white/20 border-b-4 border-b-transparent hover:border-b-[#12290D] hover:shadow-[0_8px_15px_rgba(0,0,0,0.3)] hover:scale-105 active:translate-y-[2px] active:border-b-0"
+                        ? "bg-[#18181b] text-white border-t border-t-white/10 border-b-4 border-b-[#000] shadow-[0_0_20px_rgba(255,255,255,0.15)] scale-105"
+                        : "text-white/60 hover:text-white hover:bg-[#18181b] border-t border-t-transparent hover:border-t-white/10 border-b-4 border-b-transparent hover:border-b-[#000] hover:shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:scale-105"
                         } ${isCollapsed ? 'justify-center mx-auto w-10 h-10 px-0' : 'gap-4'}`}
                       title={isCollapsed ? cat : undefined}
                     >

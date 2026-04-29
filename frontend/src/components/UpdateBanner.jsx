@@ -9,7 +9,7 @@ export function UpdateBanner() {
     const [loading, setLoading] = useState(true);
 
     const iconMap = {
-        zap: <Zap className="w-4 h-4 text-green-500" />,
+        zap: <Zap className="w-4 h-4 text-blue-500" />,
         sparkles: <Sparkles className="w-4 h-4 text-amber-500" />,
         shield: <Shield className="w-4 h-4 text-emerald-500" />,
         box: <Box className="w-4 h-4 text-purple-500" />,
@@ -48,7 +48,7 @@ export function UpdateBanner() {
                 <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[var(--color-primary)]/30 to-transparent"></div>
 
                 <div className="flex items-center justify-center gap-4 py-3 bg-[var(--color-surface-base)]/50 backdrop-blur-sm border border-[var(--color-border-subtle)] rounded-2xl relative z-10">
-                    <div className="flex items-center gap-2 px-3 py-1 bg-green-600/10 text-green-600 rounded-lg border border-green-600/20 shadow-sm shadow-green-600/5 animate-pulse shrink-0">
+                    <div className="flex items-center gap-2 px-3 py-1 bg-blue-600/10 text-blue-600 rounded-lg border border-green-600/20 shadow-sm shadow-green-600/5 animate-pulse shrink-0">
                         <Sparkles className="w-3.5 h-3.5" />
                         <span className="text-[10px] font-black uppercase tracking-widest">System Update</span>
                     </div>
@@ -78,7 +78,7 @@ export function UpdateBanner() {
 
                     <div
                         onClick={() => setShowDetails(true)}
-                        className="hidden sm:flex items-center gap-2 text-green-600 hover:text-green-700 transition-colors ml-4 cursor-pointer shrink-0"
+                        className="hidden sm:flex items-center gap-2 text-blue-600 hover:text-green-700 transition-colors ml-4 cursor-pointer shrink-0"
                     >
                         <span className="text-[9px] font-black uppercase tracking-widest">Learn More</span>
                         <ArrowRight className="w-3 h-3" />
@@ -105,12 +105,12 @@ export function UpdateBanner() {
                         >
                             <div className="p-8 border-b border-[var(--color-border-subtle)] flex items-center justify-between bg-zinc-50/50">
                                 <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 bg-green-600 rounded-2xl flex items-center justify-center shadow-lg shadow-green-600/20">
+                                    <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-green-600/20">
                                         <Zap className="w-6 h-6 text-white" />
                                     </div>
                                     <div>
                                         <h2 className="text-2xl font-black text-[var(--color-text-primary)] tracking-tighter uppercase italic">NextGen Update</h2>
-                                        <p className="text-[10px] font-black text-green-600 uppercase tracking-widest">Version 2.0.1 Stable</p>
+                                        <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest">Version 2.0.1 Stable</p>
                                     </div>
                                 </div>
                                 <button
@@ -125,13 +125,13 @@ export function UpdateBanner() {
                                 {updates.map((group, idx) => (
                                     <div key={idx} className="space-y-4">
                                         <div className="flex items-center gap-2">
-                                            {iconMap[group.iconType] || <Zap className="w-4 h-4 text-green-500" />}
+                                            {iconMap[group.iconType] || <Zap className="w-4 h-4 text-blue-500" />}
                                             <h3 className="text-xs font-black text-[var(--color-text-primary)] uppercase tracking-wider">{group.category}</h3>
                                         </div>
                                         <div className="grid gap-3 pl-6">
                                             {group.items.map((item, i) => (
                                                 <div key={i} className="flex items-start gap-3 group">
-                                                    <CheckCircle2 className="w-3.5 h-3.5 mt-0.5 text-green-500 shrink-0" />
+                                                    <CheckCircle2 className="w-3.5 h-3.5 mt-0.5 text-blue-500 shrink-0" />
                                                     <p className="text-xs font-bold text-[var(--color-text-secondary)] leading-relaxed">{item}</p>
                                                 </div>
                                             ))}
@@ -145,7 +145,7 @@ export function UpdateBanner() {
                                     {[1, 2, 3].map(i => (
                                         <div key={i} className="w-6 h-6 rounded-full border-2 border-[var(--color-surface-card)] bg-zinc-200"></div>
                                     ))}
-                                    <div className="w-6 h-6 rounded-full border-2 border-[var(--color-surface-card)] bg-green-600 flex items-center justify-center text-[8px] font-black text-white">+5</div>
+                                    <div className="w-6 h-6 rounded-full border-2 border-[var(--color-surface-card)] bg-blue-600 flex items-center justify-center text-[8px] font-black text-white">+5</div>
                                 </div>
                                 <button
                                     onClick={() => setShowDetails(false)}

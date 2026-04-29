@@ -43,7 +43,7 @@ export function Storefront({ onAdd, onEdit, onDelete, onView }) {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
       </div>
     );
   }
@@ -54,7 +54,7 @@ export function Storefront({ onAdd, onEdit, onDelete, onView }) {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
         <div className="space-y-1">
           <div className="flex items-center gap-3">
-            <div className="w-2 h-7 bg-green-500 rounded-full shadow-[0_0_10px_rgba(22,163,74,0.5)]"></div>
+            <div className="w-2 h-7 bg-blue-500 rounded-full shadow-[0_0_10px_rgba(22,163,74,0.5)]"></div>
             <h2 className="text-2xl font-black text-[var(--color-text-primary)] tracking-tighter capitalize leading-none">
               {category ? `${category}` : status ? `${status}` : "Master Catalog"}
             </h2>
@@ -85,7 +85,7 @@ export function Storefront({ onAdd, onEdit, onDelete, onView }) {
             {searchTerm && (
               <button
                 onClick={() => setSearchTerm("")}
-                className="text-xs font-black uppercase tracking-widest text-green-600 hover:text-green-700 transition-colors"
+                className="text-xs font-black uppercase tracking-widest text-blue-600 hover:text-green-700 transition-colors"
               >
                 Clear Search Term
               </button>

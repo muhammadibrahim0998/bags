@@ -16,7 +16,7 @@ export function FilterBar() {
       case 'Low Stock': return 'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.3)]';
       case 'Out of Stock': return 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.3)]';
       case 'In Stock': return 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.3)]';
-      default: return 'bg-green-600 shadow-[0_0_8px_rgba(37,99,235,0.3)]';
+      default: return 'bg-blue-600 shadow-[0_0_8px_rgba(37,99,235,0.3)]';
     }
   };
 

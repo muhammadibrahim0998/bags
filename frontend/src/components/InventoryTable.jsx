@@ -48,7 +48,7 @@ const RowActions = ({ onEdit, onDelete, onView, isShopAdmin }) => {
             {isShopAdmin && (
               <>
                 <div className="w-px h-4 bg-zinc-200 mx-1" />
-                <button onClick={() => { onEdit(); setIsOpen(false); }} className="p-2 text-green-600 hover:text-white hover:bg-green-300 rounded-lg" title="Edit"><Edit2 className="w-4 h-4" /></button>
+                <button onClick={() => { onEdit(); setIsOpen(false); }} className="p-2 text-blue-600 hover:text-white hover:bg-green-300 rounded-lg" title="Edit"><Edit2 className="w-4 h-4" /></button>
                 <button onClick={() => { onDelete(); setIsOpen(false); }} className="p-2 text-rose-500 hover:bg-rose-50 rounded-lg" title="Delete"><Trash2 className="w-4 h-4" /></button>
               </>
             )}
@@ -131,7 +131,7 @@ export function InventoryTable({ onEdit, onDelete, onView, onExport }) {
                       <div className="text-[9px] text-zinc-400 font-bold uppercase italic">Min: {product.minStock}</div>
                     </td>
                     <td className="px-4 py-4">
-                      <div className="text-xs font-black text-green-600 font-mono">Rs.{product.price.toLocaleString()}</div>
+                      <div className="text-xs font-black text-blue-600 font-mono">Rs.{product.price.toLocaleString()}</div>
                     </td>
                     <td className="px-4 py-4">
                       <div className="flex items-center gap-1.5 text-zinc-600">
@@ -186,7 +186,7 @@ export function InventoryTable({ onEdit, onDelete, onView, onExport }) {
                 </div>
                 <div>
                   <h4 className="text-sm font-bold text-zinc-900 line-clamp-1">{product.name}</h4>
-                  <span className="text-[9px] font-black text-green-600 uppercase">{product.category}</span>
+                  <span className="text-[9px] font-black text-blue-600 uppercase">{product.category}</span>
                 </div>
               </div>
               <RowActions onView={() => onView(product)} onEdit={() => onEdit(product)} onDelete={() => onDelete(product._id)} isShopAdmin={isShopAdmin()} />
@@ -201,7 +201,12 @@ export function InventoryTable({ onEdit, onDelete, onView, onExport }) {
                 <p className="text-xs font-black text-green-">Rs.{product.price.toLocaleString()}</p>
               </div>
             </div>
-            <button onClick={() => addToCart(product)} className="w-full py-2 bg-green-600 text-white rounded-lg text-[10px] font-black uppercase tracking-widest shadow-lg shadow-green-600/20 active:scale-95">Add to Cart</button>
+            <button 
+              onClick={() => addToCart(product)} 
+              className="w-full py-2 bg-blue-600 hover:bg-orange-500 text-white rounded-lg text-[10px] font-black uppercase tracking-widest border-t border-white/20 border-b-4 border-black/40 shadow-[0_8px_15px_rgba(37,99,235,0.2)] hover:shadow-[0_8px_20px_rgba(249,115,22,0.3)] transition-all active:translate-y-[2px] active:border-b-0"
+            >
+              Add to Cart
+            </button>
           </div>
         ))}
       </div>

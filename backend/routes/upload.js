@@ -30,13 +30,18 @@ const storage = multer.diskStorage({
 
 // File type filter
 const fileFilter = (req, file, cb) => {
-  const allowed = /jpeg|jpg|png|webp|gif|avif/;
-  const ext = allowed.test(path.extname(file.originalname).toLowerCase());
-  const mime = allowed.test(file.mimetype);
+  const allowedExts = /jpeg|jpg|png|webp|gif|avif|jfif|heic|heif/;
+  const allowedMime = /image\/(jpeg|jpg|png|webp|gif|avif|jfif|heic|heif)/;
+  
+  const ext = allowedExts.test(path.extname(file.originalname).toLowerCase());
+  const mime = allowedMime.test(file.mimetype);
+  
+  console.log(`[Upload Filter] File: ${file.originalname}, Mime: ${file.mimetype}, Ext: ${path.extname(file.originalname)}, Result: ${ext && mime}`);
+
   if (ext && mime) {
     cb(null, true);
   } else {
-    cb(new ApiError(400, 'Only image files (JPEG, JPG, PNG, WEBP, GIF, AVIF) are allowed!'));
+    cb(new ApiError(400, `Only image files are allowed! Received: ${file.mimetype}`));
   }
 };
 
@@ -47,7 +52,18 @@ const upload = multer({ storage, fileFilter });
 router.post(
   '/',
   authenticate,
-  upload.array('images', 5),
+  (req, res, next) => {
+    upload.array('images', 5)(req, res, (err) => {
+      if (err instanceof multer.MulterError) {
+        console.error(`[Upload] Multer Error:`, err);
+        return res.status(400).json({ message: `Multer Error: ${err.message}` });
+      } else if (err) {
+        console.error(`[Upload] General Error:`, err);
+        return res.status(400).json({ message: err.message });
+      }
+      next();
+    });
+  },
   asyncHandler(async (req, res) => {
     console.log(`[Upload] Body:`, req.body);
     console.log(`[Upload] Files:`, req.files?.map(f => ({ name: f.originalname, size: f.size, path: f.path })));

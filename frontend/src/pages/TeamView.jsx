@@ -167,7 +167,7 @@ export function TeamView() {
             Team Management
           </h1>
           <div className="text-[var(--color-text-muted)] font-bold uppercase text-[9px] sm:text-[10px] tracking-[0.2em] sm:tracking-[0.4em] mt-2 sm:mt-3 flex items-center gap-2">
-            <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
+            <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></div>
             Staff Accounts & Access Control
           </div>
         </div>
@@ -183,7 +183,7 @@ export function TeamView() {
       {/* Main Content Grid */}
       {loading ? (
         <div className="flex flex-col items-center justify-center p-20 bg-surface-card rounded-[2.5rem] border border-[var(--color-border-subtle)]">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4"></div>
           <p className="text-[10px] font-black text-[var(--color-text-muted)] uppercase tracking-widest">Identifying Team Personnel...</p>
         </div>
       ) : (
@@ -209,7 +209,7 @@ export function TeamView() {
                   {['admin', 'shop_admin', 'super_admin'].includes(u.role) ? <ShieldCheck className="w-7 h-7 text-[var(--color-primary)]" /> : <UserIcon className="w-7 h-7 text-[var(--color-primary)]" />}
                 </div>
                 <div className="flex gap-2 transition-opacity">
-                  <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={() => handleOpenModal(u, true)} className="p-3 bg-[var(--color-surface-base)] rounded-xl border border-[var(--color-border-subtle)] hover:text-green-500 hover:border-green-500/30 transition-colors"><Eye className="w-5 h-5" /></motion.button>
+                  <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={() => handleOpenModal(u, true)} className="p-3 bg-[var(--color-surface-base)] rounded-xl border border-[var(--color-border-subtle)] hover:text-blue-500 hover:border-blue-500/30 transition-colors"><Eye className="w-5 h-5" /></motion.button>
                   <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={() => handleOpenModal(u)} className="p-3 bg-[var(--color-surface-base)] rounded-xl border border-[var(--color-border-subtle)] hover:text-amber-500 hover:border-amber-500/30 transition-colors"><Edit2 className="w-5 h-5" /></motion.button>
                   <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={() => handleDeleteClick(u)} disabled={u._id === currentUser?.id} className="p-3 bg-[var(--color-surface-base)] rounded-xl border border-[var(--color-border-subtle)] disabled:opacity-20 hover:text-rose-500 hover:border-rose-500/30 transition-colors"><Trash2 className="w-5 h-5" /></motion.button>
                 </div>
@@ -217,7 +217,7 @@ export function TeamView() {
               <h3 className="text-2xl font-black text-[var(--color-text-primary)] uppercase tracking-tighter">{u.fullName}</h3>
               <p className="text-[11px] font-black text-[var(--color-text-muted)] uppercase tracking-widest mb-4">@{u.username}</p>
               <div className="flex gap-2">
-                <span className="text-[9px] font-black uppercase px-3 py-1 bg-green-500/10 text-green-500 rounded-full">{u.role}</span>
+                <span className="text-[9px] font-black uppercase px-3 py-1 bg-blue-500/10 text-blue-500 rounded-full">{u.role}</span>
                 <span className={`text-[9px] font-black uppercase px-3 py-1 rounded-full ${u.status === 'active' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}`}>{u.status}</span>
               </div>
             </motion.div>
@@ -306,7 +306,7 @@ export function TeamView() {
                 </div>
 
                 {!isViewMode && (
-                  <button type="submit" disabled={isSubmitting} className="w-full py-3 mb-4 bg-green-600 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-green-700 active:scale-[0.98] transition-all">
+                  <button type="submit" disabled={isSubmitting} className="w-full py-3 mb-4 bg-blue-600 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-blue-700 active:scale-[0.98] transition-all">
                     {isSubmitting ? "Processing..." : editingUser ? "Finalize Update" : "Authorize Member"}
                   </button>
                 )}
